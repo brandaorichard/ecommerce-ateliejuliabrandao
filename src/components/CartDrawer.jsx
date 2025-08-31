@@ -35,7 +35,6 @@ export default function CartDrawer({ open, onClose }) {
   const [clientRequestId] = useState(() => crypto.randomUUID());
   const [lastOrderId, setLastOrderId] = useState(null);
   const [freteAviso, setFreteAviso] = useState(false);
-  const [freteBordaVermelha, setFreteBordaVermelha] = useState(false);
   const [numeroCasaAviso, setNumeroCasaAviso] = useState(false);
 
   const images = useCartImages(items);
@@ -96,7 +95,6 @@ export default function CartDrawer({ open, onClose }) {
 
     if (!freteSelecionado) {
       setFreteAviso(true);
-      setFreteBordaVermelha(true);
       setTimeout(() => setFreteAviso(false), 3000);
       return;
     }
@@ -252,12 +250,9 @@ export default function CartDrawer({ open, onClose }) {
                 {items.length > 0 && (
                   <motion.div
                     id="frete-card"
-                    className={`mt-4 ${freteBordaVermelha ? "border-2 border-red-500" : ""}`}
+                    className="mt-4"
                   >
-                    <div
-                      className={`relative ${freteBordaVermelha ? "border-2 border-red-500 rounded-lg transition-all duration-300" : ""}`}
-                      style={{ transition: "border-color 0.3s" }}
-                    >
+                    <div className="relative">
                       <FreightSection
                         fullWidth
                         cepInput={cepInput}
@@ -270,7 +265,6 @@ export default function CartDrawer({ open, onClose }) {
                         onSelectFrete={(frete) => {
                           handleFreteChange(frete);
                           setFreteAviso(false);
-                          setFreteBordaVermelha(false);
                         }}
                         endereco={enderecoCep}
                         showCepInput={!cep || cep.length !== 8}
