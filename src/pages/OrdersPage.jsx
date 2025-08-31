@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import babies from "../mocks/babiesMock";
-
-const babiesBySlug = babies.reduce((acc, baby) => {
-  acc[baby.slug] = baby;
-  return acc;
-}, {});
+import { useBabies } from "../hooks/useBabies"; // Importa o hook real
 
 export default function OrdersPage() {
   const navigate = useNavigate();
   const token = useSelector((state) => state.auth.token);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Busca os bebês reais do backend
+  const { babies, loading: babiesLoading } = useBabies();
+
+  // Cria um mapa para acesso rápido por slug
+  const babiesBySlug = babies.reduce((acc, baby) => {
+    acc[baby.slug] = baby;
+    return acc;
+  }, {});
 
   useEffect(() => {
     if (!token) {
@@ -42,7 +46,7 @@ export default function OrdersPage() {
     fetchOrders();
   }, [token]);
 
-  if (loading) return <p>Carregando pedidos...</p>;
+  if (loading || babiesLoading) return <p>Carregando pedidos...</p>;
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -76,11 +80,6 @@ export default function OrdersPage() {
                     {new Date(order.date).toLocaleDateString()}
                   </p>
                 </div>
-                {/* <div>
-                  <span className="px-3 py-1 rounded text-white bg-purple-600">
-                    {order.status}
-                  </span>
-                </div> */}
               </div>
 
               <div className="flex gap-4 items-center">
@@ -105,9 +104,6 @@ export default function OrdersPage() {
               <p>
                 <strong>Total:</strong> R$ {order.total.toFixed(2)}
               </p>
-              {/* <p>
-                <strong>Pagamento:</strong> {order.paymentMethod}
-              </p> */}
               <p>
                 <strong>Entrega:</strong> {order.deliveryAddress}
               </p>
