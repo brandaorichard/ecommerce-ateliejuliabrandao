@@ -40,7 +40,10 @@ export default function MobileHeader({
     <header className="fixed top-0 left-0 w-full z-50 bg-[#f9e7f6] md:hidden">
       {/* Faixa roxa só aparece se não estiver scrolled */}
       {!scrolled && (
-        <div className="h-[30px] bg-[#c5adee] w-full transition-all duration-300 flex items-center justify-center px-2">
+        <div
+          className="h-[30px] bg-[#c5adee] w-full transition-all duration-300 flex items-center justify-center px-2 pt-[env(safe-area-inset-top)]"
+          style={{ paddingTop: "env(safe-area-inset-top)" }}
+        >
           <span className="text-black text-[12px] font-extralight">
             ✈️ ENVIAMOS PARA TODO O BRASIL E EXTERIOR! ✈️
           </span>
