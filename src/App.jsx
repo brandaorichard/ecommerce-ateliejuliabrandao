@@ -52,15 +52,20 @@ const maintenanceMode = true; // Troque para false para desfazer
 
 function App() {
   const [cartOpen, setCartOpen] = React.useState(false);
+  const user = useSelector(s => s.auth.user);
+  const isAdmin = user?.role === "admin";
 
   return (
     <BrowserRouter>
-      {maintenanceMode ? (
-        <MaintenancePage />
+      {maintenanceMode && !isAdmin ? (
+        <Routes>
+          <Route path="/login" element={<LoginPage maintenanceMode={true} />} />
+          <Route path="*" element={<MaintenancePage />} />
+        </Routes>
       ) : (
         <Routes>
           {/* Admin (layout próprio) */}
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
             <Route index element={<AdminHeroPage />} />
             <Route path="produtos" element={<AdminBabiesPage />} />
             <Route path="pedidos" element={<AdminOrdersPage />} />
