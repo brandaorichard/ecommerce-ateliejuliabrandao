@@ -31,6 +31,7 @@ import ConfirmEmailChangePage from "./pages/ConfirmEmailChangePage";
 
 import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import MaintenancePage from "./components/MaintenancePage"; // Adicione este import
 
 // Página de redirecionamento
 function PedidoRedirect() {
@@ -47,28 +48,34 @@ function AdminRoute({ children }) {
   return children;
 }
 
+const maintenanceMode = true; // Troque para false para desfazer
+
 function App() {
   const [cartOpen, setCartOpen] = React.useState(false);
 
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Admin (layout próprio) */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminHeroPage />} />
-          <Route path="produtos" element={<AdminBabiesPage />} />
-          <Route path="pedidos" element={<AdminOrdersPage />} />
-          <Route path="usuarios" element={<AdminUsersPage />} />
-        </Route>
+      {maintenanceMode ? (
+        <MaintenancePage />
+      ) : (
+        <Routes>
+          {/* Admin (layout próprio) */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminHeroPage />} />
+            <Route path="produtos" element={<AdminBabiesPage />} />
+            <Route path="pedidos" element={<AdminOrdersPage />} />
+            <Route path="usuarios" element={<AdminUsersPage />} />
+          </Route>
 
-        {/* Site público (layout padrão) */}
-        <Route
-          path="/*"
-          element={
-            <SiteShell cartOpen={cartOpen} setCartOpen={setCartOpen} />
-          }
-        />
-      </Routes>
+          {/* Site público (layout padrão) */}
+          <Route
+            path="/*"
+            element={
+              <SiteShell cartOpen={cartOpen} setCartOpen={setCartOpen} />
+            }
+          />
+        </Routes>
+      )}
     </BrowserRouter>
   );
 }
