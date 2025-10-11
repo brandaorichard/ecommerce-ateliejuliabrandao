@@ -48,12 +48,11 @@ function AdminRoute({ children }) {
   return children;
 }
 
-const maintenanceMode = true; // Troque para false para desfazer
-
 function App() {
   const [cartOpen, setCartOpen] = React.useState(false);
   const user = useSelector(s => s.auth.user);
   const isAdmin = user?.role === "admin";
+  const maintenanceMode = useSelector(s => s.maintenance.enabled); // Adicionar este selector
 
   return (
     <BrowserRouter>
