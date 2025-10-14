@@ -79,7 +79,7 @@ export function FreightSection({
                 </div>
                 <div className={`text-[11px] ${isNegotiation ? 'text-blue-400' : 'text-gray-600'}`}>
                   {isNegotiation 
-                    ? "Entre em contato para negociar valor e prazo personalizados"
+                    ? "Desconto especial para envios JadLog"
                     : f.deadline
                       ? `${f.deadline} dias úteis`
                       : "Prazo não informado"

@@ -72,6 +72,7 @@ export default function FreteCalculator({
         company: "Ateliê Julia Brandão",
         logo: null,
         isNegotiation: true,
+        description: "Transportadora parceira Jadlog com desconto especial"
       };
 
       const fretesComNegociacao = [...services, opcaoNegociacao];
@@ -141,28 +142,34 @@ export default function FreteCalculator({
       {fretes.length > 0 && (
         <div className="mt-2 space-y-2">
           {fretes.map(frete => (
-            <label key={frete.name} className={`flex items-center gap-2 text-sm ${
-              frete.isNegotiation ? 'text-blue-400' : ''
-            }`}>
+            <label key={frete.name} className="flex items-start gap-2 text-sm">
               <input
                 type="radio"
                 name="frete"
                 checked={freteSelecionado?.name === frete.name}
                 onChange={() => handleFreteChange(frete)}
+                className="mt-1"
               />
-              <div className="flex items-center gap-2">
-                {frete.isNegotiation && <FaHandshake className="text-blue-400" />}
-                <span>
-                  {frete.name} - {frete.isNegotiation ? "A combinar" : `${frete.deadline} dias úteis - `}
-                  {!frete.isNegotiation && (
-                    <strong>
-                      {Number(frete.price).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </strong>
-                  )}
-                </span>
+              <div className="flex flex-col">
+                <div className={`flex items-center gap-2 ${frete.isNegotiation ? 'text-blue-400' : ''}`}>
+                  {frete.isNegotiation && <FaHandshake className="text-blue-400" />}
+                  <span>
+                    {frete.name} - {frete.isNegotiation ? "A combinar" : `${frete.deadline} dias úteis - `}
+                    {!frete.isNegotiation && (
+                      <strong>
+                        {Number(frete.price).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </strong>
+                    )}
+                  </span>
+                </div>
+                {frete.isNegotiation && (
+                  <span className="text-xs text-gray-500 ml-0">
+                    (Desconto especial para envios JadLog)
+                  </span>
+                )}
               </div>
             </label>
           ))}
