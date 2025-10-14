@@ -1,5 +1,5 @@
 import React from "react";
-import { FaExclamationTriangle } from "react-icons/fa";
+import { FaExclamationTriangle, FaHandshake } from "react-icons/fa";
 
 export function FreightSection({
   fullWidth = false,
@@ -50,6 +50,8 @@ export function FreightSection({
         <div className="flex flex-col gap-2 w-full">
           {opcoesFrete.map((f) => {
             const selected = freteSelecionado?.name === f.name;
+            const isNegotiation = f.isNegotiation;
+            
             return (
               <button
                 key={f.name}
@@ -61,19 +63,27 @@ export function FreightSection({
                     : "border-gray-300 bg-[#f9e7f6] hover:bg-[#f3e1f0]"
                 }`}
               >
-                <div className="flex justify-between">
-                  <span className="font-medium">{f.name}</span>
-                  <span className="font-semibold">
-                    {f.price.toLocaleString("pt-BR", {
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    {isNegotiation && <FaHandshake className="text-blue-400" />}
+                    <span className={`font-medium ${isNegotiation ? 'text-blue-400' : ''}`}>
+                      {f.name}
+                    </span>
+                  </div>
+                  <span className={`font-semibold ${isNegotiation ? 'text-blue-400' : ''}`}>
+                    {isNegotiation ? "A combinar" : f.price.toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
                   </span>
                 </div>
-                <div className="text-[11px] text-gray-600">
-                  {f.deadline
-                    ? `${f.deadline} dias úteis`
-                    : "Prazo não informado"}
+                <div className={`text-[11px] ${isNegotiation ? 'text-blue-400' : 'text-gray-600'}`}>
+                  {isNegotiation 
+                    ? "Entre em contato para negociar valor e prazo personalizados"
+                    : f.deadline
+                      ? `${f.deadline} dias úteis`
+                      : "Prazo não informado"
+                  }
                 </div>
               </button>
             );
@@ -83,10 +93,19 @@ export function FreightSection({
 
       {/* Aviso frete selecionado */}
       {freteSelecionado && (
-        <div className="text-[11px] mt-1 p-2 border border-purple-200 rounded bg-[#f9e7f6]">
+        <div className={`text-[11px] mt-1 p-2 border rounded ${
+          freteSelecionado.isNegotiation 
+            ? "border-blue-200 bg-[#f9e7f6]" 
+            : "border-purple-200 bg-[#f9e7f6]"
+        }`}>
           Frete selecionado:{" "}
-          <strong>{freteSelecionado.name}</strong>{" "}
-          {freteSelecionado.deadline && `- ${freteSelecionado.deadline} dias úteis`}
+          <strong className={freteSelecionado.isNegotiation ? 'text-blue-400' : ''}>
+            {freteSelecionado.name}
+          </strong>{" "}
+          {freteSelecionado.isNegotiation 
+            ? "- Entre em contato para acertar os detalhes"
+            : freteSelecionado.deadline && `- ${freteSelecionado.deadline} dias úteis`
+          }
         </div>
       )}
     </section>
