@@ -363,23 +363,26 @@ export default function CartDrawer({ open, onClose }) {
                       <div className="flex justify-between text-sm mb-1">
                         <span>Frete</span>
                         <span>
-                          {Number(freteSelecionado.price).toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
+                          {freteSelecionado.isNegotiation 
+                            ? "A combinar"
+                            : Number(freteSelecionado.price).toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            })
+                          }
                         </span>
                       </div>
                     )}
                     <div className="flex justify-between font-semibold text-base mt-2">
                       <span>Total</span>
                       <span>
-                        {(
-                          subtotal +
-                          (freteSelecionado ? Number(freteSelecionado.price) : 0)
-                        ).toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })}
+                        {freteSelecionado?.isNegotiation 
+                          ? `${subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} + frete a combinar`
+                          : (subtotal + (freteSelecionado ? Number(freteSelecionado.price) : 0)).toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            })
+                        }
                       </span>
                     </div>
                   </div>
