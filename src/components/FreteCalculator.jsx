@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import axios from "axios";
-import { FaExclamationTriangle } from "react-icons/fa";
+import { FaExclamationTriangle, FaHandshake } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { setCep, setFreteSelecionado, setFreteData } from "../redux/freteSlice";
 
@@ -64,7 +64,18 @@ export default function FreteCalculator({
           logo: s.company?.picture,
         }));
 
-      setFretes(services);
+      // Adiciona a opção de negociação direta
+      const opcaoNegociacao = {
+        name: "Negociar com a Artista",
+        price: 0,
+        deadline: null,
+        company: "Ateliê Julia Brandão",
+        logo: null,
+        isNegotiation: true,
+      };
+
+      const fretesComNegociacao = [...services, opcaoNegociacao];
+      setFretes(fretesComNegociacao);
 
       // ViaCEP
       let enderecoViaCep = null;
@@ -76,12 +87,12 @@ export default function FreteCalculator({
 
       dispatch(setFreteData({
         cep: cepFormatado,
-        fretes: services,
+        fretes: fretesComNegociacao,
         enderecoCep: enderecoViaCep,
       }));
 
-      if (onFreteSelecionado && services[0]) {
-        onFreteSelecionado(services[0]);
+      if (onFreteSelecionado && fretesComNegociacao[0]) {
+        onFreteSelecionado(fretesComNegociacao[0]);
       }
     } catch (err) {
       console.log(err);
@@ -130,22 +141,29 @@ export default function FreteCalculator({
       {fretes.length > 0 && (
         <div className="mt-2 space-y-2">
           {fretes.map(frete => (
-            <label key={frete.name} className="flex items-center gap-2 text-sm">
+            <label key={frete.name} className={`flex items-center gap-2 text-sm ${
+              frete.isNegotiation ? 'text-blue-400' : ''
+            }`}>
               <input
                 type="radio"
                 name="frete"
                 checked={freteSelecionado?.name === frete.name}
                 onChange={() => handleFreteChange(frete)}
               />
-              <span>
-                {frete.name} - {frete.deadline} dias úteis -{" "}
-                <strong>
-                  {Number(frete.price).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
-                </strong>
-              </span>
+              <div className="flex items-center gap-2">
+                {frete.isNegotiation && <FaHandshake className="text-blue-400" />}
+                <span>
+                  {frete.name} - {frete.isNegotiation ? "A combinar" : `${frete.deadline} dias úteis - `}
+                  {!frete.isNegotiation && (
+                    <strong>
+                      {Number(frete.price).toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </strong>
+                  )}
+                </span>
+              </div>
             </label>
           ))}
         </div>
