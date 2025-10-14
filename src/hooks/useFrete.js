@@ -63,9 +63,23 @@ export function useFrete(items) {
           company: s.company?.name,
           logo: s.company?.picture,
         }));
-      dispatch(setFretes(services));
+
+      // Adiciona a opção de negociação direta
+      const opcaoNegociacao = {
+        name: "Negociar com a Artista",
+        price: 0,
+        deadline: null,
+        company: "Ateliê Julia Brandão",
+        logo: null,
+        isNegotiation: true,
+      };
+
+      const fretesComNegociacao = [...services, opcaoNegociacao];
+      
+      dispatch(setFretes(fretesComNegociacao));
       dispatch(setCep(cepInput));
-      if (!services.length) setErroFrete("Nenhuma opção de frete encontrada para este CEP.");
+      
+      if (!services.length) setErroFrete("Nenhuma opção de frete encontrada para este CEP, mas você pode negociar diretamente com a artista.");
 
       const via = await fetch(`https://viacep.com.br/ws/${cepInput}/json/`);
       if (via.ok) {
@@ -73,7 +87,7 @@ export function useFrete(items) {
         if (!addr.erro) {
           dispatch(setFreteData({
             cep: cepInput,
-            fretes: services,
+            fretes: fretesComNegociacao,
             enderecoCep: addr,
           }));
         }
