@@ -1,38 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
-export function useCarousel() {
+export function useCarousel(options = {}) {
+  const { enabled = true } = options;
   const [carouselItems, setCarouselItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState(null);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const controllerRef = useRef(null);
 
-  useEffect(() => {
-    const fetchCarouselItems = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel');
-        
-        if (!response.ok) {
-          throw new Error('Falha ao carregar itens do carrossel');
-        }
+  const fetchCarouselItems = useCallback(async () => {
+    if (!enabled) return;
+    
+    controllerRef.current?.abort();
+    const ctrl = new AbortController();
+    controllerRef.current = ctrl;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await fetch('https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel', { 
+        signal: ctrl.signal 
+      });
+      
+      if (!response.ok) {
+        throw new Error('Falha ao carregar itens do carrossel');
+      }
 
-        const data = await response.json();
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        // Filtrar apenas itens ativos e ordenar por ordem
+        const activeItems = data.data
+          .filter(item => item.isActive)
+          .sort((a, b) => a.order - b.order);
         
-        if (data.success && data.data) {
-          // Filtrar apenas itens ativos e ordenar por ordem
-          const activeItems = data.data
-            .filter(item => item.isActive)
-            .sort((a, b) => a.order - b.order);
-          
-          console.log('Carousel items carregados:', activeItems);
-          setCarouselItems(activeItems);
-        } else {
-          console.warn('Resposta do servidor sem dados válidos:', data);
-          throw new Error('Dados inválidos recebidos do servidor');
-        }
-      } catch (err) {
-        console.error('Erro ao carregar carrossel:', err);
+        setCarouselItems(activeItems);
+      } else {
+        throw new Error('Dados inválidos recebidos do servidor');
+      }
+    } catch (err) {
+      if (err.name !== "AbortError") {
         setError(err.message);
+        
         // Em caso de erro, usar imagens estáticas como fallback
         setCarouselItems([
           {
@@ -66,18 +75,16 @@ export function useCarousel() {
             isActive: true
           }
         ]);
-      } finally {
-        setLoading(false);
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  }, [enabled]);
 
+  useEffect(() => {
     fetchCarouselItems();
-  }, [refreshKey]);
+    return () => controllerRef.current?.abort();
+  }, [fetchCarouselItems]);
 
-  // Função para forçar refresh
-  const refresh = () => {
-    setRefreshKey(prev => prev + 1);
-  };
-
-  return { carouselItems, loading, error, refresh };
+  return { carouselItems, loading, error, refetch: fetchCarouselItems };
 }
