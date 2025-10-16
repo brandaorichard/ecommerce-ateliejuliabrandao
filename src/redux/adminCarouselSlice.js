@@ -8,7 +8,7 @@ export const loadCarouselItems = createAsyncThunk(
       const state = getState();
       const token = state.auth.token;
       
-      const response = await fetch('https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel/admin/all', {
+      const response = await fetch('https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel/admin', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ export const createCarouselItem = createAsyncThunk(
   'adminCarousel/createCarouselItem',
   async ({ formData, token }, { rejectWithValue }) => {
     try {
-      const response = await fetch('https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel/admin/create', {
+      const response = await fetch('https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel/admin', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
