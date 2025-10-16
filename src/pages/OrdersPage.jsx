@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useBabies } from "../hooks/useBabies"; // Importa o hook real
+import PaymentStatusBadge from "../components/PaymentStatusBadge";
 
 export default function OrdersPage() {
   const navigate = useNavigate();
@@ -80,6 +81,10 @@ export default function OrdersPage() {
                     {new Date(order.date).toLocaleDateString()}
                   </p>
                 </div>
+                <PaymentStatusBadge 
+                  paymentStatus={order.paymentStatus} 
+                  size="small"
+                />
               </div>
 
               <div className="flex gap-4 items-center">

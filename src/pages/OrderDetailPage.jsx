@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useBabies } from "../hooks/useBabies"; // Use o hook real
+import PaymentStatusBadge from "../components/PaymentStatusBadge";
 
 export default function OrderDetailPage() {
   const { id } = useParams();
@@ -91,6 +92,10 @@ export default function OrderDetailPage() {
             <p className="font-semibold">Pedido #{order._id}</p>
             <p className="text-sm text-gray-500">{new Date(order.date).toLocaleDateString()}</p>
           </div>
+          <PaymentStatusBadge 
+            paymentStatus={order.paymentStatus} 
+            size="normal"
+          />
         </div>
 
         <div>

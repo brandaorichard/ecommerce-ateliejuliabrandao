@@ -17,7 +17,7 @@ import {
 } from "../mocks/babyTexts";
 import { FaWhatsapp } from "react-icons/fa";
 
-export default function ProductPage() {
+export default function ProductPage({ onOpenCart }) {
   const { slug } = useParams();
   const navigate = useNavigate();
 
@@ -225,7 +225,7 @@ export default function ProductPage() {
             discount={baby.discount}
             installment={baby.installment}
           />
-          <QuantityBuy product={baby} quantity={quantity} setQuantity={setQuantity} />
+          <QuantityBuy product={baby} quantity={quantity} setQuantity={setQuantity} onOpenCart={onOpenCart} />
           <FreteCalculator
             items={[{ slug: baby.slug, quantity }]}
             onFreteSelecionado={setFreteSelecionado}

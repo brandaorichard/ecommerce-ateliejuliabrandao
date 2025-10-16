@@ -1,11 +1,23 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
 import { addToCart } from "../redux/cartSlice";
 import { showToast } from "../redux/toastSlice";
+import CartButton from "./CartButton";
 
-export default function QuantityBuy({ product }) {
+export default function QuantityBuy({ product, onOpenCart }) {
   const [quantity, setQuantity] = React.useState(1);
+  const [showCartIcon, setShowCartIcon] = React.useState(false);
   const dispatch = useDispatch();
+  
+  // Get cart items and count for the animated icon
+  const cartItems = useSelector((state) => state.cart.items);
+  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  
+  // Show cart icon if there are items in cart
+  React.useEffect(() => {
+    setShowCartIcon(cartCount > 0);
+  }, [cartCount]);
   
   // Verifica se é um produto de pronta entrega indisponível
   const isProntaEntrega = product.category === "pronta_entrega";
@@ -25,6 +37,8 @@ export default function QuantityBuy({ product }) {
       },
       quantity,
     }));
+
+    // The cart icon visibility is now controlled by cartCount via useEffect
   };
 
   return (
@@ -51,18 +65,44 @@ export default function QuantityBuy({ product }) {
             +
           </button>
         </div>
-        <button
-          className={`
-            text-white text-lg font-medium rounded-full px-10 py-2 transition
-            ${isIndisponivel 
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-[#7a4fcf] hover:bg-[#ae95d9] cursor-pointer'}
-          `}
-          onClick={handleBuy}
-          disabled={isIndisponivel}
-        >
-          {isIndisponivel ? "Indisponível" : "Comprar"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            className={`
+              text-white text-lg font-medium rounded-full px-10 py-2 transition
+              ${isIndisponivel 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-[#7a4fcf] hover:bg-[#ae95d9] cursor-pointer'}
+            `}
+            onClick={handleBuy}
+            disabled={isIndisponivel}
+          >
+            {isIndisponivel ? "Indisponível" : "Comprar"}
+          </button>
+          
+          {/* Animated Cart Icon */}
+          <motion.div
+            initial={false}
+            animate={{ 
+              scale: showCartIcon ? 1 : 0, 
+              opacity: showCartIcon ? 1 : 0 
+            }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 20
+            }}
+            className="flex items-center"
+          >
+            {showCartIcon && (
+              <CartButton
+                size={24}
+                className="text-[#7a4fcf] cursor-pointer"
+                badge={cartCount}
+                onClick={onOpenCart}
+              />
+            )}
+          </motion.div>
+        </div>
       </div>
       
       {isProntaEntrega && isIndisponivel && (

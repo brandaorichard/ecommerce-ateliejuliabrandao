@@ -31,7 +31,6 @@ import ConfirmEmailChangePage from "./pages/ConfirmEmailChangePage";
 
 import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
-import MaintenancePage from "./components/MaintenancePage"; // Adicione este import
 
 // Página de redirecionamento
 function PedidoRedirect() {
@@ -52,16 +51,9 @@ function App() {
   const [cartOpen, setCartOpen] = React.useState(false);
   const user = useSelector(s => s.auth.user);
   const isAdmin = user?.role === "admin";
-  const maintenanceMode = useSelector(s => s.maintenance.enabled); // Adicionar este selector
 
   return (
     <BrowserRouter>
-      {maintenanceMode && !isAdmin ? (
-        <Routes>
-          <Route path="/login" element={<LoginPage maintenanceMode={true} />} />
-          <Route path="*" element={<MaintenancePage />} />
-        </Routes>
-      ) : (
         <Routes>
           {/* Admin (layout próprio) */}
           <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
@@ -79,7 +71,6 @@ function App() {
             }
           />
         </Routes>
-      )}
     </BrowserRouter>
   );
 }
@@ -104,7 +95,7 @@ function SiteShell({ cartOpen, setCartOpen }) {
         <Route path="/meus-pedidos" element={<OrdersPage />} />
         <Route path="/minha-conta" element={<MinhaContaPage />} />
         <Route path="/pedido/:id" element={<OrderDetailPage />} />
-        <Route path="/produto/:slug" element={<ProductPage />} />
+        <Route path="/produto/:slug" element={<ProductPage onOpenCart={() => setCartOpen(true)} />} />
         <Route path="/pedido/:id/pendente" element={<PedidoSucessoRedirect />} />
         <Route path="/pedido/:id/sucesso" element={<PedidoSucessoRedirect />} />
         <Route path="/pedido/:id/erro" element={<PedidoSucessoRedirect />} />
