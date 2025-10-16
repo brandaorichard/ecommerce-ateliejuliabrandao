@@ -3,11 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useBabies } from "../hooks/useBabies"; // Use o hook real
 import PaymentStatusBadge from "../components/PaymentStatusBadge";
+import { FaWhatsapp } from "react-icons/fa";
 
 export default function OrderDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const token = useSelector((state) => state.auth.token);
+  const user = useSelector((state) => state.auth.user);
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -97,6 +99,43 @@ export default function OrderDetailPage() {
             size="normal"
           />
         </div>
+
+        {/* WhatsApp Contact Section - Only for custom orders */}
+        {order.items.some(item => {
+          const baby = babiesBySlug[item.slug];
+          return baby && baby.category !== 'pronta_entrega';
+        }) && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0">
+                <FaWhatsapp className="text-green-600 text-2xl" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-green-800 mb-1">
+                  Personalize seu pedido
+                </h3>
+                <p className="text-xs text-green-700 mb-2">
+                  Entre em contato com a artista para personalizar detalhes como cor do enxoval e características do seu bebê reborn.
+                </p>
+                <a
+                  href={`https://wa.me/5567992654151?text=${encodeURIComponent(
+                    `Olá! Meu nome é ${user?.nome || 'Cliente'} e gostaria de personalizar os detalhes do meu pedido #${order._id}. ` +
+                    `Pedido realizado em ${new Date(order.date).toLocaleDateString()}. ` +
+                    `Itens: ${order.items.map(item => `${item.quantity}x ${item.name || item.slug}`).join(', ')}. ` +
+                    `Total: R$ ${order.total.toFixed(2)}. ` +
+                    `Gostaria de conversar sobre personalizações específicas. Obrigado!`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  <FaWhatsapp className="text-base" />
+                  Falar no WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div>
           <h2 className="font-semibold mb-2">Itens do Pedido</h2>

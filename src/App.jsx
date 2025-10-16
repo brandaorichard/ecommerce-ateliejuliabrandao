@@ -31,6 +31,7 @@ import ConfirmEmailChangePage from "./pages/ConfirmEmailChangePage";
 
 import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminCarouselPage from "./pages/admin/AdminCarouselPage";
 
 // Página de redirecionamento
 function PedidoRedirect() {
@@ -61,6 +62,7 @@ function App() {
             <Route path="produtos" element={<AdminBabiesPage />} />
             <Route path="pedidos" element={<AdminOrdersPage />} />
             <Route path="usuarios" element={<AdminUsersPage />} />
+            <Route path="carrossel" element={<AdminCarouselPage />} />
           </Route>
 
           {/* Site público (layout padrão) */}

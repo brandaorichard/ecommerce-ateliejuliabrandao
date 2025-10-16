@@ -35,20 +35,20 @@ export default function PaymentStatusBadge({ paymentStatus, size = 'normal' }) {
   const config = paymentStatusConfig[paymentStatus] || paymentStatusConfig['pagamento_pendente'];
   
   const sizeClasses = {
-    small: 'px-2 py-1 text-xs',
-    normal: 'px-3 py-1.5 text-sm',
-    large: 'px-4 py-2 text-base'
+    small: 'px-1.5 py-0.5 text-[10px] md:px-2 md:py-1 md:text-xs',
+    normal: 'px-2 py-1 text-xs md:px-3 md:py-1.5 md:text-sm',
+    large: 'px-3 py-1.5 text-sm md:px-4 md:py-2 md:text-base'
   };
 
   return (
     <span
       className={`
-        inline-flex items-center gap-1 rounded-full border font-medium
+        inline-flex items-center gap-0.5 md:gap-1 rounded-full border font-medium
         ${config.bgColor} ${config.textColor} ${config.borderColor}
         ${sizeClasses[size]}
       `}
     >
-      <span className="text-xs">{config.icon}</span>
+      <span className="text-[10px] md:text-xs">{config.icon}</span>
       {config.label}
     </span>
   );

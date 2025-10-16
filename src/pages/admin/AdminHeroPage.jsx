@@ -5,12 +5,12 @@ export default function AdminHeroPage() {
       <section>
         <h1 className="text-3xl font-light tracking-wide">Painel Administrativo</h1>
         <p className="text-sm text-neutral-600 mt-2">
-          Bem-vindo. Selecione uma área no menu: produtos, pedidos ou usuários.
+          Bem-vindo. Selecione uma área no menu: produtos, pedidos, usuários ou carrossel.
         </p>
 
       </section>
 
-      <div className="grid gap-6 sm:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <div className="p-5 rounded-lg bg-white border border-[#e0d6f7]">
           <h2 className="text-sm font-semibold mb-1 text-neutral-900">Produtos</h2>
           <p className="text-xs text-neutral-600 mb-3">Gerencie o catálogo (bebês) por categoria.</p>
@@ -31,11 +31,21 @@ export default function AdminHeroPage() {
             Acessar
           </a>
         </div>
-        <div className="p-5 rounded-lg bg-[#f7f3fa] border border-[#e0d6f7]">
+        <div className="p-5 rounded-lg bg-white border border-[#e0d6f7]">
           <h2 className="text-sm font-semibold mb-1 text-neutral-900">Usuários</h2>
           <p className="text-xs text-neutral-600 mb-3">Visualize dados completos dos usuários.</p>
           <a
             href="/admin/usuarios"
+            className="inline-block text-xs px-3 py-1 rounded bg-[#7a4fcf] hover:bg-[#ae95d9] text-white"
+          >
+            Acessar
+          </a>
+        </div>
+        <div className="p-5 rounded-lg bg-[#f7f3fa] border border-[#e0d6f7]">
+          <h2 className="text-sm font-semibold mb-1 text-neutral-900">Carrossel</h2>
+          <p className="text-xs text-neutral-600 mb-3">Gerencie os slides da página inicial.</p>
+          <a
+            href="/admin/carrossel"
             className="inline-block text-xs px-3 py-1 rounded bg-[#7a4fcf] hover:bg-[#ae95d9] text-white"
           >
             Acessar

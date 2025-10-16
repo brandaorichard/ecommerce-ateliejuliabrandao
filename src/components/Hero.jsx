@@ -1,22 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import img1 from "../assets/hero1.jpeg";
-import img2 from "../assets/hero2.jpeg";
-import img3 from "../assets/hero3.jpeg";
-import img4 from "../assets/img.png";
-import img5 from "../assets/babies/babylaura6.png";
-import img6 from "../assets/babies/babykylin8.png";
-// import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useSwipeable } from "react-swipeable";
 import { motion } from "framer-motion";
-
-const images = [
-  { src: img1, alt: "Imagem 1" },
-  { src: img2, alt: "Imagem 2" },
-  { src: img3, alt: "Imagem 3" },
-  { src: img4, alt: "Imagem 4" },
-  { src: img5, alt: "Imagem 5" },
-  { src: img6, alt: "Imagem 6" },
-];
+import { useCarousel } from "../hooks/useCarousel";
 
 function useImagesPerSlide() {
   const [imagesPerSlide, setImagesPerSlide] = useState(window.innerWidth >= 768 ? 2 : 1);
@@ -33,25 +18,46 @@ function useImagesPerSlide() {
 }
 
 export default function Hero() {
+  // TODOS OS HOOKS DEVEM SER CHAMADOS AQUI, NO TOPO DO COMPONENTE, INCONDICIONALMENTE
+  const { carouselItems, loading } = useCarousel();
   const imagesPerSlide = useImagesPerSlide();
-  const totalSlides = Math.ceil(images.length / imagesPerSlide);
-
-  // Monta os slides (cada um com 1 ou 2 imagens)
-  const slides = [];
-  for (let i = 0; i < images.length; i += imagesPerSlide) {
-    slides.push(images.slice(i, i + imagesPerSlide));
-  }
-
   const [current, setCurrent] = useState(0);
   const intervalRef = useRef();
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % totalSlides);
-    }, 5000);
+  // Swipe only on mobile (<1000px)
+  const isMobile = window.innerWidth < 1000;
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => isMobile && next(),
+    onSwipedRight: () => isMobile && prev(),
+    trackMouse: true,
+  });
 
-    return () => clearInterval(intervalRef.current);
-  }, [totalSlides]);
+  // Transform carousel items to match component structure
+  const transformedItems = carouselItems.map(item => ({
+    id: item._id,
+    title: item.title,
+    description: item.description,
+    images: item.images.map((imageUrl, index) => ({
+      src: imageUrl,
+      alt: item.imageAlt || `${item.title} - Imagem ${index + 1}`
+    })),
+    link: item.link,
+    linkText: item.linkText || "Saiba mais",
+    order: item.order
+  }));
+
+  // Flatten all images from all carousel items
+  const allImages = transformedItems.reduce((acc, item) => {
+    return [...acc, ...item.images];
+  }, []);
+
+  // Group images into slides based on imagesPerSlide
+  const slides = [];
+  for (let i = 0; i < allImages.length; i += imagesPerSlide) {
+    slides.push(allImages.slice(i, i + imagesPerSlide));
+  }
+
+  const totalSlides = slides.length;
 
   const goTo = (idx) => {
     setCurrent(idx);
@@ -64,13 +70,34 @@ export default function Hero() {
   const prev = () => goTo((current - 1 + totalSlides) % totalSlides);
   const next = () => goTo((current + 1) % totalSlides);
 
-  // Swipe only on mobile (<1000px)
-  const isMobile = window.innerWidth < 1000;
-  const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => isMobile && next(),
-    onSwipedRight: () => isMobile && prev(),
-    trackMouse: true,
-  });
+  useEffect(() => {
+    if (totalSlides > 0) {
+      intervalRef.current = setInterval(() => {
+        setCurrent((prev) => (prev + 1) % totalSlides);
+      }, 5000);
+
+      return () => clearInterval(intervalRef.current);
+    }
+  }, [totalSlides]);
+
+  // AGORA, A LÓGICA CONDICIONAL PODE VIR AQUI, DEPOIS DE TODOS OS HOOKS
+  if (loading) {
+    return (
+      <div className="w-full h-[46vh] md:h-[50vh] bg-gray-200 flex items-center justify-center">
+        <p className="text-gray-500">Carregando...</p>
+      </div>
+    );
+  }
+
+  if (carouselItems.length === 0) {
+    return (
+      <div className="w-full h-[46vh] md:h-[50vh] bg-gray-100 flex items-center justify-center">
+        <p className="text-gray-500 text-center">
+          Nenhuma imagem disponível
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -128,7 +155,7 @@ export default function Hero() {
             >
               {slide.map((img, idx) => (
                 <img
-                  key={img.alt}
+                  key={`${img.alt}-${idx}`}
                   src={img.src}
                   alt={img.alt}
                   className="w-full h-full object-cover"
@@ -138,22 +165,6 @@ export default function Hero() {
             </div>
           ))}
         </motion.div>
-
-        {/* Setas */}
-        {/* <button
-          onClick={prev}
-          className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full p-2 shadow cursor-pointer transition z-20"
-          aria-label="Anterior"
-        >
-          <FaChevronLeft size={10} className="text-white" />
-        </button>
-        <button
-          onClick={next}
-          className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-2 shadow cursor-pointer transition z-20"
-          aria-label="Próxima"
-        >
-          <FaChevronRight size={10} className="text-white" />
-        </button> */}
 
         {/* Bolinhas */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">

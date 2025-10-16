@@ -24,3 +24,6 @@ dist-ssr
 *.sln
 *.sw?
 cep-sync-analysis.plan.md
+CAROUSEL_API_DOCUMENTATION.md
+BACKEND_CAROUSEL_FIXES.md
+FRONTEND_CAROUSEL_FIXES.md
