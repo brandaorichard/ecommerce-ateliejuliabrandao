@@ -19,7 +19,7 @@ function useImagesPerSlide() {
 
 export default function Hero() {
   // TODOS OS HOOKS DEVEM SER CHAMADOS AQUI, NO TOPO DO COMPONENTE, INCONDICIONALMENTE
-  const { carouselItems, loading } = useCarousel();
+  const { carouselItems, loading, error, refresh } = useCarousel();
   const imagesPerSlide = useImagesPerSlide();
   const [current, setCurrent] = useState(0);
   const intervalRef = useRef();
@@ -45,6 +45,9 @@ export default function Hero() {
     linkText: item.linkText || "Saiba mais",
     order: item.order
   }));
+
+  console.log('Hero - carouselItems:', carouselItems);
+  console.log('Hero - transformedItems:', transformedItems);
 
   // Flatten all images from all carousel items
   const allImages = transformedItems.reduce((acc, item) => {
@@ -89,12 +92,23 @@ export default function Hero() {
     );
   }
 
-  if (carouselItems.length === 0) {
+  if (carouselItems.length === 0 && !loading) {
     return (
       <div className="w-full h-[46vh] md:h-[50vh] bg-gray-100 flex items-center justify-center">
-        <p className="text-gray-500 text-center">
-          Nenhuma imagem disponível
-        </p>
+        <div className="text-center">
+          <p className="text-gray-500 mb-2">
+            Nenhuma imagem disponível
+          </p>
+          <p className="text-xs text-gray-400 mt-2">
+            Debug: carouselItems.length = {carouselItems.length}, loading = {loading.toString()}
+          </p>
+          <button 
+            onClick={refresh}
+            className="mt-2 px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+          >
+            Atualizar Carrossel
+          </button>
+        </div>
       </div>
     );
   }

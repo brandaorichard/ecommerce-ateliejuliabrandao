@@ -4,6 +4,7 @@ export function useCarousel() {
   const [carouselItems, setCarouselItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const fetchCarouselItems = async () => {
@@ -22,6 +23,8 @@ export function useCarousel() {
           const activeItems = data.data
             .filter(item => item.isActive)
             .sort((a, b) => a.order - b.order);
+          
+          console.log('Carousel items carregados:', activeItems);
           setCarouselItems(activeItems);
         } else {
           console.warn('Resposta do servidor sem dados válidos:', data);
@@ -69,7 +72,12 @@ export function useCarousel() {
     };
 
     fetchCarouselItems();
-  }, []);
+  }, [refreshKey]);
 
-  return { carouselItems, loading, error };
+  // Função para forçar refresh
+  const refresh = () => {
+    setRefreshKey(prev => prev + 1);
+  };
+
+  return { carouselItems, loading, error, refresh };
 }
