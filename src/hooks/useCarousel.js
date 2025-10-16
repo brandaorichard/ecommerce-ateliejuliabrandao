@@ -29,10 +29,11 @@ export function useCarousel(options = {}) {
       const data = await response.json();
       
       if (data.success && data.data) {
-        // Filtrar apenas itens ativos e ordenar por ordem
+        // Filtrar apenas itens ativos (se o campo existir) e ordenar por ordem
         const activeItems = data.data
-          .filter(item => item.isActive)
-          .sort((a, b) => a.order - b.order);
+          .filter(item => item.isActive !== false) // Se não existir isActive, assume true
+          .sort((a, b) => (a.order || 0) - (b.order || 0));
+        
         
         setCarouselItems(activeItems);
       } else {

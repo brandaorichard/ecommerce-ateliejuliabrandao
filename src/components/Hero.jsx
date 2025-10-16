@@ -24,6 +24,14 @@ export default function Hero() {
   const [current, setCurrent] = useState(0);
   const intervalRef = useRef();
 
+  // Flatten all images from all carousel items - usar diretamente as URLs
+  const allImages = carouselItems.reduce((acc, item) => {
+    if (item.images && Array.isArray(item.images)) {
+      return [...acc, ...item.images];
+    }
+    return acc;
+  }, []);
+
   // Swipe only on mobile (<1000px)
   const isMobile = window.innerWidth < 1000;
   const swipeHandlers = useSwipeable({
@@ -32,26 +40,6 @@ export default function Hero() {
     trackMouse: true,
   });
 
-  // Transform carousel items to match component structure
-  const transformedItems = carouselItems.map(item => ({
-    id: item._id,
-    title: item.title,
-    description: item.description,
-    images: item.images.map((imageUrl, index) => ({
-      src: imageUrl,
-      alt: item.imageAlt || `${item.title} - Imagem ${index + 1}`
-    })),
-    link: item.link,
-    linkText: item.linkText || "Saiba mais",
-    order: item.order
-  }));
-
-
-  // Flatten all images from all carousel items
-  const allImages = transformedItems.reduce((acc, item) => {
-    return [...acc, ...item.images];
-  }, []);
-
   // Group images into slides based on imagesPerSlide
   const slides = [];
   for (let i = 0; i < allImages.length; i += imagesPerSlide) {
@@ -59,6 +47,7 @@ export default function Hero() {
   }
 
   const totalSlides = slides.length;
+
 
   const goTo = (idx) => {
     setCurrent(idx);
@@ -100,6 +89,16 @@ export default function Hero() {
     );
   }
 
+  if (allImages.length === 0) {
+    return (
+      <div className="w-full h-[46vh] md:h-[50vh] bg-gray-100 flex items-center justify-center">
+        <p className="text-gray-500 text-center">
+          Nenhuma imagem processada
+        </p>
+      </div>
+    );
+  }
+  
   return (
     <div>
       {/* Título acima do carousel */}
@@ -154,13 +153,16 @@ export default function Hero() {
               className="flex w-full h-full"
               style={{ width: `${100 / totalSlides}%` }}
             >
-              {slide.map((img, idx) => (
+              {slide.map((imageUrl, idx) => (
                 <img
-                  key={`${img.alt}-${idx}`}
-                  src={img.src}
-                  alt={img.alt}
+                  key={`${imageUrl}-${idx}`}
+                  src={imageUrl}
+                  alt={`Carousel image ${idx + 1}`}
                   className="w-full h-full object-cover"
                   style={{ flex: 1 }}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
                 />
               ))}
             </div>
