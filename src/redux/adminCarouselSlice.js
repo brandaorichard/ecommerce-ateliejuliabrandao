@@ -8,7 +8,7 @@ export const loadCarouselItems = createAsyncThunk(
       const state = getState();
       const token = state.auth.token;
       
-      const response = await fetch('https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel/admin', {
+      const response = await fetch('https://atelie-juliabrandao-backend-production.up.railway.app/api/admin/carousel', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ export const createCarouselItem = createAsyncThunk(
   'adminCarousel/createCarouselItem',
   async ({ formData, token }, { rejectWithValue }) => {
     try {
-      const response = await fetch('https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel/admin', {
+      const response = await fetch('https://atelie-juliabrandao-backend-production.up.railway.app/api/admin/carousel', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -56,7 +56,7 @@ export const updateCarouselItem = createAsyncThunk(
   'adminCarousel/updateCarouselItem',
   async ({ id, formData, token }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel/admin/${id}`, {
+      const response = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/admin/carousel/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -81,7 +81,7 @@ export const deleteCarouselItem = createAsyncThunk(
   'adminCarousel/deleteCarouselItem',
   async ({ id, token }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel/admin/${id}`, {
+      const response = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/admin/carousel/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -105,7 +105,7 @@ export const toggleCarouselItemStatus = createAsyncThunk(
   'adminCarousel/toggleCarouselItemStatus',
   async ({ id, token }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel/admin/${id}/toggle-status`, {
+      const response = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/admin/carousel/${id}/toggle-status`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -130,7 +130,7 @@ export const removeCarouselImage = createAsyncThunk(
   'adminCarousel/removeCarouselImage',
   async ({ id, imageUrl, token }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel/admin/${id}/remove-image`, {
+      const response = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/admin/carousel/${id}/remove-image`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
