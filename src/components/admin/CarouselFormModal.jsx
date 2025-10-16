@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes, FaPlus, FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeCarouselImage } from '../../redux/adminCarouselSlice';
 
 export default function CarouselFormModal({ 
   open, 
@@ -9,6 +11,9 @@ export default function CarouselFormModal({
   editing = null, 
   loading = false 
 }) {
+  const dispatch = useDispatch();
+  const token = useSelector(s => s.auth.token);
+  
   const [formData, setFormData] = useState({
     title: editing?.title || '',
     description: editing?.description || '',
@@ -21,7 +26,8 @@ export default function CarouselFormModal({
 
   const [images, setImages] = useState(editing?.images || []);
   const [newImages, setNewImages] = useState([]);
-  const [imagesToDelete, setImagesToDelete] = useState([]);
+  const [removing, setRemoving] = useState(false);
+  const [deletedImages, setDeletedImages] = useState([]); // Para marcar imagens como deletadas
   const [errors, setErrors] = useState({});
   const fileInputRef = useRef(null);
 
@@ -50,8 +56,9 @@ export default function CarouselFormModal({
       setImages([]);
     }
     setNewImages([]);
-    setImagesToDelete([]);
+    setDeletedImages([]);
     setErrors({});
+    setRemoving(false);
   }, [editing, open]);
 
   const handleInputChange = (e) => {
@@ -85,14 +92,35 @@ export default function CarouselFormModal({
     setErrors(prev => ({ ...prev, images: '' }));
   };
 
+  // Remoção imediata via API (igual aos bebês)
+  const handleRemoveImage = async (imageUrl) => {
+    if (!editing?._id) return;
+    
+    setRemoving(imageUrl);
+    try {
+      await dispatch(removeCarouselImage({
+        id: editing._id,
+        imageUrl,
+        token
+      })).unwrap();
+      
+      // Marca como deletada (igual aos bebês)
+      setDeletedImages(prev => [...prev, imageUrl]);
+    } catch (error) {
+      console.error('Erro ao remover imagem:', error);
+      alert('Erro ao remover imagem');
+    } finally {
+      setRemoving(false);
+    }
+  };
+
   const removeImage = (index, isNew = false) => {
     if (isNew) {
       setNewImages(prev => prev.filter((_, i) => i !== index));
     } else {
-      // Para imagens existentes, adicionar à lista de remoção
+      // Para imagens existentes, usar remoção imediata
       const imageToRemove = images[index];
-      setImagesToDelete(prev => [...prev, imageToRemove]);
-      setImages(prev => prev.filter((_, i) => i !== index));
+      handleRemoveImage(imageToRemove);
     }
   };
 
@@ -104,7 +132,8 @@ export default function CarouselFormModal({
     if (!formData.title.trim()) {
       newErrors.title = 'Título é obrigatório';
     }
-    if (images.length === 0 && newImages.length === 0) {
+    const activeImages = images.filter(img => !deletedImages.includes(img));
+    if (activeImages.length === 0 && newImages.length === 0) {
       newErrors.images = 'Pelo menos uma imagem é obrigatória';
     }
 
@@ -123,10 +152,7 @@ export default function CarouselFormModal({
     submitData.append('order', formData.order);
     submitData.append('isActive', formData.isActive);
 
-    // Add images to delete (only for editing)
-    if (editing && imagesToDelete.length > 0) {
-      submitData.append('imagesToDelete', JSON.stringify(imagesToDelete));
-    }
+    // Imagens são removidas imediatamente via API, não precisamos enviar lista de remoção
 
     // Add new images
     newImages.forEach(file => {
@@ -136,7 +162,7 @@ export default function CarouselFormModal({
     onSubmit(submitData);
   };
 
-  const allImages = [...images, ...newImages];
+  const allImages = [...images.filter(img => !deletedImages.includes(img)), ...newImages];
 
   return (
     <AnimatePresence>
@@ -325,16 +351,30 @@ export default function CarouselFormModal({
                         <img
                           src={image}
                           alt={`Imagem ${index + 1}`}
-                          className="w-full h-20 object-cover rounded border"
+                          className={`w-full h-20 object-cover rounded border transition-all duration-300 ${
+                            deletedImages.includes(image) ? "opacity-40 grayscale" : ""
+                          } ${removing === image ? "opacity-50" : ""}`}
                         />
-                        <button
-                          type="button"
-                          onClick={() => removeImage(index, false)}
-                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                          disabled={loading}
-                        >
-                          <FaTrash size={10} />
-                        </button>
+                        {!deletedImages.includes(image) && (
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index, false)}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 disabled:opacity-50"
+                            disabled={loading || removing === image}
+                          >
+                            <FaTrash size={10} />
+                          </button>
+                        )}
+                        {deletedImages.includes(image) && (
+                          <span className="absolute top-1 right-1 bg-red-100 text-red-600 rounded-full px-2 py-0.5 text-[10px] font-semibold opacity-80">
+                            Removida
+                          </span>
+                        )}
+                        {removing === image && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded">
+                            <div className="text-white text-xs">Removendo...</div>
+                          </div>
+                        )}
                       </div>
                     ))}
                     {newImages.map((file, index) => (
