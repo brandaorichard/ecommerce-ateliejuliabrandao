@@ -5,13 +5,19 @@ function authHeader(token) {
 }
 
 export async function fetchOrdersAdmin(token) {
-  const res = await fetch(`${API_BASE}/admin/orders`, { headers: authHeader(token) });
+  const res = await fetch(`${API_BASE}/admin/orders`, { 
+    headers: authHeader(token),
+    credentials: 'include'
+  });
   if (!res.ok) throw new Error("Falha ao listar pedidos");
   return res.json();
 }
 
 export async function fetchOrderAdmin(token, id) {
-  const res = await fetch(`${API_BASE}/admin/orders/${id}`, { headers: authHeader(token) });
+  const res = await fetch(`${API_BASE}/admin/orders/${id}`, { 
+    headers: authHeader(token),
+    credentials: 'include'
+  });
   if (!res.ok) throw new Error("Falha ao buscar pedido");
   return res.json();
 }
@@ -23,6 +29,7 @@ export async function updateOrderStatus(token, id, status) {
       ...authHeader(token),
       "Content-Type": "application/json"
     },
+    credentials: 'include',
     body: JSON.stringify({ status })
   });
   const json = await res.json();

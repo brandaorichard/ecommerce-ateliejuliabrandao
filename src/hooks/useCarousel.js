@@ -19,7 +19,8 @@ export function useCarousel(options = {}) {
       setError(null);
       
       const response = await fetch('https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel', { 
-        signal: ctrl.signal 
+        signal: ctrl.signal,
+        credentials: 'include'
       });
       
       if (!response.ok) {

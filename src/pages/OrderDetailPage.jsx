@@ -35,6 +35,7 @@ export default function OrderDetailPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          credentials: 'include'
         });
         if (!res.ok) {
           const data = await res.json();

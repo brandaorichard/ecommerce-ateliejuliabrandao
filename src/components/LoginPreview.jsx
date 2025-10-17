@@ -39,6 +39,7 @@ export default function LoginPreview({ open, onClose, onLogin, onCreateAccount }
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: 'include',
           body: JSON.stringify({ identificador: identificadorFormatado, senha }),
         }
       );

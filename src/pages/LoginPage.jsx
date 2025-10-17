@@ -50,6 +50,7 @@ export default function LoginPage() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: 'include',
           body: JSON.stringify({ email: identificadorFormatado, senha }),
         }
       );
@@ -72,6 +73,7 @@ export default function LoginPage() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: 'include',
           body: JSON.stringify({ identificador: identificadorFormatado, senha }),
         }
       );

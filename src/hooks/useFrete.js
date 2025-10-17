@@ -46,6 +46,7 @@ export function useFrete(items) {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: 'include',
           body: JSON.stringify({
             cepDestino: cepInput,
             items: items.map((i) => ({ slug: i.slug, quantity: i.quantity })),

@@ -147,6 +147,7 @@ export default function CartDrawer({ open, onClose }) {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: 'include',
           body: JSON.stringify({
             orderId: createdOrder._id,
             buyer: { email: buyerEmail },

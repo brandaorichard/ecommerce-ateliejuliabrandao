@@ -24,6 +24,7 @@ export async function handleSaveEndereco(e, endereco, token, dispatch, user, set
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
+        credentials: 'include',
         body: JSON.stringify(endereco),
       }
     );

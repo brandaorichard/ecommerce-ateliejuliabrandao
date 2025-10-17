@@ -51,7 +51,8 @@ export default function FreteCalculator({
 
       const res = await axios.post(
         "https://atelie-juliabrandao-backend-production.up.railway.app/api/frete/calcular",
-        { cepDestino: cepFormatado, items: itemsFormatados }
+        { cepDestino: cepFormatado, items: itemsFormatados },
+        { withCredentials: true }
       );
 
       const services = (Array.isArray(res.data) ? res.data : res.data.services || [])

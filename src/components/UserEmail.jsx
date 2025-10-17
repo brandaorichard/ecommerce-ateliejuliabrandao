@@ -16,6 +16,7 @@ export default function UserEmail({ user, token, dispatch, showToast }) {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`,
           },
+          credentials: 'include',
           body: JSON.stringify({ newEmail }),
         }
       );

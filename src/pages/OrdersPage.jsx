@@ -32,6 +32,7 @@ export default function OrdersPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          credentials: 'include'
         });
         if (!res.ok) throw new Error("Erro ao buscar pedidos");
         const data = await res.json();

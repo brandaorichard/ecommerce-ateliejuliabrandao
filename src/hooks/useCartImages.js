@@ -9,7 +9,8 @@ export function useCartImages(items) {
         if (!images[item.slug]) {
           try {
             const res = await fetch(
-              `https://atelie-juliabrandao-backend-production.up.railway.app/api/babies/slug/${item.slug}`
+              `https://atelie-juliabrandao-backend-production.up.railway.app/api/babies/slug/${item.slug}`,
+              { credentials: 'include' }
             );
             if (res.ok) {
               const data = await res.json();

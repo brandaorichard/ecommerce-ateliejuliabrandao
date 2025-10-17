@@ -66,6 +66,7 @@ export default function UserSecurity({
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+          credentials: 'include',
           body: JSON.stringify({ newEmail }),
         }
       );
@@ -113,6 +114,7 @@ export default function UserSecurity({
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+          credentials: 'include',
           body: JSON.stringify({
             senhaAtual,
             novaSenha,

@@ -16,6 +16,7 @@ export default function ConfirmEmailPage() {
       try {
         const response = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/auth/confirm/${token}`, {
           method: "GET",
+          credentials: 'include'
         });
 
         const data = await response.json();

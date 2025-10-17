@@ -33,7 +33,10 @@ export function useBabies(options = {}) {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch("https://atelie-juliabrandao-backend-production.up.railway.app/api/babies", { signal: ctrl.signal });
+      const res = await fetch("https://atelie-juliabrandao-backend-production.up.railway.app/api/babies", { 
+        signal: ctrl.signal,
+        credentials: 'include'
+      });
       if (!res.ok) throw new Error("Erro ao buscar bebês");
       const data = await res.json();
       const mapped = data.map(b => {

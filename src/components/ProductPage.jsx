@@ -30,7 +30,9 @@ export default function ProductPage({ onOpenCart }) {
   useEffect(() => {
     async function fetchBaby() {
       try {
-        const res = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/babies/slug/${slug}`);
+        const res = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/babies/slug/${slug}`, {
+          credentials: 'include'
+        });
         if (!res.ok) throw new Error("Bebê não encontrado");
         const data = await res.json();
         setBaby(data);

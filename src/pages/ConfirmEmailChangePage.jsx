@@ -19,7 +19,10 @@ export default function ConfirmEmailChangePage() {
       try {
         const response = await fetch(
           `https://atelie-juliabrandao-backend-production.up.railway.app/api/auth/confirm-email-change/${token}`,
-          { method: "GET" }
+          { 
+            method: "GET",
+            credentials: 'include'
+          }
         );
         const data = await response.json();
 
@@ -37,6 +40,7 @@ export default function ConfirmEmailChangePage() {
               "https://atelie-juliabrandao-backend-production.up.railway.app/api/auth/user/me",
               {
                 headers: { "Authorization": `Bearer ${authToken}` },
+                credentials: 'include'
               }
             );
             const userData = await userRes.json();

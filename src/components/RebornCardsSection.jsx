@@ -44,7 +44,9 @@ export default function RebornCardsSection() {
   useEffect(() => {
     async function fetchBabies() {
       try {
-        const res = await fetch("https://atelie-juliabrandao-backend-production.up.railway.app/api/babies");
+        const res = await fetch("https://atelie-juliabrandao-backend-production.up.railway.app/api/babies", {
+          credentials: 'include'
+        });
         if (!res.ok) throw new Error("Erro ao buscar bebês");
         const data = await res.json();
         setBabies(data);

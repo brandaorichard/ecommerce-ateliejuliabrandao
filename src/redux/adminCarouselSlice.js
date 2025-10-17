@@ -12,7 +12,8 @@ export const loadCarouselItems = createAsyncThunk(
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        credentials: 'include'
       });
 
       if (!response.ok) {
@@ -36,6 +37,7 @@ export const createCarouselItem = createAsyncThunk(
         headers: {
           'Authorization': `Bearer ${token}`
         },
+        credentials: 'include',
         body: formData
       });
 
@@ -61,6 +63,7 @@ export const updateCarouselItem = createAsyncThunk(
         headers: {
           'Authorization': `Bearer ${token}`
         },
+        credentials: 'include',
         body: formData
       });
 
@@ -86,7 +89,8 @@ export const deleteCarouselItem = createAsyncThunk(
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        credentials: 'include'
       });
 
       if (!response.ok) {
@@ -110,7 +114,8 @@ export const toggleCarouselItemStatus = createAsyncThunk(
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        credentials: 'include'
       });
 
       if (!response.ok) {
@@ -136,6 +141,7 @@ export const removeCarouselImage = createAsyncThunk(
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ imageUrl })
       });
 

@@ -18,6 +18,7 @@ export default function AdminUsersPage() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+          credentials: 'include'
         });
         if (!res.ok) throw new Error("Erro ao buscar usuários");
         const data = await res.json();

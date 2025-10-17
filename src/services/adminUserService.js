@@ -9,6 +9,7 @@ export async function fetchUserById(token, userId) {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      credentials: 'include'
     }
   );
   if (!res.ok) throw new Error("Usuário não encontrado");
