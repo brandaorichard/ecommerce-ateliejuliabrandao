@@ -63,6 +63,20 @@ export default function AdminLayout() {
                 >
                   Usuários
                 </Link>
+                <Link
+                  to="/admin/carrossel"
+                  onClick={() => setNavOpen(false)}
+                  className="block px-3 py-2 text-xs md:text-sm hover:bg-[#f7f3fa] text-[#7a4fcf]"
+                >
+                  Carrossel
+                </Link>
+                <Link
+                  to="/admin/analytics"
+                  onClick={() => setNavOpen(false)}
+                  className="block px-3 py-2 text-xs md:text-sm hover:bg-[#f7f3fa] text-[#7a4fcf]"
+                >
+                  📊 Analytics
+                </Link>
               </div>
             )}
           </div>
