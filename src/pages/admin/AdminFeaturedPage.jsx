@@ -29,6 +29,8 @@ export default function AdminFeaturedPage() {
   });
 
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(12);
 
   // Atualizar form quando dados carregam
   useEffect(() => {
@@ -42,6 +44,11 @@ export default function AdminFeaturedPage() {
       setSelectedProducts(featuredData.products || []);
     }
   }, [featuredData]);
+
+  // Resetar página quando produtos disponíveis mudarem
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [availableProducts.length]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -106,8 +113,8 @@ export default function AdminFeaturedPage() {
     // Trocar posições
     [newProducts[currentIndex], newProducts[newIndex]] = [newProducts[newIndex], newProducts[currentIndex]];
 
-    const productIds = newProducts.map(p => p._id || p.id);
-    const result = await reorderProducts(productIds);
+    // Passar array de produtos (não só IDs) para a função reorderProducts
+    const result = await reorderProducts(newProducts);
 
     if (result.success) {
       dispatch(showToast({ message: "Ordem atualizada com sucesso!", type: "success" }));
@@ -120,6 +127,15 @@ export default function AdminFeaturedPage() {
     const selectedIds = selectedProducts.map(p => p._id || p.id);
     return availableProducts.filter(p => !selectedIds.includes(p._id || p.id));
   };
+
+  const getPaginatedProducts = () => {
+    const available = getAvailableProducts();
+    const startIndex = (currentPage - 1) * productsPerPage;
+    const endIndex = startIndex + productsPerPage;
+    return available.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(getAvailableProducts().length / productsPerPage);
 
   if (loading) {
     return (
@@ -249,7 +265,7 @@ export default function AdminFeaturedPage() {
       {/* Produtos em Destaque */}
       <div className="bg-white border border-[#e0d6f7] rounded-lg p-6">
         <h2 className="text-base font-semibold mb-4 text-neutral-900">
-          🎯 Produtos em Destaque ({selectedProducts.length}/5)
+          🎯 Produtos em Destaque ({selectedProducts.length}/10)
         </h2>
         
         {selectedProducts.length === 0 ? (
@@ -310,42 +326,98 @@ export default function AdminFeaturedPage() {
 
       {/* Adicionar Produtos */}
       <div className="bg-white border border-[#e0d6f7] rounded-lg p-6">
-        <h2 className="text-base font-semibold mb-4 text-neutral-900">➕ Adicionar Produtos</h2>
+        <div className="mb-4">
+          <h2 className="text-base font-semibold text-neutral-900">
+            ➕ Adicionar Produtos
+          </h2>
+        </div>
         
         {getAvailableProducts().length === 0 ? (
           <div className="text-center py-8 text-neutral-500">
             <p className="text-sm">Todos os produtos já estão em destaque ou não há produtos disponíveis.</p>
           </div>
         ) : (
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {getAvailableProducts().slice(0, 12).map((product) => (
-              <div key={product._id || product.id} className="flex items-center justify-between p-3 bg-[#f7f3fa] rounded-lg border border-[#e0d6f7]">
-                <div className="flex items-center gap-3">
-                  {product.images?.[0] && (
-                    <img
-                      src={product.images[0]}
-                      alt={product.name}
-                      className="w-10 h-10 object-cover rounded border border-[#e0d6f7]"
-                    />
-                  )}
-                  
-                  <div>
-                    <h3 className="text-xs font-medium text-neutral-900">{product.name}</h3>
-                    <p className="text-xs text-neutral-600">R$ {product.price?.toFixed(2).replace('.', ',')}</p>
+          <>
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {getPaginatedProducts().map((product) => (
+                <div key={product._id || product.id} className="flex items-center justify-between p-3 bg-[#f7f3fa] rounded-lg border border-[#e0d6f7]">
+                  <div className="flex items-center gap-3">
+                    {product.images?.[0] && (
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        className="w-10 h-10 object-cover rounded border border-[#e0d6f7]"
+                      />
+                    )}
+                    
+                    <div>
+                      <h3 className="text-xs font-medium text-neutral-900">{product.name}</h3>
+                      <p className="text-xs text-neutral-600">R$ {product.price?.toFixed(2).replace('.', ',')}</p>
+                    </div>
                   </div>
+                  
+                  <button
+                    onClick={() => handleAddProduct(product)}
+                    disabled={selectedProducts.length >= 10}
+                    className="px-2 py-1 text-xs bg-[#7a4fcf] hover:bg-[#ae95d9] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                    title={selectedProducts.length >= 10 ? "Máximo de 10 produtos" : "Adicionar produto"}
+                  >
+                    +
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Paginação */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-6">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 text-sm border border-[#e0d6f7] rounded text-neutral-900 bg-white hover:bg-[#f7f3fa] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  ← Anterior
+                </button>
+                
+                <div className="flex gap-1">
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+                    
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`px-3 py-1 text-sm rounded ${
+                          currentPage === pageNum
+                            ? 'bg-[#7a4fcf] text-white'
+                            : 'border border-[#e0d6f7] text-neutral-900 bg-white hover:bg-[#f7f3fa]'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
                 </div>
                 
                 <button
-                  onClick={() => handleAddProduct(product)}
-                  disabled={selectedProducts.length >= 5}
-                  className="px-2 py-1 text-xs bg-[#7a4fcf] hover:bg-[#ae95d9] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                  title={selectedProducts.length >= 5 ? "Máximo de 5 produtos" : "Adicionar produto"}
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1 text-sm border border-[#e0d6f7] rounded text-neutral-900 bg-white hover:bg-[#f7f3fa] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  +
+                  Próximo →
                 </button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
       </div>
 
