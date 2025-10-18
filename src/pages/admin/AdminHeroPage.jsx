@@ -41,7 +41,7 @@ export default function AdminHeroPage() {
             Acessar
           </a>
         </div>
-        <div className="p-5 rounded-lg bg-[#f7f3fa] border border-[#e0d6f7]">
+        <div className="p-5 rounded-lg bg-white border border-[#e0d6f7]">
           <h2 className="text-sm font-semibold mb-1 text-neutral-900">Carrossel</h2>
           <p className="text-xs text-neutral-600 mb-3">Gerencie os slides da página inicial.</p>
           <a

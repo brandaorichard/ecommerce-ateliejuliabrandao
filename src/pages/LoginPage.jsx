@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/authSlice";
@@ -23,6 +23,12 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const user = useSelector((s) => s.auth.user);
   const isAdmin = user?.role === "admin";
+
+  // Limpar campos ao carregar a página para evitar autofill
+  useEffect(() => {
+    setIdentificador("");
+    setSenha("");
+  }, []);
 
   const handleIdentificadorChange = (e) => {
     let value = e.target.value;
@@ -158,6 +164,8 @@ export default function LoginPage() {
             required
             autoFocus
             placeholder="Digite seu e-mail ou CPF"
+            autoComplete="username"
+            name="username"
           />
         </div>
         <div className="mb-2 relative">
@@ -168,6 +176,8 @@ export default function LoginPage() {
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             required
+            autoComplete="current-password"
+            name="password"
           />
           <button
             type="button"

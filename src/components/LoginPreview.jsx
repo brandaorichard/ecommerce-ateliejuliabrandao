@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaTimes } from "react-icons/fa";
 
@@ -14,6 +14,14 @@ export default function LoginPreview({ open, onClose, onLogin, onCreateAccount }
   const [showSenha, setShowSenha] = useState(false);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
+
+  // Limpar campos ao abrir o modal para evitar autofill
+  useEffect(() => {
+    if (open) {
+      setIdentificador("");
+      setSenha("");
+    }
+  }, [open]);
 
   const handleIdentificadorChange = (e) => {
     let value = e.target.value;
@@ -98,6 +106,8 @@ export default function LoginPreview({ open, onClose, onLogin, onCreateAccount }
                 onChange={handleIdentificadorChange}
                 required
                 autoFocus
+                autoComplete="username"
+                name="username"
               />
               <div className="relative">
                 <input
@@ -107,6 +117,8 @@ export default function LoginPreview({ open, onClose, onLogin, onCreateAccount }
                   value={senha}
                   onChange={e => setSenha(e.target.value)}
                   required
+                  autoComplete="current-password"
+                  name="password"
                 />
                 <button
                   type="button"
