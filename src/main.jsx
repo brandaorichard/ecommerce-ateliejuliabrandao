@@ -11,7 +11,7 @@ import { initGA } from "./utils/analytics";
 // Configurar axios para incluir cookies
 axios.defaults.withCredentials = true;
 
-// Inicializar Google Analytics 4
+// Inicializar Google Analytics sempre (independente do consentimento)
 initGA('G-HVR2YHYHKZ');
 
 ReactDOM.createRoot(document.getElementById("root")).render(

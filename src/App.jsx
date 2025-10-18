@@ -8,6 +8,7 @@ import ToastContainer from "./components/ToastContainer";
 import CartDrawer from "./components/CartDrawer";
 import Footer from "./components/Footer";
 import LoadingSpinner from "./components/LoadingSpinner";
+import CookieConsent from "./components/CookieConsent";
 import { trackPageView } from "./utils/analytics";
 
 // Lazy loading das páginas
@@ -24,6 +25,9 @@ const OrderDetailPage = lazy(() => import("./pages/OrderDetailPage"));
 const PedidoSucessoRedirect = lazy(() => import("./pages/PedidoSucessoRedirect"));
 const ConfirmEmailPage = lazy(() => import("./pages/ConfirmEmailPage"));
 const ConfirmEmailChangePage = lazy(() => import("./pages/ConfirmEmailChangePage"));
+const PoliticaPrivacidadePage = lazy(() => import("./pages/PoliticaPrivacidadePage"));
+const TermosUsoPage = lazy(() => import("./pages/TermosUsoPage"));
+const PoliticaTrocasPage = lazy(() => import("./pages/PoliticaTrocasPage"));
 
 // Admin pages
 const AdminBabiesPage = lazy(() => import("./pages/admin/AdminBabiesPage"));
@@ -124,10 +128,15 @@ function SiteShell({ cartOpen, setCartOpen }) {
         <Route path="/pedido/:id/erro" element={<PedidoSucessoRedirect />} />
         {/* Rota para confirmação de alteração de email */}
         <Route path="/confirm-email-change/:token" element={<ConfirmEmailChangePage />} />
+        {/* Rotas legais */}
+        <Route path="/politica-privacidade" element={<PoliticaPrivacidadePage />} />
+        <Route path="/termos-uso" element={<TermosUsoPage />} />
+        <Route path="/politica-trocas" element={<PoliticaTrocasPage />} />
       </Routes>
       </Suspense>
       <Footer />
       <SocialMediasSection />
+      <CookieConsent />
     </>
   );
 }

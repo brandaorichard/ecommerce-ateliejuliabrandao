@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '443535322074-7pp5innr18a230n59n255r48v5s5k6d5.apps.googleusercontent.com';
 
-export default function GoogleLoginButton({ onSuccess, onError, text = "signin_with" }) {
+export default function GoogleLoginButton({ onSuccess, onError, text = "signin_with", width = 300 }) {
   const googleButtonRef = useRef(null);
 
   useEffect(() => {
@@ -19,12 +19,12 @@ export default function GoogleLoginButton({ onSuccess, onError, text = "signin_w
         theme: "outline",
         size: "large",
         text: text, // "signin_with", "signup_with", "continue_with"
-        width: 300,
-        shape: "rectangular",
-        logo_alignment: "left"
+        width: width,
+        shape: "pill", // Mudança para pill (totalmente arredondado)
+        logo_alignment: "center"
       }
     );
-  }, [onSuccess, text]);
+  }, [onSuccess, text, width]);
 
   return <div ref={googleButtonRef} className="google-button-container" />;
 }

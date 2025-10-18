@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaTimes } from "react-icons/fa";
+import GoogleLoginButton from "./Auth/GoogleLoginButton";
+import axios from "axios";
 
 function formatCpf(cpf) {
   const digits = cpf.replace(/\D/g, "").slice(0, 11);
@@ -70,6 +72,28 @@ export default function LoginPreview({ open, onClose, onLogin, onCreateAccount }
     } catch (err) {
       setErro("Erro de conexão com o servidor");
       setLoading(false);
+    }
+  };
+
+  // Callback para login com Google
+  const handleGoogleSuccess = async (response) => {
+    try {
+      const { data } = await axios.post('https://atelie-juliabrandao-backend-production.up.railway.app/api/auth/google', {
+        credential: response.credential
+      }, {
+        withCredentials: true
+      });
+
+      onLogin({
+        user: data.user,
+        token: data.token,
+      });
+    } catch (error) {
+      if (error.response?.data?.action === 'login_required') {
+        setErro(error.response.data.message);
+      } else {
+        setErro('Erro ao fazer login com Google');
+      }
     }
   };
 
@@ -162,6 +186,16 @@ export default function LoginPreview({ open, onClose, onLogin, onCreateAccount }
               <span className="mx-3 text-xs text-[#ae95d9]">ou</span>
               <div className="flex-1 h-px bg-[#ae95d9]" />
             </div>
+            
+            {/* Botão Google */}
+            <div className="mb-4">
+              <GoogleLoginButton 
+                onSuccess={handleGoogleSuccess}
+                text="signin_with"
+                width="100%"
+              />
+            </div>
+            
             <button
               className="w-full rounded-full py-3 font-medium bg-[#7a4fcf] text-white transition"
               onClick={onCreateAccount}

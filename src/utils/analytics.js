@@ -6,9 +6,14 @@ export const initGA = (measurementId) => {
   }
 };
 
+// Analytics sempre ativo (independente do consentimento)
+const canTrackAnalytics = () => {
+  return typeof window !== 'undefined' && window.gtag;
+};
+
 // Enviar pageview usando gtag
 export const trackPageView = (path) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && canTrackAnalytics()) {
     window.gtag('config', 'G-HVR2YHYHKZ', {
       page_path: path,
     });
@@ -17,7 +22,7 @@ export const trackPageView = (path) => {
 
 // Eventos customizados usando gtag
 export const trackEvent = (action, category, label, value) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && canTrackAnalytics()) {
     window.gtag('event', action, {
       event_category: category,
       event_label: label,
@@ -28,7 +33,7 @@ export const trackEvent = (action, category, label, value) => {
 
 // Eventos específicos do e-commerce
 export const trackPurchase = (transactionId, value, currency = 'BRL', items = []) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && canTrackAnalytics()) {
     window.gtag('event', 'purchase', {
       transaction_id: transactionId,
       value: value,
@@ -39,7 +44,7 @@ export const trackPurchase = (transactionId, value, currency = 'BRL', items = []
 };
 
 export const trackAddToCart = (itemId, itemName, category, quantity, value) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && canTrackAnalytics()) {
     window.gtag('event', 'add_to_cart', {
       currency: 'BRL',
       value: value,
@@ -58,7 +63,7 @@ export const trackAddToCart = (itemId, itemName, category, quantity, value) => {
 };
 
 export const trackViewItem = (itemId, itemName, category, value) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && canTrackAnalytics()) {
     window.gtag('event', 'view_item', {
       currency: 'BRL',
       value: value,
@@ -73,7 +78,7 @@ export const trackViewItem = (itemId, itemName, category, value) => {
 };
 
 export const trackBeginCheckout = (value, items = []) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && canTrackAnalytics()) {
     window.gtag('event', 'begin_checkout', {
       currency: 'BRL',
       value: value,
@@ -84,7 +89,7 @@ export const trackBeginCheckout = (value, items = []) => {
 
 // Visualização de lista de produtos
 export const trackViewItemList = (items, listName) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && canTrackAnalytics()) {
     window.gtag('event', 'view_item_list', {
       item_list_id: listName,
       item_list_name: listName,
@@ -95,7 +100,7 @@ export const trackViewItemList = (items, listName) => {
 
 // Seleção de item da lista
 export const trackSelectItem = (item, listName) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && canTrackAnalytics()) {
     window.gtag('event', 'select_item', {
       item_list_id: listName,
       item_list_name: listName,
@@ -106,7 +111,7 @@ export const trackSelectItem = (item, listName) => {
 
 // Remoção do carrinho
 export const trackRemoveFromCart = (itemId, itemName, category, quantity, value) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && canTrackAnalytics()) {
     window.gtag('event', 'remove_from_cart', {
       currency: 'BRL',
       value: value,
@@ -123,7 +128,7 @@ export const trackRemoveFromCart = (itemId, itemName, category, quantity, value)
 
 // Visualização do carrinho
 export const trackViewCart = (cartItems, totalValue) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && canTrackAnalytics()) {
     window.gtag('event', 'view_cart', {
       currency: 'BRL',
       value: totalValue,
@@ -134,7 +139,7 @@ export const trackViewCart = (cartItems, totalValue) => {
 
 // Melhorar trackPurchase com dados completos
 export const trackPurchaseComplete = (order) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && canTrackAnalytics()) {
     window.gtag('event', 'purchase', {
       transaction_id: order.id,
       value: order.total,
@@ -154,7 +159,7 @@ export const trackPurchaseComplete = (order) => {
 
 // Tracking de compartilhamento
 export const trackShare = (productName, platform) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && canTrackAnalytics()) {
     window.gtag('event', 'share', {
       method: platform,
       content_type: 'product',
