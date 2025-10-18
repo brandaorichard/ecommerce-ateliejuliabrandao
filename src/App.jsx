@@ -34,6 +34,7 @@ const AdminBabiesPage = lazy(() => import("./pages/admin/AdminBabiesPage"));
 const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrdersPage"));
 const AdminUsersPage = lazy(() => import("./pages/admin/AdminUsersPage"));
 const AdminCarouselPage = lazy(() => import("./pages/admin/AdminCarouselPage"));
+const AdminFeaturedPage = lazy(() => import("./pages/admin/AdminFeaturedPage"));
 const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalyticsPage"));
 
 import AdminLayout from "./components/admin/AdminLayout";
@@ -85,6 +86,7 @@ function App() {
             <Route path="pedidos" element={<AdminOrdersPage />} />
             <Route path="usuarios" element={<AdminUsersPage />} />
             <Route path="carrossel" element={<AdminCarouselPage />} />
+            <Route path="destaques" element={<AdminFeaturedPage />} />
             <Route path="analytics" element={<AdminAnalyticsPage />} />
           </Route>
 

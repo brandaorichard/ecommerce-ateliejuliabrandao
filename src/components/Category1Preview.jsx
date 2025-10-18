@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useSwipeable } from "react-swipeable";
 import { useBabies } from "../hooks/useBabies";
+import { useFeaturedEncomenda } from "../hooks/useFeaturedEncomenda";
 
 function useWindowWidth() {
   const [width, setWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
@@ -18,9 +19,15 @@ function useWindowWidth() {
 
 export default function Category1Preview() {
   const navigate = useNavigate();
-  const { babies, loading, error } = useBabies({ type: "encomenda" });
-  // Mantém só os primeiros 8 (ou menos se não houver)
-  const previewBabies = babies.slice(0, 8);
+  const { featuredData, loading: loadingFeatured, error: errorFeatured } = useFeaturedEncomenda();
+  const { babies, loading: loadingBabies, error: errorBabies } = useBabies({ type: "encomenda" });
+  
+  // Decidir qual fonte de dados usar
+  const useFeaturedSystem = featuredData?.products?.length > 0;
+  const previewBabies = useFeaturedSystem ? featuredData.products : babies.slice(0, 8);
+  const loading = loadingFeatured || loadingBabies;
+  const error = errorFeatured || errorBabies;
+  
   const [mobileIndex, setMobileIndex] = useState(0);
 
   const width = useWindowWidth();
@@ -75,7 +82,9 @@ export default function Category1Preview() {
   return (
     <div className="max-w-6xl mx-auto px-4 mt-10 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-light text-black">Sob Encomenda</h2>
+        <h2 className="text-xl font-light text-black">
+          {useFeaturedSystem && featuredData.title ? featuredData.title : "Sob Encomenda"}
+        </h2>
         <motion.button
           id="ver-mais-link"
           whileTap={isMobile ? { scale: 0.95 } : {}}
