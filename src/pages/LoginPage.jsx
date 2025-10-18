@@ -5,6 +5,9 @@ import { login } from "../redux/authSlice";
 import { showToast } from "../redux/toastSlice";
 import BreadcrumbItens from "../components/BreadcrumbItens";
 import AccountBreadcrumb from "../components/AccountBreadcrumb";
+import GoogleLoginButton from "../components/Auth/GoogleLoginButton";
+import { useGoogleOneTap } from "../hooks/useGoogleOneTap";
+import axios from "axios";
 
 // Função para formatar CPF para 000.000.000-00
 function formatCpf(cpf) {
@@ -29,6 +32,70 @@ export default function LoginPage() {
     setIdentificador("");
     setSenha("");
   }, []);
+
+  // Google One Tap automático
+  useGoogleOneTap({
+    onSuccess: (data) => {
+      console.log('Login com Google realizado:', data);
+      dispatch(login({
+        user: data.user,
+        token: data.token,
+      }));
+      dispatch(showToast({
+        message: "Login realizado com sucesso!",
+        iconType: "success",
+      }));
+      
+      // Redireciona conforme role
+      if (data.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+    },
+    onError: (error) => {
+      if (error.action === 'login_required') {
+        setErro(error.message);
+      } else {
+        setErro('Erro ao fazer login com Google');
+      }
+    },
+    disabled: false // Desabilitar se usuário já estiver logado
+  });
+
+  // Callback para botão Google
+  const handleGoogleSuccess = async (response) => {
+    try {
+      const { data } = await axios.post('https://atelie-juliabrandao-backend-production.up.railway.app/api/auth/google', {
+        credential: response.credential
+      }, {
+        withCredentials: true
+      });
+
+      dispatch(login({
+        user: data.user,
+        token: data.token,
+      }));
+      
+      dispatch(showToast({
+        message: "Login realizado com sucesso!",
+        iconType: "success",
+      }));
+
+      // Redireciona conforme role
+      if (data.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      if (error.response?.data?.action === 'login_required') {
+        setErro(error.response.data.message);
+      } else {
+        setErro('Erro ao fazer login com Google');
+      }
+    }
+  };
 
   const handleIdentificadorChange = (e) => {
     let value = e.target.value;
@@ -248,6 +315,22 @@ export default function LoginPage() {
         >
           {loading ? "Entrando..." : "Iniciar sessão"}
         </button>
+        
+        {/* Divisor */}
+        <div className="flex items-center my-6 text-gray-500">
+          <div className="flex-1 border-t border-gray-300"></div>
+          <span className="px-4 text-sm">OU</span>
+          <div className="flex-1 border-t border-gray-300"></div>
+        </div>
+
+        {/* Botão Google */}
+        <div className="flex justify-center mb-6">
+          <GoogleLoginButton 
+            onSuccess={handleGoogleSuccess}
+            text="signin_with"
+          />
+        </div>
+        
         <div className="text-center mt-6 text-gray-800">
           Não possui uma conta ainda?{" "}
           <Link

@@ -4,6 +4,7 @@ import { showToast } from "../redux/toastSlice"; // <-- IMPORTANTE
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import UserAvatar from "./UserAvatar";
 
 export default function UserButton({ mobileFaixa = false }) {
   const dispatch = useDispatch();
@@ -13,6 +14,12 @@ export default function UserButton({ mobileFaixa = false }) {
   const isAdmin = user?.role === "admin";
   const [open, setOpen] = useState(false);
   const ref = useRef();
+
+  // Determinar se o usuário tem foto do Google
+  const hasGooglePhoto = isLoggedIn && user?.profilePicture;
+  
+  // Tamanho do avatar baseado no contexto (mobile/desktop)
+  const avatarSize = mobileFaixa ? 28 : 36; // Desktop: 36px, Mobile: 28px (aumentado)
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -53,47 +60,55 @@ export default function UserButton({ mobileFaixa = false }) {
         onClick={() => (isLoggedIn ? setOpen((o) => !o) : navigate("/login"))}
         type="button"
       >
-        {/* Ícone de usuário */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4 -mr-1.5 sm:-mr-1"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          style={{ minWidth: 16, minHeight: 16 }}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"
-          />
-        </svg>
-        {isLoggedIn ? (
+        {/* Se tem foto do Google, mostrar apenas a foto */}
+        {hasGooglePhoto ? (
+          <UserAvatar user={user} size={avatarSize} />
+        ) : (
+          /* Comportamento padrão para usuários sem Google */
           <>
-            <span className="font-medium -mr-2.5">{`Olá, ${
-              user?.nome?.split(" ")[0] || "Usuário"
-            }`}</span>
+            {/* Ícone de usuário */}
             <svg
-              className={`h-3 w-3 ml-1 transition-transform ${
-                open ? "rotate-180" : ""
-              }`}
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 -mr-1.5 sm:-mr-1"
               fill="none"
-              stroke="currentColor"
               viewBox="0 0 24 24"
+              stroke="currentColor"
+              style={{ minWidth: 16, minHeight: 16 }}
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={5}
-                d="M19 9l-7 7-7-7"
+                strokeWidth={2}
+                d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"
               />
             </svg>
+            {isLoggedIn ? (
+              <>
+                <span className="font-medium -mr-2.5">{`Olá, ${
+                  user?.nome?.split(" ")[0] || "Usuário"
+                }`}</span>
+                <svg
+                  className={`h-3 w-3 ml-1 transition-transform ${
+                    open ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={5}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </>
+            ) : (
+              <span className="font-semibold -mr-2 sm:mr-4 text-gray-700">
+                Entrar
+              </span>
+            )}
           </>
-        ) : (
-          <span className="font-semibold -mr-2 sm:mr-4 text-gray-700">
-            Entrar
-          </span>
         )}
       </button>
       {isLoggedIn && open && (

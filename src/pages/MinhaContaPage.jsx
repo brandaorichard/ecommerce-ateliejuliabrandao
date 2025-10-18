@@ -7,6 +7,7 @@ import FormAddress from "../components/FormAddress";
 import UserData from "../components/UserData";
 import UserSecurity from "../components/UserSecurity";
 import UserEmail from "../components/UserEmail";
+import GoogleAccountLink from "../components/GoogleAccountLink";
 import { initializePerfil, handleSavePerfil } from "../utils/userProfileUtils";
 import { initializeEndereco, handleSaveEndereco, handleCepChange } from "../utils/addressUtils";
 import { normalizeDateToYMD } from "../utils/dateUtils";
@@ -94,6 +95,11 @@ export default function MinhaContaPage() {
           />
         </motion.div>
       </AnimatePresence>
+
+      {/* Conta Google */}
+      <section className="mt-8">
+        <GoogleAccountLink user={user} />
+      </section>
 
       {/* Endereço */}
       <section>

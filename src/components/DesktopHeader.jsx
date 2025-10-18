@@ -116,7 +116,7 @@ export default function DesktopHeader({
           >
             <UserButton />
             <CartButton
-              size={28}
+              size={36}
               className="text-gray-700 cursor-pointer"
               onClick={() => setCartOpen(true)}
               badge={cartCount}

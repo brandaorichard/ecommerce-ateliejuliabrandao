@@ -95,7 +95,7 @@ export default function MobileHeader({
           }`}
         >
           <CartButton
-            size={24}
+            size={28}
             className="text-gray-700"
             onClick={() => setCartOpen(true)}
             badge={cartCount}
