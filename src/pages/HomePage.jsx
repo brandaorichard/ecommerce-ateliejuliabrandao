@@ -9,7 +9,6 @@ export default function HomePage() {
   return (
     <>
       <SEOHead 
-        title="Home"
         description="Bebês Reborn personalizados artesanais únicos. Confira nossa coleção exclusiva de bebês feitos com carinho e atenção aos detalhes."
         keywords="bebês reborn, artesanato, bebês artesanais, presente personalizado, bebê único"
         url="https://www.juliabrandao.com.br"

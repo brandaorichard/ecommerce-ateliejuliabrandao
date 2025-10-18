@@ -133,7 +133,7 @@ export default function ProductPage({ onOpenCart }) {
       ]
     : [
         { label: "Início", to: "/" },
-        { label: "Bebês Reborn Por Encomenda", to: "/categoria1" },
+        { label: "Bebês Reborn Sob Encomenda", to: "/categoria1" },
         { label: baby.name }
       ];
 

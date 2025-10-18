@@ -20,7 +20,7 @@ export default function Header() {
   };
   const transition = { type: "spring", stiffness: 300, damping: 30 };
   const headerHeight = scrolled ? 144 : 160;
-  const categories = ["POR ENCOMENDA", "PRONTA ENTREGA", "POR SEMELHANCA"];
+  const categories = ["SOB ENCOMENDA", "PRONTA ENTREGA", "POR SEMELHANCA"];
 
   return (
     <>

@@ -12,7 +12,7 @@ function Category1Page() {
 
   const breadcrumbItems = [
     { label: "Início", to: "/" },
-    { label: "Bebes Reborn Por Encomenda" }
+    { label: "Bebes Reborn Sob Encomenda" }
   ];
 
   // Track view item list when babies load
@@ -47,7 +47,7 @@ function Category1Page() {
         {error && <div className="py-10 text-center text-red-600">Erro: {error}</div>}
         {!loading && !error && (
           <CategoryCardsSection
-            title="Por Encomenda"
+            title="Sob Encomenda"
             babies={babies}
             onCardClick={(baby) => navigate(`/produto/${baby.slug}`)}
             showFilter

@@ -10,7 +10,7 @@ import slugify from "../utils/slugify";
 import { FaFilter, FaSortAmountDown } from "react-icons/fa";
 
 const categories = [
-  { name: "Por Encomenda", filter: b => b.type === "encomenda" || !b.type },
+  { name: "Sob Encomenda", filter: b => b.type === "encomenda" || !b.type },
   { name: "Pronta Entrega", filter: b => b.type === "pronta" },
   { name: "Por Semelhança", filter: b => b.type === "semelhanca" },
 ];
@@ -59,7 +59,7 @@ export default function RebornCardsSection() {
     fetchBabies();
   }, []);
 
-  // Filtrar e ordenar só os bebês "Por Encomenda"
+  // Filtrar e ordenar só os bebês "Sob Encomenda"
   const filteredBabies = useFilteredBabies(
     babies.filter(categories[0].filter),
     selectedSort,
@@ -92,10 +92,10 @@ export default function RebornCardsSection() {
 
   return (
     <main>
-      {/* Por Encomenda */}
+      {/* Sob Encomenda */}
       <RebornSection
         id={`categoria-${slugify(categories[0].name)}`}
-        title="Bebês Reborn por Encomenda"
+        title="Bebês Reborn sob Encomenda"
         actions={
           <div className="flex items-center justify-between mb-4 px-1 text-left mt-7">
             <button

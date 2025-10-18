@@ -77,7 +77,7 @@ const babies = [
     installment: "4x de R$600,00 sem juros",
     img: imgBaby1,
     images: [imgBaby1, imgBaby2, imgBaby3, imgBaby4],
-    description: "Uma linda bebê, feita a partir do Kit Quinlynn versão menina ou menino por encomenda. Cerca de 48cm e aproximadamente 2kgs",
+    description: "Uma linda bebê, feita a partir do Kit Quinlynn versão menina ou menino sob encomenda. Cerca de 48cm e aproximadamente 2kgs",
     features: [
       "Cabelo implantado fio a fio com mohair, veias e micro veias, vasos sanguíneos, efeito de unhas crescidas, pelos nas têmporas, manchinhas, marca de vacina, teste do pezinho, manchinhas de frio, cílios micro implantados, arranhões de unha, sobrancelhas 3D, lábios umedecidos.",
       "Com todas as características de um bebê real! São molinhos e sua cabeça tomba pra trás e pros lados.",
@@ -99,7 +99,7 @@ const babies = [
     installment: "4x de R$620,00 sem juros",
     img: babyRaven1,
     images: [babyRaven1, babyRaven2, babyRaven3, babyRaven4],
-    description: "Uma linda bebê, feita a partir do Kit Quinlynn versão menina ou menino por encomenda.",
+    description: "Uma linda bebê, feita a partir do Kit Quinlynn versão menina ou menino sob encomenda.",
     features: [
       "Voce pode escolher a cor do cabelo, o tipo de cabelo, cor dos olhos. Para tonalidade de pele, o preço é alterado.",
       ...featuresPadrao
@@ -120,7 +120,7 @@ const babies = [
     installment: "4x de R$850,00 sem juros",
     img: babySandie1,
     images: [babySandie1, babySandie2, babySandie3, babySandie4, babySandie5, babySandie6],
-    description: "Um lindo bebê, feito a partir do Kit Sandie Feita por encomenda",
+    description: "Um lindo bebê, feito a partir do Kit Sandie Feita sob encomenda",
     features: [
       ...featuresPadrao,
       "Sobre o cabelo:",
@@ -167,7 +167,7 @@ const babies = [
     installment: "4x de R$600,00 sem juros",
     img: babyAvelee1,
     images: [babyAvelee1, babyAvelee2, babyAvelee3, babyAvelee4],
-    description: "Um lindo bebê, feito a partir do Kit Avelee por encomenda.",
+    description: "Um lindo bebê, feito a partir do Kit Avelee sob encomenda.",
     features: [
       ...featuresPadrao,
       "Todos os bebês São molinhos e sua cabeça tomba pra trás e pros lados.",
@@ -190,7 +190,7 @@ const babies = [
     img: babyDelilah1,
     images: [babyDelilah1, babyDelilah2, babyDelilah3, babyDelilah4, babyDelilah5, babyDelilah6, babyDelilah7, babyDelilah8],
     description: [
-      "Uma linda bebê, feito a partir do Kit Delilah por encomenda.",
+      "Uma linda bebê, feito a partir do Kit Delilah sob encomenda.",
       "Voce pode escolher menino ou menina,  a cor do cabelo, o tipo de cabelo. Para tonalidade de pele, o preço é alterado."
     ],
     features: [
@@ -215,7 +215,7 @@ const babies = [
     img: babyLaura1,
     images: [babyLaura1, babyLaura2, babyLaura3, babyLaura4, babyLaura5, babyLaura6, babyLaura7, babyLaura8, babyLaura9, babyLaura10, babyLaura11],
     description: [
-      "Uma linda bebê, feito a partir do Kit Delilah por encomenda.",
+      "Uma linda bebê, feito a partir do Kit Delilah sob encomenda.",
       "Voce pode escolher menino ou menina,  a cor do cabelo, o tipo de cabelo. Para tonalidade de pele, o preço é alterado."
     ],
     features: [
@@ -241,7 +241,7 @@ const babies = [
     img: babyKylin1,
     images: [babyKylin1, babyKylin2, babyKylin3, babyKylin4, babyKylin5, babyKylin6, babyKylin7, babyKylin8, babyKylin9, babyKylin10],
     description: [
-      "Uma linda bebê, feito a partir do Kit Delilah por encomenda.",
+      "Uma linda bebê, feito a partir do Kit Delilah sob encomenda.",
       "Voce pode escolher menino ou menina,  a cor do cabelo, o tipo de cabelo. Para tonalidade de pele, o preço é alterado."
     ],
     features: [

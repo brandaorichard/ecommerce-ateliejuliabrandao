@@ -75,7 +75,7 @@ export default function Category1Preview() {
   return (
     <div className="max-w-6xl mx-auto px-4 mt-10 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-light text-black">Por Encomenda</h2>
+        <h2 className="text-xl font-light text-black">Sob Encomenda</h2>
         <motion.button
           id="ver-mais-link"
           whileTap={isMobile ? { scale: 0.95 } : {}}
