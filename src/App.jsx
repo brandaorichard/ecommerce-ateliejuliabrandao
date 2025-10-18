@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+import React, { lazy, Suspense, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useParams, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import SocialMediasSection from "./components/SocialMediasSection";
 import ProductPage from "./components/ProductPage";
@@ -7,32 +7,36 @@ import ScrollToTop from "./components/ScrollToTop";
 import ToastContainer from "./components/ToastContainer";
 import CartDrawer from "./components/CartDrawer";
 import Footer from "./components/Footer";
+import LoadingSpinner from "./components/LoadingSpinner";
+import { trackPageView } from "./utils/analytics";
 
-import HomePage from "./pages/HomePage";
-import Category1Page from "./pages/Category1Page";
-import Category2Page from "./pages/Category2Page";
-import Category3Page from "./pages/Category3Page";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import ConfirmEmailInstructionPage from "./pages/ConfirmEmailInstructionPage";
-import OrdersPage from "./pages/OrdersPage";
-import MinhaContaPage from "./pages/MinhaContaPage";
-import OrderDetailPage from "./pages/OrderDetailPage";
-import PedidoSucessoRedirect from "./pages/PedidoSucessoRedirect"; // importando o redirecionamento
-import AdminBabiesPage from "./pages/admin/AdminBabiesPage";
+// Lazy loading das páginas
+const HomePage = lazy(() => import("./pages/HomePage"));
+const Category1Page = lazy(() => import("./pages/Category1Page"));
+const Category2Page = lazy(() => import("./pages/Category2Page"));
+const Category3Page = lazy(() => import("./pages/Category3Page"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage"));
+const ConfirmEmailInstructionPage = lazy(() => import("./pages/ConfirmEmailInstructionPage"));
+const OrdersPage = lazy(() => import("./pages/OrdersPage"));
+const MinhaContaPage = lazy(() => import("./pages/MinhaContaPage"));
+const OrderDetailPage = lazy(() => import("./pages/OrderDetailPage"));
+const PedidoSucessoRedirect = lazy(() => import("./pages/PedidoSucessoRedirect"));
+const ConfirmEmailPage = lazy(() => import("./pages/ConfirmEmailPage"));
+const ConfirmEmailChangePage = lazy(() => import("./pages/ConfirmEmailChangePage"));
+
+// Admin pages
+const AdminBabiesPage = lazy(() => import("./pages/admin/AdminBabiesPage"));
+const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrdersPage"));
+const AdminUsersPage = lazy(() => import("./pages/admin/AdminUsersPage"));
+const AdminCarouselPage = lazy(() => import("./pages/admin/AdminCarouselPage"));
+const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalyticsPage"));
+
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminHeroPage from "./pages/admin/AdminHeroPage";
 import { useSelector } from "react-redux";
 
 import "./index.css";
-
-import ConfirmEmailPage from "./pages/ConfirmEmailPage"; // importe o componente
-import ConfirmEmailChangePage from "./pages/ConfirmEmailChangePage";
-
-import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
-import AdminUsersPage from "./pages/admin/AdminUsersPage";
-import AdminCarouselPage from "./pages/admin/AdminCarouselPage";
-import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
 
 // Página de redirecionamento
 function PedidoRedirect() {
@@ -49,13 +53,26 @@ function AdminRoute({ children }) {
   return children;
 }
 
+// Componente para rastrear mudanças de rota
+function RouteTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location]);
+
+  return null;
+}
+
 function App() {
   const [cartOpen, setCartOpen] = React.useState(false);
-  const user = useSelector(s => s.auth.user);
-  const isAdmin = user?.role === "admin";
+  // const user = useSelector(s => s.auth.user);
+  // const isAdmin = user?.role === "admin";
 
   return (
     <BrowserRouter>
+      <RouteTracker />
+      <Suspense fallback={<LoadingSpinner />}>
         <Routes>
           {/* Admin (layout próprio) */}
           <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
@@ -75,6 +92,7 @@ function App() {
             }
           />
         </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }
@@ -86,7 +104,8 @@ function SiteShell({ cartOpen, setCartOpen }) {
       <Header />
       <ToastContainer onViewCart={() => setCartOpen(true)} />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
-      <Routes>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/categoria1" element={<Category1Page />} />
         <Route path="/categoria2" element={<Category2Page />} />
@@ -106,6 +125,7 @@ function SiteShell({ cartOpen, setCartOpen }) {
         {/* Rota para confirmação de alteração de email */}
         <Route path="/confirm-email-change/:token" element={<ConfirmEmailChangePage />} />
       </Routes>
+      </Suspense>
       <Footer />
       <SocialMediasSection />
     </>

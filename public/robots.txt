@@ -1,0 +1,14 @@
+# Permitir todos os bots
+User-agent: *
+Allow: /
+
+# Bloquear rotas administrativas
+Disallow: /admin
+Disallow: /checkout
+Disallow: /minha-conta
+Disallow: /meus-pedidos
+Disallow: /login
+Disallow: /register
+
+# Sitemap
+Sitemap: https://www.juliabrandao.com.br/sitemap.xml

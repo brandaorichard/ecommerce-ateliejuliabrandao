@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useBabies } from "../hooks/useBabies";
 import CategoryCardsSection from "../components/CategoryCardsSection";
+import SEOHead from "../components/SEO/SEOHead";
 
 const sortOptions = [
   { label: "Preço: Menor ao Maior", value: "price-asc" },
@@ -31,7 +32,14 @@ export default function Category2Page() {
   ];
 
   return (
-    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+    <>
+      <SEOHead 
+        title="Pronta Entrega"
+        description="Bebês Reborn prontos para entrega imediata. Peças únicas disponíveis em estoque para envio rápido."
+        keywords="bebês reborn pronta entrega, disponível, estoque, imediato, envio rápido"
+        url="https://www.juliabrandao.com.br/categoria2"
+      />
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
       <div className="max-w-6xl mx-auto px-4 py-8 -mt-15">
         {/* <h1 className="text-2xl font-light text-[#616161] mb-6 mt-6">A pronta entrega</h1> */}
         {/* Filtro e Ordenar */}
@@ -86,7 +94,8 @@ export default function Category2Page() {
           showSort
           breadcrumbItems={breadcrumbItems}
         />
-      )}
-    </motion.div>
+        )}
+      </motion.div>
+    </>
   );
 }

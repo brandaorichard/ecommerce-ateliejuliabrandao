@@ -18,4 +18,12 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  optimizeDeps: {
+    include: ['react-is']
+  },
+  build: {
+    commonjsOptions: {
+      include: [/react-is/, /node_modules/]
+    }
+  }
 })

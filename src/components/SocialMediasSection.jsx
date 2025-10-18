@@ -4,7 +4,7 @@ export default function SocialMediasSection() {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-4">
       <a
-        href="https://wa.me/5567996101874"
+        href="https://wa.me/5567992654151"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp"

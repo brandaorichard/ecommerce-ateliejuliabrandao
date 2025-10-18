@@ -8,6 +8,8 @@ import QuantityBuy from "./QuantityBuy";
 import PaymentMethods from "./PaymentMethods";
 import ProductSection from "./ProductSection";
 import FreteCalculator from "./FreteCalculator";
+import SEOHead from "./SEO/SEOHead";
+import { ProductStructuredData } from "./SEO/StructuredData";
 
 import {
   featuresPadrao,
@@ -215,33 +217,44 @@ export default function ProductPage({ onOpenCart }) {
   }
 
   return (
-    <section className="w-full bg-[#f9e7f6] min-h-screen py-6 px-2">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8">
-        <ProductCarousel images={baby.images} current={current} setCurrent={setCurrent} name={baby.name} />
-        <div className="flex-1 flex flex-col justify-start mt-2 md:mt-0">
-          <Breadcrumb items={breadcrumbItems} />
-          <ProductTitlePrice
-            name={baby.name}
-            price={baby.price}
-            oldPrice={baby.oldPrice}
-            discount={baby.discount}
-            installment={baby.installment}
-          />
-          <QuantityBuy product={baby} quantity={quantity} setQuantity={setQuantity} onOpenCart={onOpenCart} />
-          <FreteCalculator
-            items={[{ slug: baby.slug, quantity }]}
-            onFreteSelecionado={setFreteSelecionado}
-            hideProductionNote={prontaEntrega}
-          />
-          <PaymentMethods />
-          {!prontaEntrega && (
-            <ProductSection title="Prazo de entrega" items={prazoPadrao} />
-          )}
-          <ProductSection title="Características" items={featuresPadrao} />
-          <ProductSection title="Itens do enxoval" items={enxovalPadrao} />
-          <ProductSection title="Avisos e cuidados" items={avisosPadrao} />
+    <>
+      <SEOHead 
+        title={baby?.name}
+        description={baby?.description || `Bebê Reborn ${baby?.name} - ${baby?.category === 'pronta_entrega' ? 'Pronto para entrega imediata' : baby?.category === 'encomenda' ? 'Sob encomenda personalizado' : 'Por semelhança'}. Peça única feita com carinho e atenção aos detalhes.`}
+        keywords={`bebê reborn ${baby?.name}, ${baby?.category}, personalizado, artesanato, bebê único`}
+        image={baby?.images?.[0]}
+        url={`https://www.juliabrandao.com.br/produto/${baby?.slug}`}
+        type="product"
+      />
+      {baby && <ProductStructuredData baby={baby} />}
+      <section className="w-full bg-[#f9e7f6] min-h-screen py-6 px-2">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8">
+          <ProductCarousel images={baby.images} current={current} setCurrent={setCurrent} name={baby.name} />
+          <div className="flex-1 flex flex-col justify-start mt-2 md:mt-0">
+            <Breadcrumb items={breadcrumbItems} />
+            <ProductTitlePrice
+              name={baby.name}
+              price={baby.price}
+              oldPrice={baby.oldPrice}
+              discount={baby.discount}
+              installment={baby.installment}
+            />
+            <QuantityBuy product={baby} quantity={quantity} setQuantity={setQuantity} onOpenCart={onOpenCart} />
+            <FreteCalculator
+              items={[{ slug: baby.slug, quantity }]}
+              onFreteSelecionado={setFreteSelecionado}
+              hideProductionNote={prontaEntrega}
+            />
+            <PaymentMethods />
+            {!prontaEntrega && (
+              <ProductSection title="Prazo de entrega" items={prazoPadrao} />
+            )}
+            <ProductSection title="Características" items={featuresPadrao} />
+            <ProductSection title="Itens do enxoval" items={enxovalPadrao} />
+            <ProductSection title="Avisos e cuidados" items={avisosPadrao} />
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
