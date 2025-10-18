@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useCallback, useState, useRef } from "react";
+import React, { useCallback, useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { removeFromCart, setQuantity, clearCart } from "../redux/cartSlice";
 import { showToast } from "../redux/toastSlice";
@@ -15,6 +15,7 @@ import MercadoPagoIcon from "../assets/icons/mercadopago2.png"
 import LoginPreview from "./LoginPreview"; // importe o componente
 import { login } from "../redux/authSlice"; // ajuste o caminho se necessário
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
+import { trackViewCart } from "../utils/analytics";
 
 initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: 'pt-BR' });
 
@@ -54,6 +55,23 @@ export default function CartDrawer({ open, onClose }) {
   } = useFrete(items);
 
   const numeroCasaRef = useRef(null);
+
+  // Track view cart when drawer opens
+  useEffect(() => {
+    if (open && items.length > 0) {
+      const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      trackViewCart(
+        items.map(item => ({
+          item_id: item.slug,
+          item_name: item.name,
+          item_category: item.category,
+          price: item.price,
+          quantity: item.quantity
+        })),
+        total
+      );
+    }
+  }, [open, items]);
 
   const canCheckout =
     !!freteSelecionado &&

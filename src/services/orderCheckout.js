@@ -1,6 +1,7 @@
 // Serviço responsável apenas por criar o pedido.
 // Mantém deliveryAddress como String (schema atual).
 import { showToast } from "../redux/toastSlice";
+import { trackBeginCheckout, trackPurchaseComplete } from "../utils/analytics";
 
 // Renomeado de createOrderAndCheckout -> createOrder
 export async function createOrder({
@@ -61,6 +62,9 @@ export async function createOrder({
     clientRequestId, // backend deve ignorar duplicado (userId + clientRequestId)
   };
 
+  // Track begin checkout event
+  trackBeginCheckout(total, orderPayload.items);
+
   try {
     const res = await fetch(
       "https://atelie-juliabrandao-backend-production.up.railway.app/api/orders",
@@ -87,6 +91,15 @@ export async function createOrder({
     }
 
     dispatch(showToast({ type: "success", message: "Pedido criado!" }));
+    
+    // Track purchase complete event
+    trackPurchaseComplete({
+      id: json._id,
+      total: total,
+      shipping: freteValor,
+      items: orderPayload.items
+    });
+    
     return { ok: true, order: json };
   } catch (e) {
     console.error("ORDER FETCH FAIL:", e);

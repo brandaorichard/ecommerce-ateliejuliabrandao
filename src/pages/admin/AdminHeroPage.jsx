@@ -1,29 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useAnalytics } from '../../hooks/useAnalytics';
-import OverviewCards from '../../components/admin/analytics/OverviewCards';
+import React from 'react';
 
 export default function AdminHeroPage() {
-  const [analyticsData, setAnalyticsData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const { getVisitorStats } = useAnalytics();
-
-  useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        setLoading(true);
-        const result = await getVisitorStats('day');
-        setAnalyticsData(result.data);
-      } catch (error) {
-        console.error('Erro ao carregar analytics:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAnalytics();
-  }, []);
-
   return (
     <div className="space-y-8">
       <section>
@@ -32,36 +9,6 @@ export default function AdminHeroPage() {
           Bem-vindo. Selecione uma área no menu: produtos, pedidos, usuários, carrossel ou analytics.
         </p>
       </section>
-
-      {/* Analytics Summary Cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-[#f7f3fa] border border-[#e0d6f7] rounded-lg p-6"
-      >
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">📊 Resumo de Hoje</h2>
-          <a
-            href="/admin/analytics"
-            className="text-sm text-[#7a4fcf] hover:text-[#ae95d9] font-medium"
-          >
-            Ver detalhes →
-          </a>
-        </div>
-        
-        {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="animate-pulse">
-                <div className="bg-white border border-[#e0d6f7] rounded-lg p-4 h-24"></div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <OverviewCards data={analyticsData?.overview} />
-        )}
-      </motion.div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <div className="p-5 rounded-lg bg-white border border-[#e0d6f7]">

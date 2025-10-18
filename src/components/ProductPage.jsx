@@ -10,6 +10,7 @@ import ProductSection from "./ProductSection";
 import FreteCalculator from "./FreteCalculator";
 import SEOHead from "./SEO/SEOHead";
 import { ProductStructuredData } from "./SEO/StructuredData";
+import { trackViewItem } from "../utils/analytics";
 
 import {
   featuresPadrao,
@@ -47,6 +48,13 @@ export default function ProductPage({ onOpenCart }) {
     }
     fetchBaby();
   }, [slug]);
+
+  // Track view item when baby loads
+  useEffect(() => {
+    if (baby) {
+      trackViewItem(baby.slug, baby.name, baby.category, baby.price);
+    }
+  }, [baby]);
 
   if (loading) {
     return (

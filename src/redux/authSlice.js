@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { trackEvent } from "../utils/analytics";
 
 const user = localStorage.getItem("user");
 const token = localStorage.getItem("token");
@@ -19,6 +20,16 @@ const authSlice = createSlice({
       state.isLoggedIn = true;
       localStorage.setItem("user", JSON.stringify(state.user));
       localStorage.setItem("token", state.token);
+      
+      // Track user login
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('set', 'user_properties', {
+          user_id: action.payload.user._id,
+          user_role: action.payload.user.role
+        });
+        
+        trackEvent('login', 'user', 'successful_login', action.payload.user._id);
+      }
     },
     logout(state) {
       state.user = null;
@@ -26,6 +37,13 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
       localStorage.removeItem("user");
       localStorage.removeItem("token");
+      
+      // Clear user properties
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('set', 'user_properties', {
+          user_id: undefined
+        });
+      }
     },
     updateUser(state, action) {
       if (!state.user) return;

@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { trackAddToCart, trackRemoveFromCart } from "../utils/analytics";
 
 function getUniqueKey(product) {
   return [
@@ -34,9 +35,31 @@ const cartSlice = createSlice({
       } else {
         state.items.push({ ...product, quantity, uniqueKey });
       }
+      
+      // Track add to cart event
+      trackAddToCart(
+        product.slug,
+        product.name,
+        product.category,
+        quantity,
+        product.price
+      );
+      
       localStorage.setItem("cart", JSON.stringify(state.items));
     },
     removeFromCart(state, action) {
+      const item = state.items.find(i => i.uniqueKey === action.payload);
+      if (item) {
+        // Track remove from cart event
+        trackRemoveFromCart(
+          item.slug,
+          item.name,
+          item.category,
+          item.quantity,
+          item.price
+        );
+      }
+      
       state.items = state.items.filter(item => item.uniqueKey !== action.payload);
       localStorage.setItem("cart", JSON.stringify(state.items));
     },

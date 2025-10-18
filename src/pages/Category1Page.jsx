@@ -3,6 +3,8 @@ import CategoryCardsSection from "../components/CategoryCardsSection";
 import { motion } from "framer-motion";
 import { useBabies } from "../hooks/useBabies";
 import SEOHead from "../components/SEO/SEOHead";
+import { trackViewItemList } from "../utils/analytics";
+import { useEffect } from "react";
 
 function Category1Page() {
   const navigate = useNavigate();
@@ -12,6 +14,21 @@ function Category1Page() {
     { label: "Início", to: "/" },
     { label: "Bebes Reborn Por Encomenda" }
   ];
+
+  // Track view item list when babies load
+  useEffect(() => {
+    if (babies && babies.length > 0) {
+      trackViewItemList(
+        babies.map(baby => ({
+          item_id: baby.slug,
+          item_name: baby.name,
+          item_category: baby.category,
+          price: baby.price
+        })),
+        'categoria_encomenda'
+      );
+    }
+  }, [babies]);
 
   return (
     <>

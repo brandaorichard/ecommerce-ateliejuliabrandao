@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaFilter, FaSortAmountDown } from "react-icons/fa";
 import FilterDrawer from "../components/FilterDrawer";
 import SortDrawer from "../components/SortDrawer";
@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useBabies } from "../hooks/useBabies";
 import CategoryCardsSection from "../components/CategoryCardsSection";
 import SEOHead from "../components/SEO/SEOHead";
+import { trackViewItemList } from "../utils/analytics";
 
 const sortOptions = [
   { label: "Preço: Menor ao Maior", value: "price-asc" },
@@ -30,6 +31,21 @@ export default function Category2Page() {
     { label: "Início", to: "/" },
     { label: "Bebes Reborn a Pronta Entrega" }
   ];
+
+  // Track view item list when babies load
+  useEffect(() => {
+    if (babies && babies.length > 0) {
+      trackViewItemList(
+        babies.map(baby => ({
+          item_id: baby.slug,
+          item_name: baby.name,
+          item_category: baby.category,
+          price: baby.price
+        })),
+        'categoria_pronta_entrega'
+      );
+    }
+  }, [babies]);
 
   return (
     <>

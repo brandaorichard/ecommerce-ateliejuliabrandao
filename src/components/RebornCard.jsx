@@ -1,4 +1,6 @@
 // components/RebornCard.jsx
+import { trackSelectItem } from '../utils/analytics';
+
 export default function RebornCard({ baby, onClick, context, mini }) {
   const cover = baby.img || (baby.images && baby.images[0]) || "";
   // context: "category3" ou "category3preview" passado pelo pai
@@ -11,6 +13,14 @@ export default function RebornCard({ baby, onClick, context, mini }) {
 
   const handleClick = (e) => {
     if (!isIndisponivel && onClick) {
+      // Track select item event
+      trackSelectItem({
+        item_id: baby.slug,
+        item_name: baby.name,
+        item_category: baby.category,
+        price: baby.price
+      }, 'product_listing');
+      
       onClick(e);
     }
   };
