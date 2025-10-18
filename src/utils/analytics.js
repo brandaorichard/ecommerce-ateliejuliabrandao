@@ -151,3 +151,14 @@ export const trackPurchaseComplete = (order) => {
     });
   }
 };
+
+// Tracking de compartilhamento
+export const trackShare = (productName, platform) => {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', 'share', {
+      method: platform,
+      content_type: 'product',
+      item_id: productName
+    });
+  }
+};

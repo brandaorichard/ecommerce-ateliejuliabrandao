@@ -95,6 +95,8 @@ export default function ProductPage({ onOpenCart }) {
               oldPrice={baby.oldPrice}
               discount={baby.discount}
               installment={baby.installment}
+              productUrl={`https://www.juliabrandao.com.br/produto/${baby.slug}`}
+              productName={baby.name}
             />
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 my-4">
               <h3 className="text-red-600 font-medium mb-2">Produto Indisponível</h3>
@@ -246,6 +248,8 @@ export default function ProductPage({ onOpenCart }) {
               oldPrice={baby.oldPrice}
               discount={baby.discount}
               installment={baby.installment}
+              productUrl={`https://www.juliabrandao.com.br/produto/${baby.slug}`}
+              productName={baby.name}
             />
             <QuantityBuy product={baby} quantity={quantity} setQuantity={setQuantity} onOpenCart={onOpenCart} />
             <FreteCalculator
