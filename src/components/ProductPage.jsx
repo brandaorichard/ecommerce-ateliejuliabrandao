@@ -112,6 +112,12 @@ export default function ProductPage({ onOpenCart }) {
               </button>
             </div>
             <PaymentMethods />
+            {baby.description && baby.description.trim() && (
+              <div className="mt-6">
+                <h2 className="text-lg font-semibold text-black mb-2">Informações Adicionais</h2>
+                <p className="text-[#616161] mb-4">{baby.description}</p>
+              </div>
+            )}
             <ProductSection title="Características" items={featuresPadrao} />
             <ProductSection title="Itens do enxoval" items={enxovalPadrao} />
             <ProductSection title="Avisos e cuidados" items={avisosPadrao} />
@@ -170,6 +176,12 @@ export default function ProductPage({ onOpenCart }) {
               </a>
             </div>
             <PaymentMethods />
+            {baby.description && baby.description.trim() && (
+              <div className="mt-6">
+                <h2 className="text-lg font-semibold text-black mb-2">Informações Adicionais</h2>
+                <p className="text-[#616161] mb-4">{baby.description}</p>
+              </div>
+            )}
             {/* Como funciona */}
             <h2 className="mt-8 mb-2 text-lg font-semibold text-[#7a4fcf]">Como funciona os bebês por semelhança?</h2>
             <div className="bg-[#f7f3fa] border border-[#e0d6f7] rounded-lg p-4 text-sm text-neutral-800 mb-6">
@@ -260,6 +272,12 @@ export default function ProductPage({ onOpenCart }) {
             <PaymentMethods />
             {!prontaEntrega && (
               <ProductSection title="Prazo de entrega" items={prazoPadrao} />
+            )}
+            {baby.description && baby.description.trim() && (
+              <div className="mt-6">
+                <h2 className="text-lg font-semibold text-black mb-2">Informações Adicionais</h2>
+                <p className="text-[#616161] mb-4">{baby.description}</p>
+              </div>
             )}
             <ProductSection title="Características" items={featuresPadrao} />
             <ProductSection title="Itens do enxoval" items={enxovalPadrao} />
