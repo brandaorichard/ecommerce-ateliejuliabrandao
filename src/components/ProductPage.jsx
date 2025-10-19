@@ -11,6 +11,7 @@ import FreteCalculator from "./FreteCalculator";
 import SEOHead from "./SEO/SEOHead";
 import { ProductStructuredData } from "./SEO/StructuredData";
 import { trackViewItem } from "../utils/analytics";
+import RelatedProducts from "./RelatedProducts";
 
 import {
   featuresPadrao,
@@ -285,6 +286,13 @@ export default function ProductPage({ onOpenCart }) {
           </div>
         </div>
       </section>
+      
+      {/* Seção de produtos relacionados */}
+      {baby && (
+        <div className="w-full bg-[#f9e7f6] py-12">
+          <RelatedProducts currentBabyId={baby.id || baby._id} />
+        </div>
+      )}
     </>
   );
 }

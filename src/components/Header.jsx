@@ -39,7 +39,7 @@ export default function Header() {
         headerHeight={headerHeight}
         categories={categories}
       />
-      <div className="pt-[140px] md:pt-[171px]" />
+      <div className="pt-[180px] md:pt-[171px]" />
     </>
   );
 }
