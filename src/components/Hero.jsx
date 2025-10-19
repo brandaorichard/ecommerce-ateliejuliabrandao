@@ -100,7 +100,7 @@ export default function Hero() {
   }
   
   return (
-    <div>
+    <div className="mt-1">
       {/* Título acima do carousel */}
       <motion.div
         className="w-full flex flex-col items-center mb-5 -mt-2"
