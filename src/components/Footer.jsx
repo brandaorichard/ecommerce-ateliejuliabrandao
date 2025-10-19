@@ -207,6 +207,13 @@ export default function Footer({ logoVariant, scrolled, transition }) {
               >
                 Termos de Uso
               </a>
+              <span>•</span>
+              <a 
+                href="/politica-trocas" 
+                className="hover:text-[#7a4fcf] transition-colors"
+              >
+                Política de Troca
+              </a>
             </div>
           </div>
 
