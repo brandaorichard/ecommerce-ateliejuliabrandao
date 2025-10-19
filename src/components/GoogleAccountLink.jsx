@@ -1,10 +1,13 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import GoogleLoginButton from './Auth/GoogleLoginButton';
+import { updateUser } from '../redux/authSlice';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://atelie-juliabrandao-backend-production.up.railway.app';
 
 export default function GoogleAccountLink({ user }) {
+  const dispatch = useDispatch();
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,9 +29,12 @@ export default function GoogleAccountLink({ user }) {
       setMessage(data.message);
       setError('');
       
-      // Atualizar dados do usuário
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setTimeout(() => window.location.reload(), 1500);
+      // Atualizar dados do usuário no Redux
+      dispatch(updateUser({ 
+        googleId: data.user.googleId, 
+        profilePicture: data.user.profilePicture 
+      }));
+      setMessage(data.message);
     } catch (err) {
       setError(err.response?.data?.message || 'Erro ao vincular conta');
       setMessage('');
@@ -55,10 +61,12 @@ export default function GoogleAccountLink({ user }) {
       setMessage(data.message);
       setError('');
       
-      // Atualizar dados do usuário
-      const updatedUser = { ...user, googleId: null, profilePicture: null };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      setTimeout(() => window.location.reload(), 1500);
+      // Atualizar dados do usuário no Redux
+      dispatch(updateUser({ 
+        googleId: null, 
+        profilePicture: null 
+      }));
+      setMessage(data.message);
     } catch (err) {
       setError(err.response?.data?.message || 'Erro ao desvincular conta');
       setMessage('');

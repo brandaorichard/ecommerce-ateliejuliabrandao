@@ -163,6 +163,8 @@ export default function LoginPage() {
           _id: data._id,
           cpf: data.cpf,
           telefone: data.telefone,
+          profilePicture: data.profilePicture, // Adicionar este campo
+          googleId: data.googleId, // Também adicionar para consistência
         },
       };
     }
@@ -177,6 +179,31 @@ export default function LoginPage() {
           token: authData.token,
         })
       );
+
+      // Buscar dados completos do usuário para garantir que profilePicture seja carregado
+      if (authData.user.role !== "admin") {
+        try {
+          const userRes = await fetch(
+            "https://atelie-juliabrandao-backend-production.up.railway.app/api/auth/user/me",
+            {
+              headers: {
+                Authorization: `Bearer ${authData.token}`,
+              },
+            }
+          );
+          if (userRes.ok) {
+            const userData = await userRes.json();
+            dispatch(
+              login({
+                user: userData,
+                token: authData.token,
+              })
+            );
+          }
+        } catch (err) {
+          console.log("Erro ao buscar dados completos do usuário:", err);
+        }
+      }
 
       dispatch(
         showToast({

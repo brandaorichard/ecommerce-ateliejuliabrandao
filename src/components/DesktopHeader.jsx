@@ -4,6 +4,7 @@ import AnimatedLogo from "./AnimatedLogo";
 import CategoriesMenu from "./CategoriesMenu";
 import CartDrawer from "./CartDrawer";
 import SearchModal from "./SearchModal";
+import UserAvatar from "./UserAvatar";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import { showToast } from "../redux/toastSlice";
@@ -166,7 +167,7 @@ export default function DesktopHeader({
               aria-label="Pesquisar bebês"
               title="Pesquisar bebês"
             >
-              <FaSearch size={20} />
+              <FaSearch size={24} />
             </button>
             
             {/* Ícone do carrinho */}
@@ -176,7 +177,7 @@ export default function DesktopHeader({
               aria-label="Carrinho de compras"
               title="Carrinho de compras"
             >
-              <FaShoppingCart size={20} />
+              <FaShoppingCart size={24} />
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-[#7a4fcf] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {cartCount}
@@ -192,7 +193,11 @@ export default function DesktopHeader({
                 aria-label={isLoggedIn ? "Minha conta" : "Entrar"}
                 title={isLoggedIn ? "Minha conta" : "Entrar"}
               >
-                <FaUser size={20} />
+                {isLoggedIn && user?.profilePicture ? (
+                  <UserAvatar user={user} size={24} />
+                ) : (
+                  <FaUser size={24} />
+                )}
                 {isLoggedIn && (
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                 )}
