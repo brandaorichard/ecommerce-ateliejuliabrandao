@@ -12,6 +12,7 @@ export default function AdminBabiesPage() {
   const token = useSelector(s => s.auth.token);
   const [tab, setTab] = useState("todos");
   const [statusFilter, setStatusFilter] = useState("todos"); // Novo estado
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para busca
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
@@ -28,6 +29,22 @@ export default function AdminBabiesPage() {
   const filtrados = useMemo(() => {
     let result = items;
     
+    // Filtro por busca (nome)
+    if (searchTerm.trim()) {
+      const normalizedSearchTerm = searchTerm
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+      
+      result = result.filter(b => {
+        const normalizedName = b.name
+          ?.normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase() || "";
+        return normalizedName.includes(normalizedSearchTerm);
+      });
+    }
+    
     // Filtro por categoria
     if (tab !== "todos") {
       result = result.filter(b => b.category === tab);
@@ -41,7 +58,7 @@ export default function AdminBabiesPage() {
     }
     
     return result;
-  }, [items, tab, statusFilter]);
+  }, [items, tab, statusFilter, searchTerm]);
 
   const categoriaCounts = useMemo(() => {
     const counts = {};
@@ -154,6 +171,51 @@ export default function AdminBabiesPage() {
         </button>
       </div>
 
+      {/* Barra de busca */}
+      <div className="relative">
+        <div className="relative flex items-center">
+          <input
+            type="text"
+            placeholder="Buscar por nome do bebê..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-4 pr-10 py-2 border border-[#e0d6f7] rounded-lg
+                       bg-white text-sm text-gray-900 placeholder-gray-500
+                       focus:outline-none focus:ring-2 focus:ring-[#7a4fcf] focus:border-transparent
+                       transition-colors duration-200"
+            aria-label="Buscar bebês por nome"
+          />
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <svg
+              className="h-4 w-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute inset-y-0 right-8 pr-1 flex items-center
+                         text-gray-400 hover:text-gray-600 transition-colors duration-200
+                         hover:bg-gray-100 rounded-full p-1"
+              aria-label="Limpar busca"
+            >
+              <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+      </div>
+
       <div className="flex gap-2 flex-wrap">
         <button
           onClick={() => setTab("todos")}
@@ -207,7 +269,16 @@ export default function AdminBabiesPage() {
 
       {loading && <div className="text-[11px] text-neutral-600">Carregando...</div>}
       {!loading && filtrados.length === 0 && (
-        <div className="text-[11px] text-neutral-600">Nenhum item.</div>
+        <div className="text-[11px] text-neutral-600">
+          {searchTerm ? `Nenhum bebê encontrado para "${searchTerm}".` : "Nenhum item."}
+        </div>
+      )}
+      
+      {/* Indicador de busca ativa */}
+      {searchTerm && !loading && (
+        <div className="text-[11px] text-neutral-600 mb-2">
+          Buscando por: <strong>"{searchTerm}"</strong> - {filtrados.length} resultado(s) encontrado(s)
+        </div>
       )}
 
       <motion.div

@@ -49,12 +49,8 @@ export default function UserButton({ mobileFaixa = false }) {
   return (
     <div className={`relative ${mobileFaixa ? "h-[25px]" : ""}`} ref={ref}>
       <button
-        className={`flex items-center gap-2 px-2 py-1 rounded-full transition cursor-pointer focus:outline-none
-          ${
-            mobileFaixa
-              ? "bg-transparent text-gray-700 text-xs font-medium"
-              : " text-[#7a4fcf]"
-          }
+        className={`flex items-center justify-center transition cursor-pointer focus:outline-none
+          ${mobileFaixa ? "bg-transparent text-gray-700" : "text-gray-700 hover:text-[#7a4fcf]"}
         `}
         style={mobileFaixa ? { height: 22, minHeight: 0 } : {}}
         onClick={() => (isLoggedIn ? setOpen((o) => !o) : navigate("/login"))}
@@ -62,18 +58,21 @@ export default function UserButton({ mobileFaixa = false }) {
       >
         {/* Se tem foto do Google, mostrar apenas a foto */}
         {hasGooglePhoto ? (
-          <UserAvatar user={user} size={avatarSize} />
+          <div className="relative">
+            <UserAvatar user={user} size={avatarSize} />
+            {/* Indicador verde quando logado */}
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+          </div>
         ) : (
           /* Comportamento padrão para usuários sem Google */
-          <>
+          <div className="relative">
             {/* Ícone de usuário */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 -mr-1.5 sm:-mr-1"
+              className={`${mobileFaixa ? "h-4 w-4" : "h-5 w-5"}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              style={{ minWidth: 16, minHeight: 16 }}
             >
               <path
                 strokeLinecap="round"
@@ -82,33 +81,11 @@ export default function UserButton({ mobileFaixa = false }) {
                 d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"
               />
             </svg>
-            {isLoggedIn ? (
-              <>
-                <span className="font-medium -mr-2.5">{`Olá, ${
-                  user?.nome?.split(" ")[0] || "Usuário"
-                }`}</span>
-                <svg
-                  className={`h-3 w-3 ml-1 transition-transform ${
-                    open ? "rotate-180" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={5}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </>
-            ) : (
-              <span className="font-semibold -mr-2 sm:mr-4 text-gray-700">
-                Entrar
-              </span>
+            {/* Indicador verde quando logado */}
+            {isLoggedIn && (
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
             )}
-          </>
+          </div>
         )}
       </button>
       {isLoggedIn && open && (

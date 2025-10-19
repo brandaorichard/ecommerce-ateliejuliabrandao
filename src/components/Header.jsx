@@ -19,7 +19,7 @@ export default function Header() {
     scrolled: { scale: 0.7 },
   };
   const transition = { type: "spring", stiffness: 300, damping: 30 };
-  const headerHeight = scrolled ? 144 : 160;
+  const headerHeight = scrolled ? 112 : 160; // 112px (h-28) quando scrolled, 160px quando normal
   const categories = ["SOB ENCOMENDA", "PRONTA ENTREGA", "POR SEMELHANCA"];
 
   return (
@@ -39,7 +39,7 @@ export default function Header() {
         headerHeight={headerHeight}
         categories={categories}
       />
-      <div className="pt-32 md:pt-[171px]" />
+      <div className="pt-[140px] md:pt-[171px]" />
     </>
   );
 }
