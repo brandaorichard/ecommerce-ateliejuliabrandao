@@ -3,32 +3,25 @@ import { useSelector } from "react-redux";
 import { FaTrash } from "react-icons/fa";
 import { motion } from "framer-motion";
 import {
-  fetchOrdersAdmin,
-  updateOrderStatus
+  fetchOrdersAdmin
 } from "../../services/adminOrderService";
 import { useBabies } from "../../hooks/useBabies"; // Importa os bebês para buscar imagens
 import { fetchUserById } from "../../services/adminUserService"; // novo import
 import BreadcrumbItensAdmin from "../../components/BreadcrumbItensAdmin";
-
-const STATUS_OPTIONS = [
-  { value: "pendente", label: "Pendente" },
-  { value: "pronto/enviado", label: "Pronto/Enviado" },
-  { value: "finalizado", label: "Finalizado" },
-];
+import PaymentStatusBadge from "../../components/PaymentStatusBadge";
 
 const STATUS_FILTERS = [
   { value: "todos", label: "Todos" },
-  { value: "pendente", label: "Pendente" },
-  { value: "pronto/enviado", label: "Pronto/Enviado" },
-  { value: "finalizado", label: "Finalizado" },
+  { value: "pagamento_pendente", label: "Pendente" },
+  { value: "pago", label: "Pago" },
+  { value: "pagamento_rejeitado", label: "Rejeitado" },
+  { value: "cancelado", label: "Cancelado" },
 ];
 
 export default function AdminOrdersPage() {
   const token = useSelector(s => s.auth.token);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editId, setEditId] = useState(null);
-  const [editStatus, setEditStatus] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [usersById, setUsersById] = useState({}); // novo estado
   const [statusTab, setStatusTab] = useState("todos");
@@ -71,13 +64,6 @@ export default function AdminOrdersPage() {
     if (token) loadOrders();
   }, [token]);
 
-  async function handleStatusUpdate(id) {
-    await updateOrderStatus(token, id, editStatus);
-    setEditId(null);
-    setSelectedOrder(null);
-    const data = await fetchOrdersAdmin(token);
-    setOrders(data);
-  }
 
   async function handleDeleteOrder(id) {
     try {
@@ -105,13 +91,13 @@ export default function AdminOrdersPage() {
   // Filtra os pedidos pelo status selecionado
   const filteredOrders = statusTab === "todos"
     ? orders
-    : orders.filter(o => o.status === statusTab);
+    : orders.filter(o => o.paymentStatus === statusTab);
 
   // Contagem de pedidos por status
   const statusCounts = STATUS_FILTERS.reduce((acc, f) => {
     acc[f.value] = f.value === "todos"
       ? orders.length
-      : orders.filter(o => o.status === f.value).length;
+      : orders.filter(o => o.paymentStatus === f.value).length;
     return acc;
   }, {});
 
@@ -165,56 +151,16 @@ export default function AdminOrdersPage() {
                 Pedido #{order._id}
               </div>
               <div className="flex items-center gap-2 flex-wrap mt-1">
-                {editId === order._id ? (
-                  <>
-                    <select
-                      value={editStatus}
-                      onChange={e => setEditStatus(e.target.value)}
-                      className="border border-[#e0d6f7] rounded px-3 py-1 text-xs font-medium"
-                      style={{
-                        minWidth: 110,
-                        background: "#f7f3fa",
-                        color: "#7a4fcf",
-                      }}
-                    >
-                      {STATUS_OPTIONS.map(opt => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                      ))}
-                    </select>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleStatusUpdate(order._id)}
-                        className="px-3 py-1 rounded bg-[#7a4fcf] text-white text-xs"
-                      >
-                        Salvar
-                      </button>
-                      <button
-                        onClick={() => { setEditId(null); setEditStatus(""); }}
-                        className="px-3 py-1 rounded border border-[#e0d6f7] text-xs"
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <span className="px-3 py-1 rounded text-white text-xs font-medium bg-[#7a4fcf]">
-                      {order.status}
-                    </span>
-                    <button
-                      onClick={() => { setEditId(order._id); setEditStatus(order.status); }}
-                      className="px-3 py-1 rounded border border-[#e0d6f7] text-xs ml-2"
-                    >
-                      Editar Status
-                    </button>
-                    <button
-                      onClick={() => setSelectedOrder(order)}
-                      className="text-xs text-[#7a4fcf] underline font-medium ml-2"
-                    >
-                      Ver detalhes
-                    </button>
-                  </>
-                )}
+                <PaymentStatusBadge 
+                  paymentStatus={order.paymentStatus} 
+                  size="small"
+                />
+                <button
+                  onClick={() => setSelectedOrder(order)}
+                  className="text-xs text-[#7a4fcf] underline font-medium ml-2"
+                >
+                  Ver detalhes
+                </button>
               </div>
               <div className="flex gap-3 items-center mt-2">
                 {order.items.slice(0, 1).map((item, i) => (
@@ -307,10 +253,11 @@ export default function AdminOrdersPage() {
               <span className="text-neutral-700">{selectedOrder.paymentMethod}</span>
             </div>
             <div className="mb-4">
-              <span className="font-medium">Status:</span>{" "}
-              <span className="px-3 py-1 rounded text-white bg-[#7a4fcf] text-xs">
-                {selectedOrder.status}
-              </span>
+              <span className="font-medium">Status de Pagamento:</span>{" "}
+              <PaymentStatusBadge 
+                paymentStatus={selectedOrder.paymentStatus} 
+                size="normal"
+              />
             </div>
             <div className="mb-4">
               <span className="font-medium">Itens do pedido:</span>
