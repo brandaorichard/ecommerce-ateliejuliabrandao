@@ -4,11 +4,11 @@ import { motion } from "framer-motion";
 import { useCarousel } from "../hooks/useCarousel";
 
 function useImagesPerSlide() {
-  const [imagesPerSlide, setImagesPerSlide] = useState(window.innerWidth >= 768 ? 2 : 1);
+  const [imagesPerSlide, setImagesPerSlide] = useState(window.innerWidth >= 768 ? 3 : 1);
 
   useEffect(() => {
     const handleResize = () => {
-      setImagesPerSlide(window.innerWidth >= 768 ? 2 : 1);
+      setImagesPerSlide(window.innerWidth >= 768 ? 3 : 1);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);

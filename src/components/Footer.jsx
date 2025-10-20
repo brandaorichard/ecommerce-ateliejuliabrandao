@@ -12,86 +12,7 @@ import AnimatedLogo from "./AnimatedLogo";
 export default function Footer({ logoVariant, scrolled, transition }) {
   return (
     <footer className="bg-[#f9e7f6] border-t border-[#e5d3e9] pt-8 pb-4 mt-12">
-      <div className="max-w-6xl mx-auto px-4 flex flex-col gap-8 md:grid md:grid-cols-4 md:gap-12">
-        {/* Redes sociais */}
-        <div className="flex flex-col items-start gap-3 order-1 md:order-2">
-          <span className="text-[#616161] text-base font-light mb-1">
-            Redes sociais
-          </span>
-          <div className="flex gap-4">
-            <a
-              href="https://wa.me/5567992654151"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="WhatsApp"
-              className="text-green-500 text-4xl transition"
-            >
-              <FaWhatsapp />
-            </a>
-            <a
-              href="https://instagram.com/ateliejuliabrandao/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-              className="text-[#C13584] text-4xl transition"
-            >
-              <FaInstagram />
-            </a>
-            <a
-              href="https://tiktok.com/ateliejuliabrandao/"
-              aria-label="tiktok"
-              className="text-3xl transition mt-0.5"
-            >
-              <FaTiktok />
-            </a>
-          </div>
-        </div>
-
-        {/* Contato */}
-        <div className="flex flex-col items-start order-2 md:order-1">
-          <h2 className="text-base font-light text-[#616161] mb-3">
-            Entre em contato
-          </h2>
-          <div className="flex flex-col gap-2 text-[#616161] font-light">
-            <span className="flex items-center gap-2">
-              <FaPhoneAlt className="text-[#7a4fcf]" />
-              +55 (67) 99265-4151
-            </span>
-            <span className="flex items-center gap-2">
-              <FaEnvelope className="text-[#7a4fcf]" />
-              <a
-                href="mailto:ju.artereborn@gmail.com"
-                className="hover:underline break-all"
-              >
-                ju.artereborn@gmail.com
-              </a>
-            </span>
-            <span className="flex items-center gap-2">
-              <FaMapMarkerAlt className="text-[#7a4fcf]" />
-              Rua Ana Queiroz Dutra, ipe 4 Três Lagoas -<br />
-              Mato Grosso do Sul
-            </span>
-          </div>
-        </div>
-
-        {/* Formas de pagamento */}
-        <div className="flex flex-col items-start md:items-center order-3 md:order-3">
-          <PaymentMethods />
-        </div>
-
-        {/* Logo */}
-        <div className="hidden md:flex justify-center md:justify-start items-center md:items-start order-4 md:order-4 opacity-90">
-          <AnimatedLogo
-            variants={logoVariant}
-            animate={scrolled ? "scrolled" : "initial"}
-            transition={transition}
-            className="w-[250px] h-auto"
-          />
-        </div>
-      </div>
-
-      {/* Seção de Segurança Integrada */}
-      <div className="bg-[#f9e7f6] border-t border-[#e5d3e9] py-6 mt-8">
+      <div className="bg-[#f9e7f6] py-6">
         <div className="max-w-6xl mx-auto px-4">
           {/* Título */}
           <div className="text-center mb-6">
@@ -179,6 +100,71 @@ export default function Footer({ logoVariant, scrolled, transition }) {
                 <div className="text-sm font-medium text-gray-800">Google Analytics</div>
                 <div className="text-xs text-gray-600">Site Monitorado</div>
               </div>
+            </div>
+          </div>
+
+          {/* Informações do Ateliê */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {/* Redes Sociais */}
+            <div className="flex flex-col items-center text-center p-4 bg-white/70 rounded-lg hover:bg-white/90 transition-colors">
+              <h4 className="text-sm font-medium text-gray-800 mb-3">Redes sociais</h4>
+              <div className="flex gap-4">
+                <a
+                  href="https://wa.me/5567992654151"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="WhatsApp"
+                  className="text-black text-3xl hover:text-gray-600 transition"
+                >
+                  <FaWhatsapp />
+                </a>
+                <a
+                  href="https://instagram.com/ateliejuliabrandao/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  className="text-black text-3xl hover:text-gray-600 transition"
+                >
+                  <FaInstagram />
+                </a>
+                <a
+                  href="https://tiktok.com/ateliejuliabrandao/"
+                  aria-label="tiktok"
+                  className="text-black text-3xl hover:text-gray-600 transition"
+                >
+                  <FaTiktok />
+                </a>
+              </div>
+            </div>
+
+            {/* Entre em contato */}
+            <div className="flex flex-col items-center text-center p-4 bg-white/70 rounded-lg hover:bg-white/90 transition-colors">
+              <h4 className="text-sm font-medium text-gray-800 mb-3">Entre em contato</h4>
+              <div className="flex flex-col gap-2 text-xs text-gray-600">
+                <span className="flex items-center justify-center gap-2">
+                  <FaPhoneAlt className="text-[#7a4fcf]" />
+                  +55 (67) 99265-4151
+                </span>
+                <span className="flex items-center justify-center gap-2">
+                  <FaEnvelope className="text-[#7a4fcf]" />
+                  <a
+                    href="mailto:ju.artereborn@gmail.com"
+                    className="hover:underline"
+                  >
+                    ju.artereborn@gmail.com
+                  </a>
+                </span>
+                <span className="flex items-center justify-center gap-2">
+                  <FaMapMarkerAlt className="text-[#7a4fcf]" />
+                  <span className="text-center">Três Lagoas - MS</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Formas de pagamento */}
+            <div className="flex flex-col items-center text-center p-4 bg-white/70 rounded-lg hover:bg-white/90 transition-colors">
+              <h4 className="text-sm font-medium text-gray-800 mb-3">Formas de pagamento</h4>
+              <PaymentMethods />
             </div>
           </div>
 
