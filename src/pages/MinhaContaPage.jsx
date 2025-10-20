@@ -104,7 +104,7 @@ export default function MinhaContaPage() {
       {/* Endereço */}
       <section>
         <div className="flex items-center justify-between mb-4 mt-15">
-          <h2 className="text-lg font-semibold">Endereço para entrega</h2>
+          <h2 className="text-lg font-medium text-gray-800">Endereço para entrega</h2>
           {!isEditingEndereco && (
             <button
               onClick={() => setIsEditingEndereco(true)}

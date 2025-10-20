@@ -3,13 +3,13 @@ import ShareButton from './ShareButton';
 export default function ProductTitlePrice({ name, price, oldPrice, discount, installment, productUrl, productName }) {
   return (
     <>
-      <h1 className="text-2xl md:text-3xl font-light text-black mb-2">{name}</h1>
+      <h1 className="text-2xl md:text-3xl font-light text-gray-800 mb-2">{name}</h1>
       <div className="flex items-end gap-3 mb-2">
-        <span className="text-2xl md:text-3xl font-bold text-black">
+        <span className="text-2xl md:text-3xl font-bold text-gray-800">
           R${price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
         </span>
         {oldPrice && (
-          <span className="text-base md:text-lg text-[#616161] line-through">
+          <span className="text-sm md:text-base text-gray-500 line-through">
             R${oldPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
           </span>
         )}

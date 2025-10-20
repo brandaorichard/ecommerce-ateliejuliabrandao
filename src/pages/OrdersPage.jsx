@@ -63,7 +63,7 @@ export default function OrdersPage() {
         &gt; <span className="font-light underline ">Meus Pedidos</span>
       </nav>
 
-      <h1 className="text-2xl font-light mb-4">Meus Pedidos</h1>
+      <h1 className="text-2xl font-light text-gray-800 mb-4">Meus Pedidos</h1>
 
       {orders.length === 0 ? (
         <p>Você ainda não fez nenhum pedido.</p>
@@ -77,7 +77,7 @@ export default function OrdersPage() {
             >
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="font-semibold">Pedido #{order._id}</p>
+                  <p className="text-sm font-medium text-gray-800">Pedido #{order._id}</p>
                   <p className="text-sm text-gray-500">
                     {new Date(order.date).toLocaleDateString()}
                   </p>

@@ -69,7 +69,7 @@ export default function ProductPage({ onOpenCart }) {
     return (
       <section className="w-full bg-[#f9e7f6] min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl text-[#ae95d9] mb-4">Bebê não encontrado 😢</h2>
+          <h2 className="text-2xl font-light text-gray-800 mb-4">Bebê não encontrado 😢</h2>
           <button onClick={() => navigate("/")} className="text-[#7a4fcf] underline">
             Voltar para a página inicial
           </button>
@@ -100,8 +100,8 @@ export default function ProductPage({ onOpenCart }) {
               productName={baby.name}
             />
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 my-4">
-              <h3 className="text-red-600 font-medium mb-2">Produto Indisponível</h3>
-              <p className="text-sm text-red-700">
+              <h3 className="text-sm font-medium text-red-600 mb-2">Produto Indisponível</h3>
+              <p className="text-sm text-red-600">
                 Este bebê reborn não está mais disponível para compra. 
                 Por favor, confira outras opções de pronta entrega disponíveis.
               </p>
@@ -115,8 +115,8 @@ export default function ProductPage({ onOpenCart }) {
             <PaymentMethods />
             {baby.description && baby.description.trim() && (
               <div className="mt-6">
-                <h2 className="text-lg font-semibold text-black mb-2">Informações Adicionais</h2>
-                <p className="text-[#616161] mb-4">{baby.description}</p>
+                <h2 className="text-lg font-medium text-gray-800 mb-2">Informações Adicionais</h2>
+                <p className="text-sm text-gray-600 mb-4">{baby.description}</p>
               </div>
             )}
             <ProductSection title="Características" items={featuresPadrao} />
@@ -155,15 +155,15 @@ export default function ProductPage({ onOpenCart }) {
           <ProductCarousel images={baby.images} current={current} setCurrent={setCurrent} name={baby.name} />
           <div className="flex-1 flex flex-col justify-start mt-2 md:mt-0">
             <Breadcrumb items={breadcrumbItems} />
-            <h1 className="text-2xl font-light text-[#7a4fcf] mb-2">{baby.name}</h1>
+            <h1 className="text-2xl font-light text-gray-800 mb-2">{baby.name}</h1>
             {/* Bloco informativo */}
             <div className="bg-[#f7f3fa] border border-[#e0d6f7] rounded-lg p-4 mb-4 flex flex-col gap-2">
-              <span className="text-[#7a4fcf] font-semibold text-base">Pedido via WhatsApp</span>
-              <p className="text-sm text-neutral-700">
+              <span className="text-sm font-medium text-[#7a4fcf]">Pedido via WhatsApp</span>
+              <p className="text-sm text-gray-600">
                 Os pedidos de bebê reborn por semelhança são feitos diretamente com a artesã pelo WhatsApp. 
                 Tire dúvidas, envie fotos e receba atendimento personalizado!
               </p>
-              <p className="text-sm text-[#7a4fcf] font-semibold mt-1">
+              <p className="text-sm font-medium text-[#7a4fcf] mt-1">
                 Os valores são a partir de <span className="font-bold">R$ 3.499,99</span> em 4x sem juros ou à vista com desconto.
               </p>
               <a
@@ -179,13 +179,13 @@ export default function ProductPage({ onOpenCart }) {
             <PaymentMethods />
             {baby.description && baby.description.trim() && (
               <div className="mt-6">
-                <h2 className="text-lg font-semibold text-black mb-2">Informações Adicionais</h2>
-                <p className="text-[#616161] mb-4">{baby.description}</p>
+                <h2 className="text-lg font-medium text-gray-800 mb-2">Informações Adicionais</h2>
+                <p className="text-sm text-gray-600 mb-4">{baby.description}</p>
               </div>
             )}
             {/* Como funciona */}
-            <h2 className="mt-8 mb-2 text-lg font-semibold text-[#7a4fcf]">Como funciona os bebês por semelhança?</h2>
-            <div className="bg-[#f7f3fa] border border-[#e0d6f7] rounded-lg p-4 text-sm text-neutral-800 mb-6">
+            <h2 className="mt-8 mb-2 text-lg font-medium text-gray-800">Como funciona os bebês por semelhança?</h2>
+            <div className="bg-[#f7f3fa] border border-[#e0d6f7] rounded-lg p-4 text-sm text-gray-600 mb-6">
               <p className="mb-2">
                 O bebê reborn por semelhança é uma arte personalizada feita a partir de fotos reais do bebê. Veja como funciona o processo:
               </p>
@@ -229,7 +229,7 @@ export default function ProductPage({ onOpenCart }) {
                   </ul>
                 </li>
               </ol>
-              <p className="mt-4 text-[#7a4fcf] font-medium text-base">
+              <p className="mt-4 text-sm font-medium text-[#7a4fcf]">
                 ✨ O resultado é um bebê reborn exclusivo, feito com carinho, realismo e inspirado nas características mais marcantes do bebê da foto.
               </p>
             </div>
@@ -276,8 +276,8 @@ export default function ProductPage({ onOpenCart }) {
             )}
             {baby.description && baby.description.trim() && (
               <div className="mt-6">
-                <h2 className="text-lg font-semibold text-black mb-2">Informações Adicionais</h2>
-                <p className="text-[#616161] mb-4">{baby.description}</p>
+                <h2 className="text-lg font-medium text-gray-800 mb-2">Informações Adicionais</h2>
+                <p className="text-sm text-gray-600 mb-4">{baby.description}</p>
               </div>
             )}
             <ProductSection title="Características" items={featuresPadrao} />

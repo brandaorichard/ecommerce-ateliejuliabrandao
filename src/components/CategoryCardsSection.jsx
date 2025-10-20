@@ -112,7 +112,7 @@ export default function CategoryCardsSection({
   return (
     <div className="max-w-6xl mx-auto px-4 pt-8 md:pt-10 pb-8">
       <Breadcrumb items={breadcrumbItems} />
-      <h1 className="text-2xl font-light text-black mb-4">{title}</h1>
+      <h1 className="text-2xl font-light text-gray-800 mb-4">{title}</h1>
 
       {(showFilter || showSort) && (
         <div className="flex items-center gap-2 mb-4">
@@ -157,7 +157,7 @@ export default function CategoryCardsSection({
 
       {showWarning && (
         <div className="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded flex items-center justify-between">
-          <span>Nenhum bebê encontrado para o valor informado.</span>
+          <span className="text-sm text-yellow-800">Nenhum bebê encontrado para o valor informado.</span>
           <button
             className="ml-4 px-3 py-1 bg-yellow-300 text-yellow-900 rounded hover:bg-yellow-400"
             onClick={resetFilter}

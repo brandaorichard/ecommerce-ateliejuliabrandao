@@ -87,7 +87,7 @@ export default function OrderDetailPage() {
         &gt; <span className="font-light underline ">Pedido #{order._id}</span>
       </nav>
 
-      <h1 className="text-2xl font-light mb-4">Detalhes do Pedido</h1>
+      <h1 className="text-2xl font-light text-gray-800 mb-4">Detalhes do Pedido</h1>
 
       <div className="shadow-md border border-gray-200 p-6 flex flex-col gap-6" style={{ borderRadius: 0 }}>
         <div className="flex justify-between items-center">

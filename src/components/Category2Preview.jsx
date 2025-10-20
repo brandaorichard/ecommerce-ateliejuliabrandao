@@ -72,7 +72,7 @@ export default function Category2Preview() {
   return (
     <div className="max-w-6xl mx-auto px-4 mt-10 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-light text-black">A pronta entrega</h2>
+        <h2 className="text-xl font-light text-gray-800">A pronta entrega</h2>
         <motion.button
           id="ver-mais-link-pronta"
           whileTap={isMobile ? { scale: 0.95 } : {}}
@@ -90,7 +90,7 @@ export default function Category2Preview() {
         <div className="py-6 text-sm text-red-600">Erro: {error}</div>
       )}
       {!loading && !error && previewBabies.length === 0 && (
-        <div className="py-6 text-sm text-[#616161]">
+        <div className="py-6 text-sm text-gray-600">
           No momento, todos os bebês a pronta entrega estão esgotados.
         </div>
       )}

@@ -113,7 +113,7 @@ export default function Hero() {
             text-2xl
             md:text-4xl
             font-light
-            text-[#616161]
+            text-gray-800
             font-['Lexend']
             text-center
             tracking-[0.02em]
