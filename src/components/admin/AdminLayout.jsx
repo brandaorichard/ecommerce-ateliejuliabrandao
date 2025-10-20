@@ -84,6 +84,13 @@ export default function AdminLayout() {
                 >
                   📊 Analytics
                 </Link>
+                <Link
+                  to="/admin/avaliacoes"
+                  onClick={() => setNavOpen(false)}
+                  className="block px-3 py-2 text-xs md:text-sm hover:bg-[#f7f3fa] text-[#7a4fcf]"
+                >
+                  ⭐ Avaliações
+                </Link>
               </div>
             )}
           </div>

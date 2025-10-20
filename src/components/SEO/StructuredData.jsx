@@ -10,10 +10,6 @@ export function ProductStructuredData({ baby }) {
   const availability = baby.status === "indisponivel" 
     ? "https://schema.org/OutOfStock" 
     : "https://schema.org/InStock";
-
-  // Dados de avaliação agregada (valores realistas para SEO)
-  // Baseado na categoria: pronta entrega tem mais avaliações
-  const reviewCount = baby.category === 'pronta_entrega' ? 15 : 8;
   
   const data = {
     "@context": "https://schema.org/",
@@ -70,13 +66,16 @@ export function ProductStructuredData({ baby }) {
         }
       }
     },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "bestRating": "5",
-      "worstRating": "1",
-      "reviewCount": reviewCount
-    }
+    // Incluir aggregateRating somente se houver avaliações reais do backend
+    ...(baby.aggregateRating && baby.aggregateRating.reviewCount > 0 && {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": baby.aggregateRating.ratingValue.toString(),
+        "bestRating": "5",
+        "worstRating": "1",
+        "reviewCount": baby.aggregateRating.reviewCount
+      }
+    })
   };
 
   return (

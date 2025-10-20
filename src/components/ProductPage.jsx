@@ -12,6 +12,7 @@ import SEOHead from "./SEO/SEOHead";
 import { ProductStructuredData } from "./SEO/StructuredData";
 import { trackViewItem } from "../utils/analytics";
 import RelatedProducts from "./RelatedProducts";
+import ProductReviews from "./ProductReviews";
 
 import {
   featuresPadrao,
@@ -291,6 +292,13 @@ export default function ProductPage({ onOpenCart }) {
       {baby && (
         <div className="w-full bg-[#f9e7f6] py-12">
           <RelatedProducts currentBabyId={baby.id || baby._id} />
+        </div>
+      )}
+
+      {/* Seção de avaliações */}
+      {baby && (
+        <div className="w-full bg-[#f9e7f6] pb-12">
+          <ProductReviews babyId={baby._id || baby.id} />
         </div>
       )}
     </>

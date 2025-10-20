@@ -28,6 +28,9 @@ const ConfirmEmailChangePage = lazy(() => import("./pages/ConfirmEmailChangePage
 const PoliticaPrivacidadePage = lazy(() => import("./pages/PoliticaPrivacidadePage"));
 const TermosUsoPage = lazy(() => import("./pages/TermosUsoPage"));
 const PoliticaTrocasPage = lazy(() => import("./pages/PoliticaTrocasPage"));
+const EvaluateOrderPage = lazy(() => import("./pages/EvaluateOrderPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 
 // Admin pages
 const AdminBabiesPage = lazy(() => import("./pages/admin/AdminBabiesPage"));
@@ -36,6 +39,7 @@ const AdminUsersPage = lazy(() => import("./pages/admin/AdminUsersPage"));
 const AdminCarouselPage = lazy(() => import("./pages/admin/AdminCarouselPage"));
 const AdminFeaturedPage = lazy(() => import("./pages/admin/AdminFeaturedPage"));
 const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalyticsPage"));
+const AdminReviewsPage = lazy(() => import("./pages/admin/AdminReviewsPage"));
 
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminHeroPage from "./pages/admin/AdminHeroPage";
@@ -88,6 +92,7 @@ function App() {
             <Route path="carrossel" element={<AdminCarouselPage />} />
             <Route path="destaques" element={<AdminFeaturedPage />} />
             <Route path="analytics" element={<AdminAnalyticsPage />} />
+            <Route path="avaliacoes" element={<AdminReviewsPage />} />
           </Route>
 
           {/* Site público (layout padrão) */}
@@ -130,6 +135,11 @@ function SiteShell({ cartOpen, setCartOpen }) {
         <Route path="/pedido/:id/erro" element={<PedidoSucessoRedirect />} />
         {/* Rota para confirmação de alteração de email */}
         <Route path="/confirm-email-change/:token" element={<ConfirmEmailChangePage />} />
+        {/* Rota de avaliação de produto */}
+        <Route path="/avaliar/:orderId/:babyId" element={<EvaluateOrderPage />} />
+        {/* Rotas de recuperação de senha */}
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         {/* Rotas legais */}
         <Route path="/politica-privacidade" element={<PoliticaPrivacidadePage />} />
         <Route path="/termos-uso" element={<TermosUsoPage />} />
