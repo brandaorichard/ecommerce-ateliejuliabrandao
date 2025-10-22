@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { fetchWithRetry } from '../utils/fetchWithRetry';
 
 export function useCarousel(options = {}) {
   const { enabled = true } = options;
@@ -18,16 +19,16 @@ export function useCarousel(options = {}) {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel', { 
-        signal: ctrl.signal,
-        credentials: 'include'
-      });
-      
-      if (!response.ok) {
-        throw new Error('Falha ao carregar itens do carrossel');
-      }
-
-      const data = await response.json();
+      // Usar fetchWithRetry ao invés de fetch direto
+      const data = await fetchWithRetry(
+        'https://atelie-juliabrandao-backend-production.up.railway.app/api/carousel',
+        {
+          signal: ctrl.signal,
+          credentials: 'include'
+        },
+        3, // 3 tentativas
+        true // usar cache
+      );
       
       if (data.success && data.data) {
         // Filtrar apenas itens ativos (se o campo existir) e ordenar por ordem

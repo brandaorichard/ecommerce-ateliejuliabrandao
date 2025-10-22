@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { fetchWithRetry } from '../utils/fetchWithRetry';
 
 const API_BASE_URL = "https://atelie-juliabrandao-backend-production.up.railway.app/api";
 
@@ -10,15 +11,16 @@ export const useFeaturedEncomenda = () => {
   const fetchFeaturedData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/featured-encomenda`, {
-        credentials: 'include'
-      });
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
+      // Usar fetchWithRetry para lidar com 429 e cache
+      const data = await fetchWithRetry(
+        `${API_BASE_URL}/featured-encomenda`,
+        {
+          credentials: 'include'
+        },
+        3, // 3 tentativas
+        true // usar cache
+      );
       
       if (data.success && data.data) {
         // Aplicar o mesmo mapeamento que useBabies faz para garantir compatibilidade

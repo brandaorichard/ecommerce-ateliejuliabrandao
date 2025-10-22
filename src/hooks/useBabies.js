@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import { fetchWithRetry } from "../utils/fetchWithRetry";
 
 export function useBabies(options = {}) {
   const { type, customFilter, enabled = true } = options;
@@ -33,12 +34,17 @@ export function useBabies(options = {}) {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch("https://atelie-juliabrandao-backend-production.up.railway.app/api/babies", { 
-        signal: ctrl.signal,
-        credentials: 'include'
-      });
-      if (!res.ok) throw new Error("Erro ao buscar bebês");
-      const data = await res.json();
+      
+      // Usar fetchWithRetry para lidar com 429 e cache
+      const data = await fetchWithRetry(
+        "https://atelie-juliabrandao-backend-production.up.railway.app/api/babies",
+        {
+          signal: ctrl.signal,
+          credentials: 'include'
+        },
+        3, // 3 tentativas
+        true // usar cache
+      );
       const mapped = data.map(b => {
         const normId = b.id ?? b._id ?? b.slug;
         return {
