@@ -81,18 +81,18 @@ export default function Category1Preview() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 mt-10 sm:px-6 lg:px-8">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-light text-gray-800">
-          {useFeaturedSystem && featuredData.title ? featuredData.title : "Sob Encomenda"}
+      <div className="flex items-center justify-center mb-6">
+        <h2 className="text-xl font-semibold text-gray-800">
+          BEBÊS EM DESTAQUE
         </h2>
-        <motion.button
+        {/* <motion.button
           id="ver-mais-link"
           whileTap={isMobile ? { scale: 0.95 } : {}}
           onClick={handleMobileClick}
           className="flex items-center gap-1 text-[#7a4fcf] text-sm md:text-base font-medium cursor-pointer underline hover:text-[#ae95d9] transition-colors focus:outline-none"
         >
-          Ver mais <IoIosArrowForward />
-        </motion.button>
+          Ver mais {!isMobile && <IoIosArrowForward />}
+        </motion.button> */}
       </div>
 
       {loading && (
@@ -114,7 +114,7 @@ export default function Category1Preview() {
             <button
               onClick={handlePrev}
               disabled={mobileIndex === 0}
-              className="p-2 rounded-full text-[#7a4fcf] disabled:opacity-30"
+              className="p-2 rounded-full text-[#7a4fcf] disabled:opacity-30 hidden"
             >
               <IoIosArrowBack size={26} />
             </button>
@@ -155,7 +155,7 @@ export default function Category1Preview() {
             <button
               onClick={handleNext}
               disabled={mobileIndex >= Math.max(previewBabies.length - 2, 0)}
-              className="p-2 rounded-full text-[#7a4fcf] disabled:opacity-30"
+              className="p-2 rounded-full text-[#7a4fcf] disabled:opacity-30 hidden"
             >
               <IoIosArrowForward size={26} />
             </button>

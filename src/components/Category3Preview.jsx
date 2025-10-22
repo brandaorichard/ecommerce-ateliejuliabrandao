@@ -79,7 +79,7 @@ export default function Category3Preview() {
           onClick={handleMobileClick}
           className="flex items-center gap-1 text-[#7a4fcf] text-sm md:text-base font-medium cursor-pointer underline hover:text-[#ae95d9] transition-colors focus:outline-none"
         >
-          Ver mais <IoIosArrowForward />
+          Ver mais {!isMobile && <IoIosArrowForward />}
         </motion.button>
       </div>
 
@@ -102,7 +102,7 @@ export default function Category3Preview() {
             <button
               onClick={handlePrev}
               disabled={mobileIndex === 0}
-              className="p-2 rounded-full text-[#7a4fcf] disabled:opacity-30"
+              className="p-2 rounded-full text-[#7a4fcf] disabled:opacity-30 hidden"
             >
               <IoIosArrowBack size={26} />
             </button>
@@ -143,7 +143,7 @@ export default function Category3Preview() {
             <button
               onClick={handleNext}
               disabled={mobileIndex >= Math.max(previewBabies.length - 2, 0)}
-              className="p-2 rounded-full text-[#7a4fcf] disabled:opacity-30"
+              className="p-2 rounded-full text-[#7a4fcf] disabled:opacity-30 hidden"
             >
               <IoIosArrowForward size={26} />
             </button>

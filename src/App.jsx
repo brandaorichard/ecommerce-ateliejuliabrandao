@@ -40,6 +40,7 @@ const AdminCarouselPage = lazy(() => import("./pages/admin/AdminCarouselPage"));
 const AdminFeaturedPage = lazy(() => import("./pages/admin/AdminFeaturedPage"));
 const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalyticsPage"));
 const AdminReviewsPage = lazy(() => import("./pages/admin/AdminReviewsPage"));
+const AdminCategoriesPage = lazy(() => import("./pages/admin/AdminCategoriesPage"));
 
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminHeroPage from "./pages/admin/AdminHeroPage";
@@ -93,6 +94,7 @@ function App() {
             <Route path="destaques" element={<AdminFeaturedPage />} />
             <Route path="analytics" element={<AdminAnalyticsPage />} />
             <Route path="avaliacoes" element={<AdminReviewsPage />} />
+            <Route path="categorias" element={<AdminCategoriesPage />} />
           </Route>
 
           {/* Site público (layout padrão) */}

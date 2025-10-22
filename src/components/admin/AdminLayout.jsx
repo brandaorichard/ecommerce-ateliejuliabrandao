@@ -71,6 +71,13 @@ export default function AdminLayout() {
                   Carrossel
                 </Link>
                 <Link
+                  to="/admin/categorias"
+                  onClick={() => setNavOpen(false)}
+                  className="block px-3 py-2 text-xs md:text-sm hover:bg-[#f7f3fa] text-[#7a4fcf]"
+                >
+                  Categorias
+                </Link>
+                <Link
                   to="/admin/destaques"
                   onClick={() => setNavOpen(false)}
                   className="block px-3 py-2 text-xs md:text-sm hover:bg-[#f7f3fa] text-[#7a4fcf]"

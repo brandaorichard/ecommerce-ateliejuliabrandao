@@ -5,6 +5,7 @@ import authReducer from "./authSlice";
 import freteReducer from "./freteSlice"; // Import the freteSlice
 import adminBabiesReducer from "./adminBabiesSlice";
 import adminCarouselReducer from "./adminCarouselSlice";
+import adminCategoriesReducer from "./adminCategoriesSlice";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     frete: freteReducer, // Add the freteSlice reducer
     adminBabies: adminBabiesReducer,
     adminCarousel: adminCarouselReducer,
+    adminCategories: adminCategoriesReducer,
   },
 });
 
