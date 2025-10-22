@@ -4,8 +4,8 @@
   ],
   "redirects": [
     {
-      "source": "/produtos/bebe-reborn-kit-tessa",
-      "destination": "/produto/kit-tessa",
+      "source": "/produtos/bebe-reborn-:slug*",
+      "destination": "/produto/:slug*",
       "permanent": true
     },
     {
