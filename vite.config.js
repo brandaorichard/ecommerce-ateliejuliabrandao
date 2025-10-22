@@ -21,6 +21,10 @@ export default defineConfig({
   optimizeDeps: {
     include: ['react-is']
   },
+  // Configuração esbuild para remover console.log em produção
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
   build: {
     // Code splitting manual para melhor cache
     rollupOptions: {
@@ -43,23 +47,11 @@ export default defineConfig({
         assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     },
-    // Minificação agressiva
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        // Remover console.log em produção
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug'],
-        // Otimizações adicionais
-        passes: 2
-      },
-      format: {
-        // Remover comentários
-        comments: false
-      }
-    },
-    // Melhorar sourcemaps (opcional, pode desabilitar em prod)
+    // Minificação com esbuild (padrão do Vite, mais rápido)
+    minify: 'esbuild',
+    // Target ES2015 para compatibilidade
+    target: 'es2015',
+    // Desabilitar sourcemaps em produção
     sourcemap: false,
     // Aumentar limite de warning para chunks grandes
     chunkSizeWarningLimit: 1000,
