@@ -18,7 +18,7 @@ export const useFeaturedEncomenda = () => {
         {
           credentials: 'include'
         },
-        3, // 3 tentativas
+        1, // Apenas 1 retry (2 tentativas total)
         true // usar cache
       );
       

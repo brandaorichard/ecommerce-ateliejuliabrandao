@@ -42,7 +42,7 @@ export function useBabies(options = {}) {
           signal: ctrl.signal,
           credentials: 'include'
         },
-        3, // 3 tentativas
+        1, // Apenas 1 retry (2 tentativas total)
         true // usar cache
       );
       const mapped = data.map(b => {
