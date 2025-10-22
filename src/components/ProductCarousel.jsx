@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useSwipeable } from "react-swipeable";
+import OptimizedImage from "./OptimizedImage";
+import { getImageUrl } from "../utils/imageUtils";
 
 export default function ProductCarousel({ images, current, setCurrent, name }) {
   const handlePrev = () => setCurrent(prev => (prev === 0 ? images.length - 1 : prev - 1));
@@ -26,18 +28,22 @@ export default function ProductCarousel({ images, current, setCurrent, name }) {
           <FaChevronLeft size={15} className="text-white" />
         </button>
         <AnimatePresence mode="wait">
-          <motion.img
+          <motion.div
             key={current}
-            src={images[current]}
-            alt={name}
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.3, type: "spring" }}
-            className="object-cover w-full h-full rounded-lg shadow-lg bg-white"
-            loading="eager"
-            decoding="async"
-          />
+            className="w-full h-full"
+          >
+            <OptimizedImage
+              image={images[current]}
+              alt={name}
+              className="object-cover w-full h-full rounded-lg shadow-lg bg-white"
+              priority={true} // Imagem principal do produto
+              useThumbnail={false} // Usar imagem completa, não thumbnail
+            />
+          </motion.div>
         </AnimatePresence>
         <button
           className="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full p-2 shadow cursor-pointer transition"
@@ -57,14 +63,14 @@ export default function ProductCarousel({ images, current, setCurrent, name }) {
             }`}
             aria-label={`Selecionar imagem ${idx + 1}`}
           >
-            <img
-              src={img}
+            <OptimizedImage
+              image={img}
               alt={`Miniatura ${idx + 1}`}
               className="w-14 h-14 object-cover"
-              width="56"
-              height="56"
-              loading="lazy"
-              decoding="async"
+              width={56}
+              height={56}
+              useThumbnail={true} // Usar thumbnail para miniaturas
+              priority={false}
             />
           </button>
         ))}

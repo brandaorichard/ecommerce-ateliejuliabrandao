@@ -1,48 +1,53 @@
 import React from 'react';
+import { getAllImageFormats } from '../utils/imageUtils';
 
 /**
  * Componente de imagem otimizada com suporte a WebP/AVIF e lazy loading
- * @param {string} src - URL da imagem original
+ * Suporta formato antigo (string) e novo (object com múltiplos formatos)
+ * 
+ * @param {string|object} image - URL da imagem (string) ou objeto com múltiplos formatos
  * @param {string} alt - Texto alternativo
  * @param {number} width - Largura da imagem
  * @param {number} height - Altura da imagem
  * @param {string} className - Classes CSS
  * @param {boolean} priority - Se true, carrega com eager loading (para LCP)
  * @param {string} sizes - Atributo sizes para srcset responsivo
- * @param {boolean} usePicture - Se true, usa <picture> com WebP/AVIF
+ * @param {boolean} useThumbnail - Se true, usa versão thumbnail (para listagens)
  */
 export default function OptimizedImage({ 
-  src, 
+  image, 
   alt, 
   width, 
   height, 
   className,
   priority = false,
   sizes,
-  usePicture = false
+  useThumbnail = false
 }) {
-  // Gera URLs de WebP e AVIF se a imagem for do Google Cloud Storage
-  const getOptimizedUrls = (originalSrc) => {
-    if (!originalSrc || !originalSrc.includes('storage.googleapis.com')) {
-      return { webp: null, avif: null };
-    }
-    
-    // Para Google Cloud Storage, podemos tentar adicionar parâmetros de transformação
-    // ou simplesmente retornar null para usar a imagem original
-    // Nota: Isso funcionará melhor quando o backend implementar geração de WebP/AVIF
-    return { webp: null, avif: null };
-  };
+  // Extrai todos os formatos disponíveis
+  const { original, webp, avif, thumb } = getAllImageFormats(image);
+  
+  // Se useThumbnail = true e thumbnail existe, usa ele como padrão
+  const defaultSrc = useThumbnail && thumb ? thumb : original;
+  
+  // Se não tem nenhuma URL, não renderiza
+  if (!defaultSrc) {
+    return null;
+  }
 
-  const { webp, avif } = getOptimizedUrls(src);
-
-  // Se usePicture está habilitado e temos formatos otimizados, usa <picture>
-  if (usePicture && (webp || avif)) {
+  // Se tem formatos modernos (WebP ou AVIF), usa <picture> para suporte progressivo
+  if (webp || avif) {
     return (
       <picture>
+        {/* AVIF - Melhor compressão (browsers modernos) */}
         {avif && <source srcSet={avif} type="image/avif" sizes={sizes} />}
+        
+        {/* WebP - Boa compressão (97% dos browsers) */}
         {webp && <source srcSet={webp} type="image/webp" sizes={sizes} />}
+        
+        {/* JPEG/PNG - Fallback universal */}
         <img 
-          src={src} 
+          src={defaultSrc} 
           alt={alt}
           width={width}
           height={height}
@@ -55,10 +60,10 @@ export default function OptimizedImage({
     );
   }
 
-  // Fallback: imagem simples com otimizações
+  // Fallback: imagem simples (formato antigo ou sem WebP/AVIF)
   return (
     <img 
-      src={src} 
+      src={defaultSrc} 
       alt={alt}
       width={width}
       height={height}
