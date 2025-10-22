@@ -4,14 +4,29 @@ import { motion } from "framer-motion";
 import { useCarousel } from "../hooks/useCarousel";
 
 function useImagesPerSlide() {
-  const [imagesPerSlide, setImagesPerSlide] = useState(window.innerWidth >= 768 ? 3 : 1);
+  const [imagesPerSlide, setImagesPerSlide] = useState(
+    typeof window !== 'undefined' && window.innerWidth >= 768 ? 3 : 1
+  );
 
   useEffect(() => {
-    const handleResize = () => {
-      setImagesPerSlide(window.innerWidth >= 768 ? 3 : 1);
+    // Usar ResizeObserver para evitar reflow forçado
+    const updateImagesPerSlide = () => {
+      const isMdOrLarger = window.matchMedia('(min-width: 768px)').matches;
+      setImagesPerSlide(isMdOrLarger ? 3 : 1);
     };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+
+    // Criar media query listener (mais performático que resize event)
+    const mediaQuery = window.matchMedia('(min-width: 768px)');
+    
+    // Moderna API (Safari 14+)
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', updateImagesPerSlide);
+      return () => mediaQuery.removeEventListener('change', updateImagesPerSlide);
+    } else {
+      // Fallback para navegadores antigos
+      mediaQuery.addListener(updateImagesPerSlide);
+      return () => mediaQuery.removeListener(updateImagesPerSlide);
+    }
   }, []);
 
   return imagesPerSlide;
@@ -32,8 +47,24 @@ export default function Hero() {
     return acc;
   }, []);
 
-  // Swipe only on mobile (<1000px)
-  const isMobile = window.innerWidth < 1000;
+  // Detectar mobile usando media query ao invés de window.innerWidth
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 999px)').matches
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 999px)');
+    const handleChange = (e) => setIsMobile(e.matches);
+    
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } else {
+      mediaQuery.addListener(handleChange);
+      return () => mediaQuery.removeListener(handleChange);
+    }
+  }, []);
+
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => isMobile && next(),
     onSwipedRight: () => isMobile && prev(),
@@ -153,18 +184,25 @@ export default function Hero() {
               className="flex w-full h-full"
               style={{ width: `${100 / totalSlides}%` }}
             >
-              {slide.map((imageUrl, idx) => (
-                <img
-                  key={`${imageUrl}-${idx}`}
-                  src={imageUrl}
-                  alt={`Carousel image ${idx + 1}`}
-                  className="w-full h-full object-cover"
-                  style={{ flex: 1 }}
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                />
-              ))}
+              {slide.map((imageUrl, idx) => {
+                // Primeira imagem do primeiro slide é o LCP - priorizar
+                const isFirstImage = slideIdx === 0 && idx === 0;
+                return (
+                  <img
+                    key={`${imageUrl}-${idx}`}
+                    src={imageUrl}
+                    alt={`Carousel image ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                    style={{ flex: 1 }}
+                    loading={isFirstImage ? "eager" : "lazy"}
+                    fetchpriority={isFirstImage ? "high" : "auto"}
+                    decoding="async"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                );
+              })}
             </div>
           ))}
         </motion.div>

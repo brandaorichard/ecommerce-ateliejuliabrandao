@@ -14,6 +14,8 @@ export default function UserAvatar({ user, size = 40 }) {
       <img
         src={user.profilePicture}
         alt={user.nome}
+        width={size}
+        height={size}
         style={{
           width: size,
           height: size,
@@ -21,6 +23,9 @@ export default function UserAvatar({ user, size = 40 }) {
           objectFit: 'cover',
           border: '2px solid #7a4fcf'
         }}
+        loading="lazy"
+        decoding="async"
+        referrerPolicy="no-referrer"
       />
     );
   }

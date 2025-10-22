@@ -35,6 +35,8 @@ export default function ProductCarousel({ images, current, setCurrent, name }) {
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.3, type: "spring" }}
             className="object-cover w-full h-full rounded-lg shadow-lg bg-white"
+            loading="eager"
+            decoding="async"
           />
         </AnimatePresence>
         <button
@@ -59,6 +61,10 @@ export default function ProductCarousel({ images, current, setCurrent, name }) {
               src={img}
               alt={`Miniatura ${idx + 1}`}
               className="w-14 h-14 object-cover"
+              width="56"
+              height="56"
+              loading="lazy"
+              decoding="async"
             />
           </button>
         ))}

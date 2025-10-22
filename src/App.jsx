@@ -115,37 +115,39 @@ function SiteShell({ cartOpen, setCartOpen }) {
       <Header />
       <ToastContainer onViewCart={() => setCartOpen(true)} />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
-      <Suspense fallback={<LoadingSpinner />}>
-        <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/categoria1" element={<Category1Page />} />
-        <Route path="/categoria2" element={<Category2Page />} />
-        <Route path="/categoria3" element={<Category3Page />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        {/* Rota para confirmação de email */}
-        <Route path="/confirm-email/:token" element={<ConfirmEmailPage />} />
-        <Route path="/confirm-email" element={<ConfirmEmailInstructionPage />} />
-        <Route path="/meus-pedidos" element={<OrdersPage />} />
-        <Route path="/minha-conta" element={<MinhaContaPage />} />
-        <Route path="/pedido/:id" element={<OrderDetailPage />} />
-        <Route path="/produto/:slug" element={<ProductPage onOpenCart={() => setCartOpen(true)} />} />
-        <Route path="/pedido/:id/pendente" element={<PedidoSucessoRedirect />} />
-        <Route path="/pedido/:id/sucesso" element={<PedidoSucessoRedirect />} />
-        <Route path="/pedido/:id/erro" element={<PedidoSucessoRedirect />} />
-        {/* Rota para confirmação de alteração de email */}
-        <Route path="/confirm-email-change/:token" element={<ConfirmEmailChangePage />} />
-        {/* Rota de avaliação de produto */}
-        <Route path="/avaliar/:orderId/:babyId" element={<EvaluateOrderPage />} />
-        {/* Rotas de recuperação de senha */}
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-        {/* Rotas legais */}
-        <Route path="/politica-privacidade" element={<PoliticaPrivacidadePage />} />
-        <Route path="/termos-uso" element={<TermosUsoPage />} />
-        <Route path="/politica-trocas" element={<PoliticaTrocasPage />} />
-      </Routes>
-      </Suspense>
+      <main>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/categoria1" element={<Category1Page />} />
+          <Route path="/categoria2" element={<Category2Page />} />
+          <Route path="/categoria3" element={<Category3Page />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          {/* Rota para confirmação de email */}
+          <Route path="/confirm-email/:token" element={<ConfirmEmailPage />} />
+          <Route path="/confirm-email" element={<ConfirmEmailInstructionPage />} />
+          <Route path="/meus-pedidos" element={<OrdersPage />} />
+          <Route path="/minha-conta" element={<MinhaContaPage />} />
+          <Route path="/pedido/:id" element={<OrderDetailPage />} />
+          <Route path="/produto/:slug" element={<ProductPage onOpenCart={() => setCartOpen(true)} />} />
+          <Route path="/pedido/:id/pendente" element={<PedidoSucessoRedirect />} />
+          <Route path="/pedido/:id/sucesso" element={<PedidoSucessoRedirect />} />
+          <Route path="/pedido/:id/erro" element={<PedidoSucessoRedirect />} />
+          {/* Rota para confirmação de alteração de email */}
+          <Route path="/confirm-email-change/:token" element={<ConfirmEmailChangePage />} />
+          {/* Rota de avaliação de produto */}
+          <Route path="/avaliar/:orderId/:babyId" element={<EvaluateOrderPage />} />
+          {/* Rotas de recuperação de senha */}
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+          {/* Rotas legais */}
+          <Route path="/politica-privacidade" element={<PoliticaPrivacidadePage />} />
+          <Route path="/termos-uso" element={<TermosUsoPage />} />
+          <Route path="/politica-trocas" element={<PoliticaTrocasPage />} />
+        </Routes>
+        </Suspense>
+      </main>
       <Footer />
       <SocialMediasSection />
       <CookieConsent />
