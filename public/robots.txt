@@ -1,4 +1,12 @@
-# Permitir todos os bots
+# Permitir Googlebot (índice geral)
+User-agent: Googlebot
+Allow: /
+
+# Permitir StoreBot (Google Merchant Center - CRÍTICO)
+User-agent: StoreBot
+Allow: /
+
+# Outros crawlers
 User-agent: *
 Allow: /
 
