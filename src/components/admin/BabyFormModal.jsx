@@ -69,16 +69,13 @@ export default function BabyFormModal({ open, onClose, onSubmit, initial }) {
       setExistingImages((initial.images || []).map(normalizeImage).filter(Boolean));
       setNewFiles([]);
       setNewPreviews([]);
-      // nada a fazer
     } else {
       setForm(f => ({ ...f, images: [] }));
       setExistingImages([]);
       setNewFiles([]);
       setNewPreviews([]);
-      // nada a fazer
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initial]);
+  }, [initial?._id]);
 
   if (!open) return null;
 

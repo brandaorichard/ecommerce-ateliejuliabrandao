@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
 import BreadcrumbItensAdmin from "../../components/BreadcrumbItensAdmin";
 import BabyFormModal from "../../components/admin/BabyFormModal";
 import { loadBabies, addBaby, editBaby, removeBaby, updateStatus, setItemLoading } from "../../redux/adminBabiesSlice";
 import { showToast } from "../../redux/toastSlice";
-import { motion } from "framer-motion";
 
 export default function AdminBabiesPage() {
   const dispatch = useDispatch();
