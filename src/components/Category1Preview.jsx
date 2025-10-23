@@ -29,6 +29,7 @@ export default function Category1Preview() {
   const error = errorFeatured || errorBabies;
   
   const [mobileIndex, setMobileIndex] = useState(0);
+  const [desktopIndex, setDesktopIndex] = useState(0);
 
   const width = useWindowWidth();
   const isBetween768And1100 = width >= 768 && width <= 1100;
@@ -37,6 +38,7 @@ export default function Category1Preview() {
   // Resetar índice ao mudar dados
   useEffect(() => {
     setMobileIndex(0);
+    setDesktopIndex(0);
   }, [previewBabies.length]);
 
   // Auto-slide mobile
@@ -46,7 +48,19 @@ export default function Category1Preview() {
       setMobileIndex(prev =>
         prev + 1 < Math.max(previewBabies.length - 1, 1) ? prev + 1 : 0
       );
-    }, 5000);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [isMobile, previewBabies.length]);
+
+  // Auto-slide desktop
+  useEffect(() => {
+    if (isMobile || previewBabies.length <= 5) return;
+    const interval = setInterval(() => {
+      setDesktopIndex(prev => {
+        const maxIndex = Math.max(0, previewBabies.length - 5);
+        return prev + 1 <= maxIndex ? prev + 1 : 0;
+      });
+    }, 3000);
     return () => clearInterval(interval);
   }, [isMobile, previewBabies.length]);
 
@@ -73,10 +87,22 @@ export default function Category1Preview() {
       Math.min(prev + 1, Math.max(previewBabies.length - 2, 0))
     );
 
+  const handleDesktopPrev = () => setDesktopIndex(prev => Math.max(prev - 1, 0));
+  const handleDesktopNext = () => {
+    const maxIndex = Math.max(0, previewBabies.length - 5);
+    setDesktopIndex(prev => Math.min(prev + 1, maxIndex));
+  };
+
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => handleNext(),
     onSwipedRight: () => handlePrev(),
     trackMouse: false,
+  });
+
+  const desktopSwipeHandlers = useSwipeable({
+    onSwipedLeft: () => handleDesktopNext(),
+    onSwipedRight: () => handleDesktopPrev(),
+    trackMouse: true,
   });
 
   return (
@@ -165,23 +191,26 @@ export default function Category1Preview() {
 
       {/* DESKTOP */}
       {!loading && !error && previewBabies.length > 0 && (
-        <div
-          className="hidden md:grid gap-6"
-          style={{
-            gridTemplateColumns: isBetween768And1100
-              ? "repeat(auto-fit, minmax(220px, 1fr))"
-              : "repeat(5, minmax(0, 1fr))",
-          }}
-        >
-          {previewBabies.slice(0, 5).map(baby => (
-            <div key={baby.id} className="w-full">
-              <RebornCard
-                baby={baby}
-                onClick={() => navigate(`/produto/${baby.slug}`)}
-                mini
-              />
-            </div>
-          ))}
+        <div className="hidden md:block relative" {...desktopSwipeHandlers}>
+          {/* Grid de cards */}
+          <div
+            className="grid gap-6"
+            style={{
+              gridTemplateColumns: isBetween768And1100
+                ? "repeat(auto-fit, minmax(220px, 1fr))"
+                : "repeat(5, minmax(0, 1fr))",
+            }}
+          >
+            {previewBabies.slice(desktopIndex, desktopIndex + 5).map(baby => (
+              <div key={baby.id} className="w-full">
+                <RebornCard
+                  baby={baby}
+                  onClick={() => navigate(`/produto/${baby.slug}`)}
+                  mini
+                />
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

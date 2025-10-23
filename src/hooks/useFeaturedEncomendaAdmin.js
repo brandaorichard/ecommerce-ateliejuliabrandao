@@ -148,7 +148,8 @@ export const useFeaturedEncomendaAdmin = () => {
       });
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`HTTP error! status: ${response.status} - ${errorData.message || ''}`);
       }
       
       const data = await response.json();
