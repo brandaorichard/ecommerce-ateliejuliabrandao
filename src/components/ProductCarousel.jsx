@@ -2,7 +2,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useSwipeable } from "react-swipeable";
 import OptimizedImage from "./OptimizedImage";
-import { getImageUrl } from "../utils/imageUtils";
 
 export default function ProductCarousel({ images, current, setCurrent, name }) {
   const handlePrev = () => setCurrent(prev => (prev === 0 ? images.length - 1 : prev - 1));
@@ -41,7 +40,6 @@ export default function ProductCarousel({ images, current, setCurrent, name }) {
               alt={name}
               className="object-cover w-full h-full rounded-lg shadow-lg bg-white"
               priority={true} // Imagem principal do produto
-              useThumbnail={false} // Usar imagem completa, não thumbnail
             />
           </motion.div>
         </AnimatePresence>
@@ -69,7 +67,6 @@ export default function ProductCarousel({ images, current, setCurrent, name }) {
               className="w-14 h-14 object-cover"
               width={56}
               height={56}
-              useThumbnail={true} // Usar thumbnail para miniaturas
               priority={false}
             />
           </button>

@@ -48,7 +48,6 @@ export default function RebornCard({ baby, onClick, context, mini }) {
           className={`w-full object-cover h-[275px] md:h-[320px] ${isIndisponivel ? "opacity-70" : ""}`}
           width={200}
           height={320}
-          useThumbnail={true} // Usa thumbnail em listagens (95% menor)
           priority={false}
         />
         {baby.discount && (

@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { useSwipeable } from "react-swipeable";
 import { motion } from "framer-motion";
 import { useCarousel } from "../hooks/useCarousel";
-import { getImageUrl } from "../utils/imageUtils";
 
 function useImagesPerSlide() {
   const [imagesPerSlide, setImagesPerSlide] = useState(
@@ -185,37 +184,8 @@ export default function Hero() {
               className="flex w-full h-full"
               style={{ width: `${100 / totalSlides}%` }}
             >
-              {slide.map((imageData, idx) => {
-                // Primeira imagem do primeiro slide é o LCP - priorizar
+              {slide.map((imageUrl, idx) => {
                 const isFirstImage = slideIdx === 0 && idx === 0;
-                // Suporta formato antigo (string) e novo (object)
-                const imageUrl = getImageUrl(imageData, 'original');
-                const webpUrl = typeof imageData === 'object' ? imageData?.webp : null;
-                const avifUrl = typeof imageData === 'object' ? imageData?.avif : null;
-                
-                // Se tem formatos modernos, usa <picture>
-                if (webpUrl || avifUrl) {
-                  return (
-                    <picture key={`${imageUrl}-${idx}`} style={{ flex: 1 }}>
-                      {avifUrl && <source srcSet={avifUrl} type="image/avif" />}
-                      {webpUrl && <source srcSet={webpUrl} type="image/webp" />}
-                      <img
-                        src={imageUrl}
-                        alt={`Carousel image ${idx + 1}`}
-                        className="w-full h-full object-cover"
-                        style={{ width: '100%', height: '100%' }}
-                        loading={isFirstImage ? "eager" : "lazy"}
-                        fetchpriority={isFirstImage ? "high" : "auto"}
-                        decoding="async"
-                        onError={(e) => {
-                          e.target.parentElement.style.display = 'none';
-                        }}
-                      />
-                    </picture>
-                  );
-                }
-                
-                // Fallback: imagem simples (formato antigo)
                 return (
                   <img
                     key={`${imageUrl}-${idx}`}
