@@ -1,6 +1,5 @@
 // components/RebornCard.jsx
 import { trackSelectItem } from '../utils/analytics';
-import OptimizedImage from './OptimizedImage';
 
 export default function RebornCard({ baby, onClick, context, mini }) {
   const cover = baby.img || (baby.images && baby.images[0]) || "";
@@ -42,13 +41,15 @@ export default function RebornCard({ baby, onClick, context, mini }) {
       }}
     >
       <div className="relative">
-        <OptimizedImage
-          image={cover}
+        <img
+          src={cover}
           alt={baby.name}
           className={`w-full object-cover h-[275px] md:h-[320px] ${isIndisponivel ? "opacity-70" : ""}`}
           width={200}
           height={320}
-          priority={false}
+          loading="lazy"
+          decoding="async"
+          fetchpriority="auto"
         />
         {baby.discount && (
           <span className="absolute top-2 left-2 bg-[#ae95d9] text-white text-xs font-bold px-2 py-1 rounded">

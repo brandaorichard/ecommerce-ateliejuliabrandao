@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { motion } from "framer-motion";
-import axios from "axios";
+import { motion as fmMotion } from "framer-motion";
+import { removeBabyImage } from "../../services/adminBabyService";
 
 function formatCurrencyInput(value) {
   // Remove tudo que não é número
@@ -23,7 +23,7 @@ function formatCurrencyInput(value) {
 }
 
 export default function BabyFormModal({ open, onClose, onSubmit, initial }) {
-  const token = useSelector(s => s.auth.token);
+  const MotionDiv = fmMotion.div;
   const [form, setForm] = useState({
     nome: "",
     slug: "",
@@ -35,11 +35,23 @@ export default function BabyFormModal({ open, onClose, onSubmit, initial }) {
     status: "disponivel", // Adicionar status ao estado inicial
     images: []
   });
-  const [preview, setPreview] = useState([]);
-  const [removing, setRemoving] = useState(false);
-  const [deletedImages, setDeletedImages] = useState([]); // NOVO
+  const [existingImages, setExistingImages] = useState([]);
+  const [newFiles, setNewFiles] = useState([]);
+  const [newPreviews, setNewPreviews] = useState([]);
+  const token = useSelector(s => s.auth.token);
+  const [removing, setRemoving] = useState(null);
 
   useEffect(() => {
+    // cleanup previews anteriores
+    return () => {
+      newPreviews.forEach(url => URL.revokeObjectURL(url));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    // Revoga URLs antigas antes de trocar
+    newPreviews.forEach(url => URL.revokeObjectURL(url));
     if (initial) {
       setForm({
         nome: initial.name || "",
@@ -49,16 +61,23 @@ export default function BabyFormModal({ open, onClose, onSubmit, initial }) {
         installment: initial.installment || "",
         boxType: initial.boxType || "",
         description: initial.description || "",
-        status: initial.status || "disponivel", // Carregar status existente
+        status: initial.status || "disponivel",
         images: []
       });
-      setPreview(initial.images || []);
-      setDeletedImages([]); // Limpa ao abrir novo modal
+      // Normaliza imagens pré-existentes para sempre serem URLs em string
+      const normalizeImage = (img) => typeof img === "string" ? img : (img?.original || img?.webp || img?.thumb || img?.avif || "");
+      setExistingImages((initial.images || []).map(normalizeImage).filter(Boolean));
+      setNewFiles([]);
+      setNewPreviews([]);
+      // nada a fazer
     } else {
       setForm(f => ({ ...f, images: [] }));
-      setPreview([]);
-      setDeletedImages([]);
+      setExistingImages([]);
+      setNewFiles([]);
+      setNewPreviews([]);
+      // nada a fazer
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initial]);
 
   if (!open) return null;
@@ -74,25 +93,32 @@ export default function BabyFormModal({ open, onClose, onSubmit, initial }) {
 
   function handleFiles(e) {
     const files = Array.from(e.target.files);
-    setForm(f => ({ ...f, images: [...f.images, ...files] }));
-    setPreview(prev => [...prev, ...files.map(f => URL.createObjectURL(f))]);
+    // Substitui seleção atual (bulk replace)
+    // Revoga URLs anteriores
+    newPreviews.forEach(url => URL.revokeObjectURL(url));
+    setNewFiles(files);
+    const urls = files.map(f => URL.createObjectURL(f));
+    setNewPreviews(urls);
   }
 
-  async function handleRemoveImage(url) {
+  async function handleRemoveExisting(url) {
     if (!initial?._id) return;
     setRemoving(url);
     try {
-      await axios.put(
-        `https://atelie-juliabrandao-backend-production.up.railway.app/api/admin/bebes/${initial._id}/remove-image`,
-        { url },
-        { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }
-      );
-      setDeletedImages(prev => [...prev, url]); // Marca como deletada
-    } catch (err) {
+      await removeBabyImage(token, initial._id, url);
+      setExistingImages(prev => prev.filter(img => img !== url));
+    } catch {
       alert("Erro ao remover imagem.");
     } finally {
-      setRemoving(false);
+      setRemoving(null);
     }
+  }
+
+  function handleRemoveNew(index) {
+    setNewFiles(prev => prev.filter((_, i) => i !== index));
+    const url = newPreviews[index];
+    if (url) URL.revokeObjectURL(url);
+    setNewPreviews(prev => prev.filter((_, i) => i !== index));
   }
 
   function handleSubmit(e) {
@@ -107,20 +133,18 @@ export default function BabyFormModal({ open, onClose, onSubmit, initial }) {
       alert("Selecione um tipo de caixa válido.");
       return;
     }
-    // Remove imagens deletadas do preview antes de enviar
-    setPreview(prev => prev.filter(img => !deletedImages.includes(img)));
-    onSubmit(form);
+    onSubmit({ ...form, images: newFiles });
   }
 
   return (
-    <motion.div
+    <MotionDiv
       initial={{ opacity: 0, scale: 0.97 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
       className="fixed inset-0 z-50 flex"
     >
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0, x: 40 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 40 }}
@@ -253,54 +277,61 @@ export default function BabyFormModal({ open, onClose, onSubmit, initial }) {
               onChange={handleFiles}
               className="text-sm"
             />
+            <p className="text-[11px] text-neutral-600 mt-1">Ao salvar, novas imagens substituirão todas as atuais.</p>
             <div className="flex flex-wrap gap-2 mt-2">
               {/* Imagens já existentes */}
-              {initial?.images?.map((src, i) => (
+              {existingImages.map((src) => (
                 <div key={src} className="relative group">
                   <img
                     src={src}
                     alt=""
-                    className={`w-16 h-16 object-cover rounded border border-[#e0d6f7] transition-all duration-300
-                      ${deletedImages.includes(src) ? "opacity-40 grayscale" : ""}
-                    `}
+                    className="w-16 h-16 object-cover rounded border border-[#e0d6f7] transition-all duration-300"
                   />
-                  {!deletedImages.includes(src) && (
-                    <button
-                      type="button"
-                      disabled={removing === src}
-                      onClick={() => handleRemoveImage(src)}
-                      className="absolute top-1 right-1 bg-white/80 rounded-full p-1 border border-[#e0d6f7] opacity-80 hover:opacity-100 transition-opacity"
-                      title="Remover imagem"
-                    >
-                      <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
-                        <path
-                          d="M6 7h12M9 7v10m6-10v10M4 7h16l-1.5 12.5A2 2 0 0 1 16.5 21h-9a2 2 0 0 1-2-1.5L4 7z"
-                          stroke="#e53e3e"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </button>
-                  )}
-                  {deletedImages.includes(src) && (
-                    <span className="absolute top-1 right-1 bg-red-100 text-red-600 rounded-full px-2 py-0.5 text-[10px] font-semibold opacity-80">
-                      Removida
-                    </span>
-                  )}
+                  <button
+                    type="button"
+                    disabled={removing === src}
+                    onClick={() => handleRemoveExisting(src)}
+                    className="absolute top-1 right-1 bg-white/80 rounded-full p-1 border border-[#e0d6f7] opacity-80 hover:opacity-100 transition-opacity"
+                    title="Remover imagem"
+                  >
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                      <path
+                        d="M6 7h12M9 7v10m6-10v10M4 7h16l-1.5 12.5A2 2 0 0 1 16.5 21h-9a2 2 0 0 1-2-1.5L4 7z"
+                        stroke="#e53e3e"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
                 </div>
               ))}
               {/* Novas imagens (pré-visualização) */}
-              {preview
-                .filter(src => !initial?.images?.includes(src))
-                .map((src, i) => (
+              {newPreviews.map((src, i) => (
+                <div key={src} className="relative group">
                   <img
-                    key={i}
                     src={src}
                     alt=""
                     className="w-16 h-16 object-cover rounded border border-[#e0d6f7]"
                   />
-                ))}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveNew(i)}
+                    className="absolute top-1 right-1 bg-white/80 rounded-full p-1 border border-[#e0d6f7] opacity-80 hover:opacity-100 transition-opacity"
+                    title="Remover nova imagem"
+                  >
+                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                      <path
+                        d="M6 7h12M9 7v10m6-10v10M4 7h16l-1.5 12.5A2 2 0 0 1 16.5 21h-9a2 2 0 0 1-2-1.5L4 7z"
+                        stroke="#e53e3e"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
           <div className="flex gap-2 pt-2">
@@ -319,7 +350,7 @@ export default function BabyFormModal({ open, onClose, onSubmit, initial }) {
             </button>
           </div>
         </form>
-      </motion.div>
-    </motion.div>
+      </MotionDiv>
+    </MotionDiv>
   );
 }

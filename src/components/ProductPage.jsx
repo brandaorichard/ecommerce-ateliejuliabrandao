@@ -82,6 +82,22 @@ export default function ProductPage({ onOpenCart }) {
   const prontaEntrega = baby.category === "pronta_entrega";
   const porSemelhanca = baby.category === "semelhanca";
   const isIndisponivel = baby.status === "indisponivel";
+  const breadcrumbItems = prontaEntrega
+    ? [
+        { label: "Início", to: "/" },
+        { label: "Bebes Reborn a Pronta Entrega", to: "/categoria2" },
+        { label: baby.name }
+      ]
+    : porSemelhanca
+    ? [
+        { label: "Início", to: "/" },
+        { label: "Bebes Reborn por Semelhança", to: "/categoria3" },
+      ]
+    : [
+        { label: "Início", to: "/" },
+        { label: "Bebês Reborn Sob Encomenda", to: "/categoria1" },
+        { label: baby.name }
+      ];
 
   // Se for produto indisponível, mostrar mensagem
   if (prontaEntrega && isIndisponivel) {
@@ -129,23 +145,7 @@ export default function ProductPage({ onOpenCart }) {
     );
   }
 
-  const breadcrumbItems = prontaEntrega
-    ? [
-        { label: "Início", to: "/" },
-        { label: "Bebes Reborn a Pronta Entrega", to: "/categoria2" },
-        { label: baby.name }
-      ]
-    : porSemelhanca
-    ? [
-        { label: "Início", to: "/" },
-        { label: "Bebes Reborn por Semelhança", to: "/categoria3" },
-        
-      ]
-    : [
-        { label: "Início", to: "/" },
-        { label: "Bebês Reborn Sob Encomenda", to: "/categoria1" },
-        { label: baby.name }
-      ];
+  
 
       
   // Fluxo especial para "semelhanca"

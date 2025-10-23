@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useSwipeable } from "react-swipeable";
-import OptimizedImage from "./OptimizedImage";
 
 export default function ProductCarousel({ images, current, setCurrent, name }) {
   const handlePrev = () => setCurrent(prev => (prev === 0 ? images.length - 1 : prev - 1));
@@ -12,6 +11,8 @@ export default function ProductCarousel({ images, current, setCurrent, name }) {
     onSwipedRight: handlePrev,
     trackMouse: false,
   });
+
+  const MotionDiv = motion.div;
 
   return (
     <div className="w-full md:w-[420px] flex flex-col items-center">
@@ -27,7 +28,7 @@ export default function ProductCarousel({ images, current, setCurrent, name }) {
           <FaChevronLeft size={15} className="text-white" />
         </button>
         <AnimatePresence mode="wait">
-          <motion.div
+          <MotionDiv
             key={current}
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
@@ -35,13 +36,15 @@ export default function ProductCarousel({ images, current, setCurrent, name }) {
             transition={{ duration: 0.3, type: "spring" }}
             className="w-full h-full"
           >
-            <OptimizedImage
-              image={images[current]}
+            <img
+              src={images[current]}
               alt={name}
               className="object-cover w-full h-full rounded-lg shadow-lg bg-white"
-              priority={true} // Imagem principal do produto
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
             />
-          </motion.div>
+          </MotionDiv>
         </AnimatePresence>
         <button
           className="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full p-2 shadow cursor-pointer transition"
@@ -61,13 +64,15 @@ export default function ProductCarousel({ images, current, setCurrent, name }) {
             }`}
             aria-label={`Selecionar imagem ${idx + 1}`}
           >
-            <OptimizedImage
-              image={img}
+            <img
+              src={img}
               alt={`Miniatura ${idx + 1}`}
               className="w-14 h-14 object-cover"
               width={56}
               height={56}
-              priority={false}
+              loading="lazy"
+              decoding="async"
+              fetchpriority="auto"
             />
           </button>
         ))}
