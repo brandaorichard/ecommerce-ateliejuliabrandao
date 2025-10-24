@@ -41,18 +41,59 @@ export const useFeaturedEncomendaAdmin = () => {
       const data = await response.json();
       
       if (data.success && data.data) {
-        // Mapear produtos do backend (babyId aninhado) para estrutura do frontend
-        const mappedData = {
-          ...data.data,
-          products: data.data.products?.map(p => ({
-            ...p.babyId, // Extrai dados do babyId
-            _id: p._id, // ID do produto na lista (para remoção)
-            displayOrder: p.displayOrder,
-            isActive: p.isActive,
-            addedAt: p.addedAt
-          })) || []
-        };
-        setFeaturedData(mappedData);
+        // Se os produtos têm dados completos, usar diretamente
+        if (data.data.products?.some(p => p.name && p.price)) {
+          const mappedData = {
+            ...data.data,
+            products: data.data.products?.map(p => {
+              if (p.name && p.price) {
+                return {
+                  ...p,
+                  _id: p._id,
+                  displayOrder: p.displayOrder,
+                  isActive: p.isActive,
+                  addedAt: p.addedAt
+                };
+              }
+              return null;
+            }).filter(Boolean) || []
+          };
+          setFeaturedData(mappedData);
+        } else {
+          // Se os produtos só têm IDs, buscar dados completos
+          const productIds = data.data.products?.map(p => p.babyId).filter(Boolean) || [];
+          
+          if (productIds.length > 0) {
+            const babiesResponse = await authFetch(`${API_BASE_URL}/babies`);
+            if (babiesResponse.ok) {
+              const allBabies = await babiesResponse.json();
+              
+              const babiesMap = new Map(allBabies.map(b => [b._id || b.id, b]));
+              
+              const mappedData = {
+                ...data.data,
+                products: data.data.products?.map(p => {
+                  const babyData = babiesMap.get(p.babyId);
+                  if (babyData) {
+                    return {
+                      ...babyData,
+                      _id: p._id,
+                      displayOrder: p.displayOrder,
+                      isActive: p.isActive,
+                      addedAt: p.addedAt
+                    };
+                  }
+                  return null;
+                }).filter(Boolean) || []
+              };
+              setFeaturedData(mappedData);
+            } else {
+              setFeaturedData(data.data);
+            }
+          } else {
+            setFeaturedData(data.data);
+          }
+        }
       } else {
         setFeaturedData(null);
       }
@@ -113,20 +154,59 @@ export const useFeaturedEncomendaAdmin = () => {
       const data = await response.json();
       
       if (data.success) {
-        // Mapear produtos do backend para estrutura do frontend
-        const mappedData = {
-          ...data.data,
-          products: data.data.products?.map(p => ({
-            ...p.babyId,
-            _id: p._id,
-            displayOrder: p.displayOrder,
-            isActive: p.isActive,
-            addedAt: p.addedAt
-          })) || []
-        };
-        setFeaturedData(mappedData);
+        // Se os produtos têm dados completos, usar diretamente
+        if (data.data.products?.some(p => p.name && p.price)) {
+          const mappedData = {
+            ...data.data,
+            products: data.data.products?.map(p => {
+              if (p.name && p.price) {
+                return {
+                  ...p,
+                  _id: p._id,
+                  displayOrder: p.displayOrder,
+                  isActive: p.isActive,
+                  addedAt: p.addedAt
+                };
+              }
+              return null;
+            }).filter(Boolean) || []
+          };
+          setFeaturedData(mappedData);
+        } else {
+          // Se os produtos só têm IDs, buscar dados completos
+          const productIds = data.data.products?.map(p => p.babyId).filter(Boolean) || [];
+          if (productIds.length > 0) {
+            const babiesResponse = await authFetch(`${API_BASE_URL}/babies`);
+            if (babiesResponse.ok) {
+              const allBabies = await babiesResponse.json();
+              const babiesMap = new Map(allBabies.map(b => [b._id || b.id, b]));
+              
+              const mappedData = {
+                ...data.data,
+                products: data.data.products?.map(p => {
+                  const babyData = babiesMap.get(p.babyId);
+                  if (babyData) {
+                    return {
+                      ...babyData,
+                      _id: p._id,
+                      displayOrder: p.displayOrder,
+                      isActive: p.isActive,
+                      addedAt: p.addedAt
+                    };
+                  }
+                  return null;
+                }).filter(Boolean) || []
+              };
+              setFeaturedData(mappedData);
+            } else {
+              setFeaturedData(data.data);
+            }
+          } else {
+            setFeaturedData(data.data);
+          }
+        }
         setError(null);
-        return { success: true, data: mappedData };
+        return { success: true, data: data.data };
       } else {
         throw new Error(data.message || 'Erro ao salvar');
       }
@@ -155,23 +235,62 @@ export const useFeaturedEncomendaAdmin = () => {
       const data = await response.json();
       
       if (data.success) {
-        // Mapear produtos do backend para estrutura do frontend
-        const mappedData = {
-          ...data.data,
-          products: data.data.products?.map(p => ({
-            ...p.babyId,
-            _id: p._id,
-            displayOrder: p.displayOrder,
-            isActive: p.isActive,
-            addedAt: p.addedAt
-          })) || []
-        };
-        setFeaturedData(mappedData);
+        // Se os produtos têm dados completos, usar diretamente
+        if (data.data.products?.some(p => p.name && p.price)) {
+          const mappedData = {
+            ...data.data,
+            products: data.data.products?.map(p => {
+              if (p.name && p.price) {
+                return {
+                  ...p,
+                  _id: p._id,
+                  displayOrder: p.displayOrder,
+                  isActive: p.isActive,
+                  addedAt: p.addedAt
+                };
+              }
+              return null;
+            }).filter(Boolean) || []
+          };
+          setFeaturedData(mappedData);
+        } else {
+          // Se os produtos só têm IDs, buscar dados completos
+          const productIds = data.data.products?.map(p => p.babyId).filter(Boolean) || [];
+          if (productIds.length > 0) {
+            const babiesResponse = await authFetch(`${API_BASE_URL}/babies`);
+            if (babiesResponse.ok) {
+              const allBabies = await babiesResponse.json();
+              const babiesMap = new Map(allBabies.map(b => [b._id || b.id, b]));
+              
+              const mappedData = {
+                ...data.data,
+                products: data.data.products?.map(p => {
+                  const babyData = babiesMap.get(p.babyId);
+                  if (babyData) {
+                    return {
+                      ...babyData,
+                      _id: p._id,
+                      displayOrder: p.displayOrder,
+                      isActive: p.isActive,
+                      addedAt: p.addedAt
+                    };
+                  }
+                  return null;
+                }).filter(Boolean) || []
+              };
+              setFeaturedData(mappedData);
+            } else {
+              setFeaturedData(data.data);
+            }
+          } else {
+            setFeaturedData(data.data);
+          }
+        }
         
         // Recarregar produtos disponíveis para atualizar a lista
         await fetchAvailableProducts();
         
-        return { success: true, data: mappedData };
+        return { success: true, data: data.data };
       } else {
         throw new Error(data.message || 'Erro ao adicionar produto');
       }
@@ -196,23 +315,62 @@ export const useFeaturedEncomendaAdmin = () => {
       const data = await response.json();
       
       if (data.success) {
-        // Mapear produtos do backend para estrutura do frontend
-        const mappedData = {
-          ...data.data,
-          products: data.data.products?.map(p => ({
-            ...p.babyId,
-            _id: p._id,
-            displayOrder: p.displayOrder,
-            isActive: p.isActive,
-            addedAt: p.addedAt
-          })) || []
-        };
-        setFeaturedData(mappedData);
+        // Se os produtos têm dados completos, usar diretamente
+        if (data.data.products?.some(p => p.name && p.price)) {
+          const mappedData = {
+            ...data.data,
+            products: data.data.products?.map(p => {
+              if (p.name && p.price) {
+                return {
+                  ...p,
+                  _id: p._id,
+                  displayOrder: p.displayOrder,
+                  isActive: p.isActive,
+                  addedAt: p.addedAt
+                };
+              }
+              return null;
+            }).filter(Boolean) || []
+          };
+          setFeaturedData(mappedData);
+        } else {
+          // Se os produtos só têm IDs, buscar dados completos
+          const productIds = data.data.products?.map(p => p.babyId).filter(Boolean) || [];
+          if (productIds.length > 0) {
+            const babiesResponse = await authFetch(`${API_BASE_URL}/babies`);
+            if (babiesResponse.ok) {
+              const allBabies = await babiesResponse.json();
+              const babiesMap = new Map(allBabies.map(b => [b._id || b.id, b]));
+              
+              const mappedData = {
+                ...data.data,
+                products: data.data.products?.map(p => {
+                  const babyData = babiesMap.get(p.babyId);
+                  if (babyData) {
+                    return {
+                      ...babyData,
+                      _id: p._id,
+                      displayOrder: p.displayOrder,
+                      isActive: p.isActive,
+                      addedAt: p.addedAt
+                    };
+                  }
+                  return null;
+                }).filter(Boolean) || []
+              };
+              setFeaturedData(mappedData);
+            } else {
+              setFeaturedData(data.data);
+            }
+          } else {
+            setFeaturedData(data.data);
+          }
+        }
         
         // Recarregar produtos disponíveis para atualizar as imagens
         await fetchAvailableProducts();
         
-        return { success: true, data: mappedData };
+        return { success: true, data: data.data };
       } else {
         throw new Error(data.message || 'Erro ao remover produto');
       }
@@ -244,19 +402,58 @@ export const useFeaturedEncomendaAdmin = () => {
       const data = await response.json();
       
       if (data.success) {
-        // Mapear produtos do backend para estrutura do frontend
-        const mappedData = {
-          ...data.data,
-          products: data.data.products?.map(p => ({
-            ...p.babyId,
-            _id: p._id,
-            displayOrder: p.displayOrder,
-            isActive: p.isActive,
-            addedAt: p.addedAt
-          })) || []
-        };
-        setFeaturedData(mappedData);
-        return { success: true, data: mappedData };
+        // Se os produtos têm dados completos, usar diretamente
+        if (data.data.products?.some(p => p.name && p.price)) {
+          const mappedData = {
+            ...data.data,
+            products: data.data.products?.map(p => {
+              if (p.name && p.price) {
+                return {
+                  ...p,
+                  _id: p._id,
+                  displayOrder: p.displayOrder,
+                  isActive: p.isActive,
+                  addedAt: p.addedAt
+                };
+              }
+              return null;
+            }).filter(Boolean) || []
+          };
+          setFeaturedData(mappedData);
+        } else {
+          // Se os produtos só têm IDs, buscar dados completos
+          const productIds = data.data.products?.map(p => p.babyId).filter(Boolean) || [];
+          if (productIds.length > 0) {
+            const babiesResponse = await authFetch(`${API_BASE_URL}/babies`);
+            if (babiesResponse.ok) {
+              const allBabies = await babiesResponse.json();
+              const babiesMap = new Map(allBabies.map(b => [b._id || b.id, b]));
+              
+              const mappedData = {
+                ...data.data,
+                products: data.data.products?.map(p => {
+                  const babyData = babiesMap.get(p.babyId);
+                  if (babyData) {
+                    return {
+                      ...babyData,
+                      _id: p._id,
+                      displayOrder: p.displayOrder,
+                      isActive: p.isActive,
+                      addedAt: p.addedAt
+                    };
+                  }
+                  return null;
+                }).filter(Boolean) || []
+              };
+              setFeaturedData(mappedData);
+            } else {
+              setFeaturedData(data.data);
+            }
+          } else {
+            setFeaturedData(data.data);
+          }
+        }
+        return { success: true, data: data.data };
       } else {
         throw new Error(data.message || 'Erro ao reordenar produtos');
       }
@@ -281,19 +478,58 @@ export const useFeaturedEncomendaAdmin = () => {
       const data = await response.json();
       
       if (data.success) {
-        // Mapear produtos do backend para estrutura do frontend
-        const mappedData = {
-          ...data.data,
-          products: data.data.products?.map(p => ({
-            ...p.babyId,
-            _id: p._id,
-            displayOrder: p.displayOrder,
-            isActive: p.isActive,
-            addedAt: p.addedAt
-          })) || []
-        };
-        setFeaturedData(mappedData);
-        return { success: true, data: mappedData };
+        // Se os produtos têm dados completos, usar diretamente
+        if (data.data.products?.some(p => p.name && p.price)) {
+          const mappedData = {
+            ...data.data,
+            products: data.data.products?.map(p => {
+              if (p.name && p.price) {
+                return {
+                  ...p,
+                  _id: p._id,
+                  displayOrder: p.displayOrder,
+                  isActive: p.isActive,
+                  addedAt: p.addedAt
+                };
+              }
+              return null;
+            }).filter(Boolean) || []
+          };
+          setFeaturedData(mappedData);
+        } else {
+          // Se os produtos só têm IDs, buscar dados completos
+          const productIds = data.data.products?.map(p => p.babyId).filter(Boolean) || [];
+          if (productIds.length > 0) {
+            const babiesResponse = await authFetch(`${API_BASE_URL}/babies`);
+            if (babiesResponse.ok) {
+              const allBabies = await babiesResponse.json();
+              const babiesMap = new Map(allBabies.map(b => [b._id || b.id, b]));
+              
+              const mappedData = {
+                ...data.data,
+                products: data.data.products?.map(p => {
+                  const babyData = babiesMap.get(p.babyId);
+                  if (babyData) {
+                    return {
+                      ...babyData,
+                      _id: p._id,
+                      displayOrder: p.displayOrder,
+                      isActive: p.isActive,
+                      addedAt: p.addedAt
+                    };
+                  }
+                  return null;
+                }).filter(Boolean) || []
+              };
+              setFeaturedData(mappedData);
+            } else {
+              setFeaturedData(data.data);
+            }
+          } else {
+            setFeaturedData(data.data);
+          }
+        }
+        return { success: true, data: data.data };
       } else {
         throw new Error(data.message || 'Erro ao alterar status');
       }

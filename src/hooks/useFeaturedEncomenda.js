@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { fetchWithRetry } from '../utils/fetchWithRetry';
 
 const API_BASE_URL = "https://atelie-juliabrandao-backend-production.up.railway.app/api";
 
@@ -12,18 +11,19 @@ export const useFeaturedEncomenda = () => {
     try {
       setLoading(true);
       
-      // Usar fetchWithRetry para lidar com 429 e cache
-      const data = await fetchWithRetry(
-        `${API_BASE_URL}/featured-encomenda`,
-        {
-          credentials: 'include'
-        },
-        1, // Apenas 1 retry (2 tentativas total)
-        true // usar cache
-      );
+      const response = await fetch(`${API_BASE_URL}/featured-encomenda`, {
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
       
       if (data.success && data.data) {
         // Aplicar o mesmo mapeamento que useBabies faz para garantir compatibilidade
+        // Filtrar apenas produtos válidos (com nome, preço e imagem)
         const mappedProducts = data.data.products?.map(b => {
           const normId = b.id ?? b._id ?? b.slug;
           return {
@@ -33,7 +33,7 @@ export const useFeaturedEncomenda = () => {
             price: typeof b.price === "string" ? Number(b.price) : b.price,
             oldPrice: typeof b.oldPrice === "string" ? Number(b.oldPrice) : b.oldPrice,
           };
-        }) || [];
+        }).filter(b => b.name && b.price && b.img) || [];
         
         setFeaturedData({
           ...data.data,

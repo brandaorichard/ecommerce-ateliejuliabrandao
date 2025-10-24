@@ -35,6 +35,7 @@ export default function AdminFeaturedPage() {
   // Atualizar form quando dados carregam
   useEffect(() => {
     if (featuredData) {
+      console.log('Featured data loaded:', featuredData);
       setFormData({
         title: featuredData.title || "",
         subtitle: featuredData.subtitle || "",
@@ -268,6 +269,12 @@ export default function AdminFeaturedPage() {
           🎯 Produtos em Destaque ({selectedProducts.length}/10)
         </h2>
         
+        {selectedProducts.some(p => !p.name || !p.price) && (
+          <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
+            ⚠️ Alguns produtos não têm dados completos. Tente removê-los e adicioná-los novamente.
+          </div>
+        )}
+        
         {selectedProducts.length === 0 ? (
           <div className="text-center py-8 text-neutral-500">
             <p className="text-sm">Nenhum produto em destaque ainda.</p>
@@ -297,12 +304,16 @@ export default function AdminFeaturedPage() {
                     </button>
                   </div>
                   
-                  {product.images?.[0] && (
+                  {product.images?.[0] ? (
                     <img
                       src={product.images[0]}
                       alt={product.name}
                       className="w-12 h-12 object-cover rounded border border-[#e0d6f7]"
                     />
+                  ) : (
+                    <div className="w-12 h-12 bg-gray-200 rounded border border-[#e0d6f7] flex items-center justify-center">
+                      <span className="text-xs text-gray-500">Sem imagem</span>
+                    </div>
                   )}
                   
                   <div>

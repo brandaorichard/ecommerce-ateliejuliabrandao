@@ -4,7 +4,6 @@ import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useSwipeable } from "react-swipeable";
-import { useBabies } from "../hooks/useBabies";
 import { useFeaturedEncomenda } from "../hooks/useFeaturedEncomenda";
 
 function useWindowWidth() {
@@ -19,14 +18,10 @@ function useWindowWidth() {
 
 export default function Category1Preview() {
   const navigate = useNavigate();
-  const { featuredData, loading: loadingFeatured, error: errorFeatured } = useFeaturedEncomenda();
-  const { babies, loading: loadingBabies, error: errorBabies } = useBabies({ type: "encomenda" });
+  const { featuredData, loading, error } = useFeaturedEncomenda();
   
-  // Decidir qual fonte de dados usar
-  const useFeaturedSystem = featuredData?.products?.length > 0;
-  const previewBabies = useFeaturedSystem ? featuredData.products : babies.slice(0, 8);
-  const loading = loadingFeatured || loadingBabies;
-  const error = errorFeatured || errorBabies;
+  // Usar apenas produtos em destaque (sem fallback)
+  const previewBabies = featuredData?.products || [];
   
   const [mobileIndex, setMobileIndex] = useState(0);
   const [desktopIndex, setDesktopIndex] = useState(0);
@@ -128,8 +123,9 @@ export default function Category1Preview() {
         <div className="py-6 text-sm text-red-600">Erro: {error}</div>
       )}
       {!loading && !error && previewBabies.length === 0 && (
-        <div className="py-6 text-sm text-gray-600">
-          Nenhum bebê cadastrado ainda.
+        <div className="py-6 text-sm text-gray-600 text-center">
+          <p className="mb-2">Nenhum produto em destaque configurado.</p>
+          <p className="text-xs text-gray-500">Configure produtos em destaque no painel administrativo.</p>
         </div>
       )}
 
