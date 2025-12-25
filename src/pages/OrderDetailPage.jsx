@@ -3,7 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useBabies } from "../hooks/useBabies"; // Use o hook real
 import PaymentStatusBadge from "../components/PaymentStatusBadge";
-import { FaWhatsapp } from "react-icons/fa";
+import { FaWhatsapp, FaStar, FaCheckCircle } from "react-icons/fa";
+import { useUserReview } from "../hooks/useUserReview";
 
 export default function OrderDetailPage() {
   const { id } = useParams();
@@ -143,24 +144,20 @@ export default function OrderDetailPage() {
           <div className="flex flex-col gap-4">
             {order.items.map((item, i) => {
               const baby = babiesBySlug[item.slug];
+              const babyId = baby?._id || baby?.id;
+              const canReview = order.paymentStatus === 'approved' || order.paymentStatus === 'completed';
+              
               return (
-                <div key={i} className="flex items-center gap-4 border border-neutral-300 rounded-lg p-3 bg-[#f9e7f6]">
-                  <img
-                    src={baby ? baby.img : ""}
-                    alt={baby ? baby.name : item.slug}
-                    className="w-20 h-22 rounded object-cover border border-neutral-300"
-                  />
-                  <div className="flex-1">
-                    <div className="font-medium">{baby ? baby.name : item.slug}</div>
-                    <div className="text-sm text-gray-600">
-                      Valor unitário: R${item.price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                    </div>
-                    <div className="text-sm text-gray-600">Quantidade: {item.quantity}</div>
-                    <div className="text-sm font-semibold mt-1">
-                      Subtotal: R${(item.price * item.quantity).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                    </div>
-                  </div>
-                </div>
+                <OrderItemWithReview
+                  key={i}
+                  item={item}
+                  baby={baby}
+                  babyId={babyId}
+                  orderId={order._id}
+                  canReview={canReview}
+                  token={token}
+                  paymentStatus={order.paymentStatus}
+                />
               );
             })}
           </div>
@@ -203,6 +200,92 @@ export default function OrderDetailPage() {
         >
           Voltar para Meus Pedidos
         </button>
+      </div>
+    </div>
+  );
+}
+
+// Componente para item do pedido com opção de avaliação
+function OrderItemWithReview({ item, baby, babyId, orderId, canReview, token }) {
+  const navigate = useNavigate();
+  const { hasReviewed, review, loading: reviewLoading } = useUserReview(babyId, orderId, token);
+  
+  const handleReviewClick = () => {
+    if (babyId) {
+      navigate(`/avaliar/${orderId}/${babyId}`);
+    }
+  };
+
+  const handleViewReview = () => {
+    if (baby?.slug) {
+      navigate(`/produto/${baby.slug}`);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-4 border border-neutral-300 rounded-lg p-3 bg-[#f9e7f6]">
+      <img
+        src={baby ? baby.img : ""}
+        alt={baby ? baby.name : item.slug}
+        className="w-20 h-22 rounded object-cover border border-neutral-300"
+      />
+      <div className="flex-1">
+        <div className="font-medium">{baby ? baby.name : item.slug}</div>
+        <div className="text-sm text-gray-600">
+          Valor unitário: R${item.price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+        </div>
+        <div className="text-sm text-gray-600">Quantidade: {item.quantity}</div>
+        <div className="text-sm font-semibold mt-1">
+          Subtotal: R${(item.price * item.quantity).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+        </div>
+        
+        {/* Seção de Avaliação */}
+        {babyId && canReview && (
+          <div className="mt-3 pt-3 border-t border-gray-300">
+            {reviewLoading ? (
+              <p className="text-xs text-gray-500">Verificando avaliação...</p>
+            ) : hasReviewed ? (
+              <div className="flex items-center gap-2">
+                <FaCheckCircle className="text-green-600" />
+                <span className="text-sm text-green-700 font-medium">Produto já avaliado</span>
+                {review?.rating && (
+                  <div className="flex items-center gap-1 ml-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <FaStar
+                        key={star}
+                        className={`text-xs ${
+                          star <= review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+                <button
+                  onClick={handleViewReview}
+                  className="ml-auto text-xs text-[#7a4fcf] hover:underline"
+                >
+                  Ver avaliação
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleReviewClick}
+                className="flex items-center gap-2 px-4 py-2 bg-[#7a4fcf] hover:bg-[#ae95d9] text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                <FaStar className="text-base" />
+                Avaliar Produto
+              </button>
+            )}
+          </div>
+        )}
+        
+        {babyId && !canReview && (
+          <div className="mt-3 pt-3 border-t border-gray-300">
+            <p className="text-xs text-gray-500">
+              Avaliação disponível após confirmação do pagamento
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

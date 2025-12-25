@@ -1,6 +1,7 @@
 import Hero from "../components/Hero";
 import Category1Preview from "../components/Category1Preview";
 import CategoriesSection from "../components/CategoriesSection";
+import WhyBuyWithUs from "../components/WhyBuyWithUs";
 import SEOHead from "../components/SEO/SEOHead";
 import { OrganizationStructuredData } from "../components/SEO/StructuredData";
 
@@ -17,6 +18,7 @@ export default function HomePage() {
         <Hero />
         <Category1Preview />
         <CategoriesSection />
+        <WhyBuyWithUs />
       </div>
     </>
   );

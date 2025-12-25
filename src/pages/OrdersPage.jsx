@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useBabies } from "../hooks/useBabies"; // Importa o hook real
 import PaymentStatusBadge from "../components/PaymentStatusBadge";
+import { FaStar } from "react-icons/fa";
 
 export default function OrdersPage() {
   const navigate = useNavigate();
@@ -76,8 +77,16 @@ export default function OrdersPage() {
               style={{ borderRadius: 0 }}
             >
               <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-sm font-medium text-gray-800">Pedido #{order._id}</p>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-gray-800">Pedido #{order._id}</p>
+                    {(order.paymentStatus === 'approved' || order.paymentStatus === 'completed') && (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
+                        <FaStar className="text-xs" />
+                        Avaliar
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm text-gray-500">
                     {new Date(order.date).toLocaleDateString()}
                   </p>

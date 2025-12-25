@@ -113,6 +113,9 @@ function App() {
 }
 
 function SiteShell({ cartOpen, setCartOpen }) {
+  const location = useLocation();
+  const isLoginOrRegister = location.pathname === "/login" || location.pathname === "/register";
+  
   return (
     <>
       <ScrollToTop />
@@ -152,7 +155,7 @@ function SiteShell({ cartOpen, setCartOpen }) {
         </Routes>
         </Suspense>
       </main>
-      <Footer />
+      {!isLoginOrRegister && <Footer />}
       <SocialMediasSection />
       <CookieConsent />
     </>
