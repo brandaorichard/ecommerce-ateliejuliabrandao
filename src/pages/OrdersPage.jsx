@@ -43,8 +43,6 @@ export default function OrdersPage() {
       const res = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/orders?t=${Date.now()}`, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
         },
         credentials: 'include',
         cache: 'no-store'
@@ -76,8 +74,6 @@ export default function OrdersPage() {
       const res = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/orders/${orderId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
         },
         credentials: 'include',
         cache: 'no-store'
