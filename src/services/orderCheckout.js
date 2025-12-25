@@ -37,7 +37,11 @@ export async function createOrder({
     freteSelecionado.valor ??
     0
   );
-  const total = +(subtotal + freteValor).toFixed(2);
+  
+  // NOTA DE SEGURANÇA: O total calculado aqui é apenas para UX e analytics.
+  // O backend DEVE recalcular o total baseado nos itens reais e no cupom validado.
+  // Nunca confie no total enviado pelo frontend para cálculos críticos.
+  const estimatedTotal = +(subtotal + freteValor).toFixed(2);
 
   const freteServico = freteSelecionado.name || freteSelecionado.nome || "Frete";
   const prazo =
@@ -51,21 +55,23 @@ export async function createOrder({
     `Compl.: ${address.complemento || ""} | Frete: ${freteServico} (${prazo}) ` +
     `Valor Frete: ${freteValor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`;
 
+  // IMPORTANTE: O backend deve recalcular o total baseado nos itens e cupom.
+  // Enviamos apenas os dados necessários, não valores calculados que podem ser manipulados.
   const orderPayload = {
     items: items.map(i => ({
       slug: i.slug,
       quantity: i.quantity,
-      price: i.price,
+      price: i.price, // Preço também deve ser validado no backend
     })),
-    total,
+    // Não enviamos 'total' calculado - o backend deve calcular
     paymentMethod,
     deliveryAddress: deliveryAddressString,
     clientRequestId, // backend deve ignorar duplicado (userId + clientRequestId)
     ...(couponCode && { couponCode: couponCode.toUpperCase().trim() }), // Incluir cupom se fornecido
   };
 
-  // Track begin checkout event
-  trackBeginCheckout(total, orderPayload.items);
+  // Track begin checkout event (usando estimativa apenas para analytics)
+  trackBeginCheckout(estimatedTotal, orderPayload.items);
 
   try {
     const res = await fetch(
@@ -94,10 +100,10 @@ export async function createOrder({
 
     dispatch(showToast({ type: "success", message: "Pedido criado!" }));
     
-    // Track purchase complete event
+    // Track purchase complete event (usando valores do backend, não do frontend)
     trackPurchaseComplete({
       id: json._id,
-      total: total,
+      total: json.total || estimatedTotal, // Usar total do backend se disponível
       shipping: freteValor,
       items: orderPayload.items
     });

@@ -78,15 +78,23 @@ export default function CartDrawer({ open, onClose }) {
   }, [open, items]);
 
   // Revalidar cupom quando subtotal mudar (se houver cupom aplicado)
+  // NOTA: Esta revalidação é apenas para UX. O backend sempre revalida na criação do pedido.
   const prevSubtotalRef = useRef(subtotal);
   useEffect(() => {
     if (appliedCoupon?.code && prevSubtotalRef.current !== subtotal) {
-      // Revalidar cupom com novo subtotal para recalcular desconto
+      // Revalidar cupom com novo subtotal para recalcular desconto (apenas para exibição)
+      // O backend sempre revalida na criação do pedido para segurança
       import("../services/couponService").then(({ validateCoupon }) => {
         validateCoupon(appliedCoupon.code, subtotal).then((result) => {
           if (result.success && result.coupon) {
             setAppliedCoupon(result.coupon);
+          } else {
+            // Se cupom ficou inválido, remover do estado
+            // O backend ainda validará na criação do pedido
+            setAppliedCoupon(null);
           }
+        }).catch(() => {
+          // Em caso de erro, manter cupom mas backend validará
         });
       });
       prevSubtotalRef.current = subtotal;
