@@ -16,6 +16,7 @@ import LoginPreview from "./LoginPreview"; // importe o componente
 import { login } from "../redux/authSlice"; // ajuste o caminho se necessário
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import { trackViewCart } from "../utils/analytics";
+import CouponInput from "./CouponInput";
 
 initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: 'pt-BR' });
 
@@ -37,9 +38,12 @@ export default function CartDrawer({ open, onClose }) {
   const [lastOrderId, setLastOrderId] = useState(null);
   const [freteAviso, setFreteAviso] = useState(false);
   const [numeroCasaAviso, setNumeroCasaAviso] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
 
   const images = useCartImages(items);
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const discountAmount = appliedCoupon?.discountAmount || 0;
+  const subtotalWithDiscount = subtotal - discountAmount;
 
   const {
     cep,
@@ -72,6 +76,22 @@ export default function CartDrawer({ open, onClose }) {
       );
     }
   }, [open, items]);
+
+  // Revalidar cupom quando subtotal mudar (se houver cupom aplicado)
+  const prevSubtotalRef = useRef(subtotal);
+  useEffect(() => {
+    if (appliedCoupon?.code && prevSubtotalRef.current !== subtotal) {
+      // Revalidar cupom com novo subtotal para recalcular desconto
+      import("../services/couponService").then(({ validateCoupon }) => {
+        validateCoupon(appliedCoupon.code, subtotal).then((result) => {
+          if (result.success && result.coupon) {
+            setAppliedCoupon(result.coupon);
+          }
+        });
+      });
+      prevSubtotalRef.current = subtotal;
+    }
+  }, [subtotal, appliedCoupon]);
 
   const canCheckout =
     !!freteSelecionado &&
@@ -148,6 +168,7 @@ export default function CartDrawer({ open, onClose }) {
         },
         dispatch,
         clientRequestId,
+        couponCode: appliedCoupon?.code || undefined,
       });
 
       if (!orderResult.ok || !orderResult.order?._id) {
@@ -203,7 +224,8 @@ export default function CartDrawer({ open, onClose }) {
     complemento,
     dispatch,
     clientRequestId,
-    user
+    user,
+    appliedCoupon
   ]);
 
   return (
@@ -357,6 +379,24 @@ export default function CartDrawer({ open, onClose }) {
                     </div>
                   </motion.section>
                 )}
+
+                {items.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-4"
+                  >
+                    <CouponInput
+                      key={subtotal} // Força re-render quando subtotal muda
+                      orderValue={subtotal}
+                      onCouponValid={(coupon) => {
+                        setAppliedCoupon(coupon);
+                      }}
+                    />
+                  </motion.div>
+                )}
               </motion.div>
 
               {items.length > 0 && (
@@ -378,6 +418,17 @@ export default function CartDrawer({ open, onClose }) {
                         })}
                       </span>
                     </div>
+                    {appliedCoupon && discountAmount > 0 && (
+                      <div className="flex justify-between text-sm mb-1 text-green-600">
+                        <span>Desconto ({appliedCoupon.code})</span>
+                        <span>
+                          - {discountAmount.toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </span>
+                      </div>
+                    )}
                     {freteSelecionado && (
                       <div className="flex justify-between text-sm mb-1">
                         <span>Frete</span>
@@ -396,8 +447,8 @@ export default function CartDrawer({ open, onClose }) {
                       <span>Total</span>
                       <span>
                         {freteSelecionado?.isNegotiation 
-                          ? `${subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} + frete a combinar`
-                          : (subtotal + (freteSelecionado ? Number(freteSelecionado.price) : 0)).toLocaleString("pt-BR", {
+                          ? `${subtotalWithDiscount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} + frete a combinar`
+                          : (subtotalWithDiscount + (freteSelecionado ? Number(freteSelecionado.price) : 0)).toLocaleString("pt-BR", {
                               style: "currency",
                               currency: "BRL",
                             })

@@ -98,6 +98,13 @@ export default function AdminLayout() {
                 >
                   ⭐ Avaliações
                 </Link>
+                <Link
+                  to="/admin/cupons"
+                  onClick={() => setNavOpen(false)}
+                  className="block px-3 py-2 text-xs md:text-sm hover:bg-[#f7f3fa] text-[#7a4fcf]"
+                >
+                  🎟️ Cupons
+                </Link>
               </div>
             )}
           </div>

@@ -166,6 +166,30 @@ export default function OrderDetailPage() {
           </div>
         </div>
 
+        {order.couponCode && (
+          <div className="mb-2 p-3 bg-green-50 border border-green-200 rounded">
+            <p className="text-sm">
+              <strong>Cupom aplicado:</strong> {order.couponCode}
+              {order.discountAmount && (
+                <span className="text-green-700">
+                  {" "}- Desconto de R$ {order.discountAmount.toFixed(2)}
+                </span>
+              )}
+            </p>
+          </div>
+        )}
+        <div className="space-y-1 mb-2">
+          {order.subtotal && (
+            <p>
+              <strong>Subtotal:</strong> R$ {order.subtotal.toFixed(2)}
+            </p>
+          )}
+          {order.discountAmount && order.discountAmount > 0 && (
+            <p className="text-green-600">
+              <strong>Desconto:</strong> - R$ {order.discountAmount.toFixed(2)}
+            </p>
+          )}
+        </div>
         <p>
           <strong>Total:</strong> R$ {order.total.toFixed(2)}
         </p>

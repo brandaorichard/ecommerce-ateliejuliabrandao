@@ -13,6 +13,7 @@ export async function createOrder({
   address,                 // { cep, logradouro, bairro, cidade, uf, numero, complemento }
   paymentMethod = "mercadopago",
   clientRequestId,         // opcional para idempotência (enviar também userId no backend para validar)
+  couponCode,              // código do cupom de desconto (opcional)
 }) {
   if (!token) {
     dispatch(showToast({ type: "error", message: "É necessário estar logado." }));
@@ -60,6 +61,7 @@ export async function createOrder({
     paymentMethod,
     deliveryAddress: deliveryAddressString,
     clientRequestId, // backend deve ignorar duplicado (userId + clientRequestId)
+    ...(couponCode && { couponCode: couponCode.toUpperCase().trim() }), // Incluir cupom se fornecido
   };
 
   // Track begin checkout event
