@@ -84,11 +84,26 @@ const EvaluateOrderPage = () => {
   }
 
   // Verificar se o pedido permite avaliação (só verificar se order foi carregado)
+  // Segue a mesma lógica do backend: aceita status 'finalizado' OU paymentStatus 'pago'
   const canReview = order ? (
-    order.paymentStatus === 'approved' || 
-    order.paymentStatus === 'completed' ||
-    order.paymentStatus === 'pago'
+    order.status === 'finalizado' ||
+    order.paymentStatus === 'pago' ||
+    order.paymentStatus === 'approved' ||
+    order.paymentStatus === 'completed'
   ) : true;
+
+  // Verificar se o prazo de 45 dias está próximo de expirar
+  const getDaysUntilExpiry = () => {
+    if (!order || !order.updatedAt) return null;
+    const updatedDate = new Date(order.updatedAt);
+    const now = new Date();
+    const daysDiff = Math.floor((now - updatedDate) / (1000 * 60 * 60 * 24));
+    return 45 - daysDiff;
+  };
+
+  const daysUntilExpiry = getDaysUntilExpiry();
+  const isNearExpiry = daysUntilExpiry !== null && daysUntilExpiry <= 5 && daysUntilExpiry > 0;
+  const isExpired = daysUntilExpiry !== null && daysUntilExpiry <= 0;
   
   // Se já foi avaliado, mostrar mensagem (só depois que reviewLoading terminar)
   if (!reviewLoading && hasReviewed && review && !loading) {
@@ -149,7 +164,7 @@ const EvaluateOrderPage = () => {
             <FaExclamationTriangle className="text-yellow-600 text-5xl mx-auto mb-4" />
             <h1 className="text-2xl font-light text-gray-800 mb-4">Avaliação não disponível</h1>
             <p className="text-gray-600 mb-6">
-              A avaliação estará disponível após a confirmação do pagamento do pedido.
+              A avaliação estará disponível após a confirmação do pagamento do pedido ou quando o pedido for finalizado.
             </p>
             <button
               onClick={() => navigate(`/pedido/${orderId}`)}
@@ -188,6 +203,32 @@ const EvaluateOrderPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Aviso de prazo próximo de expirar */}
+        {isNearExpiry && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-2">
+              <FaExclamationTriangle className="text-yellow-600" />
+              <p className="text-yellow-800 text-sm">
+                <strong>Atenção:</strong> Você tem apenas {daysUntilExpiry} {daysUntilExpiry === 1 ? 'dia' : 'dias'} para avaliar este produto. 
+                O prazo de 45 dias expira em breve.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Aviso de prazo expirado */}
+        {isExpired && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-2">
+              <FaExclamationTriangle className="text-red-600" />
+              <p className="text-red-800 text-sm">
+                <strong>Prazo expirado:</strong> O prazo de 45 dias para avaliar este produto já expirou. 
+                Entre em contato com o suporte se precisar de ajuda.
+              </p>
+            </div>
+          </div>
+        )}
 
         <ReviewForm 
           babyId={babyId} 

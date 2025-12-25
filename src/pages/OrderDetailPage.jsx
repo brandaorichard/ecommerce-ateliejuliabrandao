@@ -146,7 +146,11 @@ export default function OrderDetailPage() {
             {order.items.map((item, i) => {
               const baby = babiesBySlug[item.slug];
               const babyId = baby?._id || baby?.id;
-              const canReview = order.paymentStatus === 'approved' || order.paymentStatus === 'completed' || order.paymentStatus === 'pago';
+              // Verificar se pedido está finalizado OU com pagamento aprovado
+              // Segue a mesma lógica do backend: aceita status 'finalizado' OU paymentStatus 'pago'
+              const isOrderFinalized = order.status === 'finalizado';
+              const isPaymentApproved = order.paymentStatus === 'pago' || order.paymentStatus === 'approved' || order.paymentStatus === 'completed';
+              const canReview = isOrderFinalized || isPaymentApproved;
               
               return (
                 <OrderItemWithReview
@@ -283,7 +287,7 @@ function OrderItemWithReview({ item, baby, babyId, orderId, canReview, token }) 
         {babyId && !canReview && (
           <div className="mt-3 pt-3 border-t border-gray-300">
             <p className="text-xs text-gray-500">
-              Avaliação disponível após confirmação do pagamento
+              Avaliação disponível após confirmação do pagamento ou finalização do pedido
             </p>
           </div>
         )}
