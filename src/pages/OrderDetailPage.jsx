@@ -35,14 +35,22 @@ export default function OrderDetailPage() {
         const res = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/orders/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
           },
-          credentials: 'include'
+          credentials: 'include',
+          cache: 'no-store'
         });
         if (!res.ok) {
           const data = await res.json();
           throw new Error(data.message || "Erro ao buscar pedido");
         }
         const data = await res.json();
+        
+        // Debug: verificar dados recebidos
+        console.log('📄 Order detalhes recebido:', data);
+        console.log('📄 Order paymentStatus:', data.paymentStatus, 'ID:', data._id);
+        
         setOrder(data);
       } catch (err) {
         setError(err.message);

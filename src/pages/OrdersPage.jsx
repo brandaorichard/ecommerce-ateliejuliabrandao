@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useBabies } from "../hooks/useBabies"; // Importa o hook real
 import PaymentStatusBadge from "../components/PaymentStatusBadge";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaSync } from "react-icons/fa";
 
 export default function OrdersPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const token = useSelector((state) => state.auth.token);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  
+  // Rastrear se viemos da página de detalhes
+  const [lastPath, setLastPath] = useState(location.pathname);
 
   // Busca os bebês reais do backend
   const { babies, loading: babiesLoading } = useBabies();
@@ -20,34 +25,99 @@ export default function OrdersPage() {
     return acc;
   }, {});
 
-  useEffect(() => {
+  const fetchOrders = async (showRefreshing = false) => {
     if (!token) {
       setOrders([]);
       setLoading(false);
       return;
     }
 
-    async function fetchOrders() {
-      try {
-        const res = await fetch("https://atelie-juliabrandao-backend-production.up.railway.app/api/orders", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: 'include'
-        });
-        if (!res.ok) throw new Error("Erro ao buscar pedidos");
-        const data = await res.json();
-        setOrders(data);
-      } catch (error) {
-        console.error(error);
-        setOrders([]);
-      } finally {
-        setLoading(false);
-      }
+    if (showRefreshing) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
     }
 
-    fetchOrders();
+    try {
+      // Adicionar cache-busting para garantir dados atualizados
+      const res = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/orders?t=${Date.now()}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        },
+        credentials: 'include',
+        cache: 'no-store'
+      });
+      if (!res.ok) throw new Error("Erro ao buscar pedidos");
+      const data = await res.json();
+      
+      // Debug: verificar dados recebidos
+      console.log('📦 Orders recebidos:', data);
+      if (data.length > 0) {
+        console.log('📦 Primeiro pedido paymentStatus:', data[0].paymentStatus, 'ID:', data[0]._id);
+      }
+      
+      setOrders(data);
+    } catch (error) {
+      console.error('❌ Erro ao buscar pedidos:', error);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  // Função para atualizar um pedido específico na lista
+  const updateOrderInList = useCallback(async (orderId) => {
+    if (!token || !orderId) return;
+    
+    try {
+      const res = await fetch(`https://atelie-juliabrandao-backend-production.up.railway.app/api/orders/${orderId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        },
+        credentials: 'include',
+        cache: 'no-store'
+      });
+      
+      if (res.ok) {
+        const updatedOrder = await res.json();
+        console.log('🔄 Atualizando pedido na lista:', updatedOrder._id, 'Status:', updatedOrder.paymentStatus);
+        
+        setOrders(prevOrders => 
+          prevOrders.map(order => 
+            order._id === updatedOrder._id ? updatedOrder : order
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar pedido específico:', error);
+    }
   }, [token]);
+
+  useEffect(() => {
+    fetchOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  // Detectar quando voltamos da página de detalhes e atualizar o pedido
+  useEffect(() => {
+    const currentPath = location.pathname;
+    
+    // Se estávamos em /pedido/:id e agora estamos em /meus-pedidos
+    if (lastPath.startsWith('/pedido/') && currentPath === '/meus-pedidos') {
+      const orderId = lastPath.replace('/pedido/', '');
+      if (orderId) {
+        console.log('🔙 Voltando da página de detalhes, atualizando pedido:', orderId);
+        updateOrderInList(orderId);
+      }
+    }
+    
+    setLastPath(currentPath);
+  }, [location.pathname, lastPath, updateOrderInList]);
 
   if (loading || babiesLoading) return <p>Carregando pedidos...</p>;
 
@@ -64,7 +134,18 @@ export default function OrdersPage() {
         &gt; <span className="font-light underline ">Meus Pedidos</span>
       </nav>
 
-      <h1 className="text-2xl font-light text-gray-800 mb-4">Meus Pedidos</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-light text-gray-800">Meus Pedidos</h1>
+        <button
+          onClick={() => fetchOrders(true)}
+          disabled={refreshing || loading}
+          className="flex items-center gap-2 px-4 py-2 bg-[#7a4fcf] hover:bg-[#ae95d9] text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Atualizar lista de pedidos"
+        >
+          <FaSync className={`text-base ${refreshing ? 'animate-spin' : ''}`} />
+          {refreshing ? 'Atualizando...' : 'Atualizar'}
+        </button>
+      </div>
 
       {orders.length === 0 ? (
         <p>Você ainda não fez nenhum pedido.</p>
