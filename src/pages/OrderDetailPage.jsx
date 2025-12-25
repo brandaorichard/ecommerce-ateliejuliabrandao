@@ -146,7 +146,7 @@ export default function OrderDetailPage() {
             {order.items.map((item, i) => {
               const baby = babiesBySlug[item.slug];
               const babyId = baby?._id || baby?.id;
-              const canReview = order.paymentStatus === 'approved' || order.paymentStatus === 'completed';
+              const canReview = order.paymentStatus === 'approved' || order.paymentStatus === 'completed' || order.paymentStatus === 'pago';
               
               return (
                 <OrderItemWithReview

@@ -86,7 +86,8 @@ const EvaluateOrderPage = () => {
   // Verificar se o pedido permite avaliação (só verificar se order foi carregado)
   const canReview = order ? (
     order.paymentStatus === 'approved' || 
-    order.paymentStatus === 'completed'
+    order.paymentStatus === 'completed' ||
+    order.paymentStatus === 'pago'
   ) : true;
   
   // Se já foi avaliado, mostrar mensagem (só depois que reviewLoading terminar)
