@@ -44,11 +44,6 @@ export default function OrderDetailPage() {
           throw new Error(data.message || "Erro ao buscar pedido");
         }
         const data = await res.json();
-        
-        // Debug: verificar dados recebidos
-        console.log('📄 Order detalhes recebido:', data);
-        console.log('📄 Order paymentStatus:', data.paymentStatus, 'ID:', data._id);
-        
         setOrder(data);
       } catch (err) {
         setError(err.message);
