@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import img1 from "../assets/categorias/encomenda.jpg";
+import img1 from "../assets/new2/image.png";
 import img2 from "../assets/categorias/prontaentrega.png";
 import img3 from "../assets/categorias/semelhanca.png";
 import img4 from "../assets/new/image.png";
@@ -50,11 +50,12 @@ export default function CategoriesSection() {
               onClick={() => handleCategoryClick(category.route)}
               className="
                 relative cursor-pointer group transition-all duration-300
-                w-full h-48
+                w-full
                 bg-gray-200 flex items-center justify-center
                 hover:opacity-90 overflow-hidden
               "
               style={{
+                height: "220.8px", // h-48 (192px) + 15% = 220.8px
                 aspectRatio: "16/9"
               }}
             >
@@ -68,8 +69,7 @@ export default function CategoriesSection() {
                   e.currentTarget.style.display = "none";
                 }}
               />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-all duration-300 z-10" />
-              <div className="absolute inset-0 bg-black/30 transition-all duration-300 z-10" />
+              <div className="absolute inset-0 bg-black/50 group-hover:bg-black/60 transition-all duration-300 z-10" />
               <div className="relative z-20 text-center px-4">
                 <h3 className="
                   text-[#f9e7f6] text-lg md:text-xl font-semibold tracking-wide
@@ -94,11 +94,12 @@ export default function CategoriesSection() {
               onClick={() => handleCategoryClick(category.route)}
               className="
                 relative cursor-pointer group transition-all duration-300
-                flex-1 h-64
+                flex-1
                 bg-gray-200 flex items-center justify-center
                 hover:opacity-90 overflow-hidden
               "
               style={{
+                height: "294.4px", // h-64 (256px) + 15% = 294.4px
                 aspectRatio: "1/1"
               }}
             >
@@ -112,8 +113,7 @@ export default function CategoriesSection() {
                   e.currentTarget.style.display = "none";
                 }}
               />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-all duration-300 z-10" />
-              <div className="absolute inset-0 bg-black/30 transition-all duration-300 z-10" />
+              <div className="absolute inset-0 bg-black/50 group-hover:bg-black/60 transition-all duration-300 z-10" />
               <div className="relative z-20 text-center px-4">
                 <h3 className="
                   text-[#f9e7f6] text-lg md:text-xl font-semibold tracking-wide
