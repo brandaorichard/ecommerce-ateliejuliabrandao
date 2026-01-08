@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import img1 from "../assets/categorias/encomenda.jpg";
 import img2 from "../assets/categorias/prontaentrega.png";
 import img3 from "../assets/categorias/semelhanca.png";
+import img4 from "../assets/new/image.png";
 
 function useWindowWidth() {
   const [width, setWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
@@ -24,7 +25,8 @@ export default function CategoriesSection() {
   const categories = [
     { title: "Sob Encomenda", route: "/categoria1", image: img1 },
     { title: "A Pronta Entrega", route: "/categoria2", image: img2 },
-    { title: "Por Semelhança", route: "/categoria3", image: img3 }
+    { title: "Por Semelhança", route: "/categoria3", image: img3 },
+    { title: "Cursos", route: "/cursos", image: img4 }
   ];
 
   const handleCategoryClick = (route) => {
@@ -41,7 +43,7 @@ export default function CategoriesSection() {
 
       {/* ========== VERSÃO MOBILE (NÃO MEXER) ========== */}
       {isMobile && (
-        <div className="grid grid-rows-3 gap-0 w-full">
+        <div className="grid grid-rows-4 gap-0 w-full">
           {categories.map((category, index) => (
             <div
               key={index}
