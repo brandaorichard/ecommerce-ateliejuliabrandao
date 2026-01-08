@@ -8,7 +8,6 @@ import ProductTitlePrice from "./ProductTitlePrice";
 import ProductSection from "./ProductSection";
 import SEOHead from "./SEO/SEOHead";
 import LoadingSpinner from "./LoadingSpinner";
-import FormattedDescription from "./FormattedDescription";
 
 import { showToast } from "../redux/toastSlice";
 import { trackViewItem } from "../utils/analytics";
@@ -111,7 +110,12 @@ export default function CourseProductPage() {
               isCourse={true}
             />
 
-            <div className="flex flex-col gap-2 mb-4">
+            <div className="flex flex-col gap-3 mb-4">
+              {course.buyUrl && (
+                <p className="text-sm text-[#7a4fcf] mb-1">
+                  Você será redirecionado para a plataforma Hotmart para finalizar a compra.
+                </p>
+              )}
               <button
                 className="text-white text-lg font-medium w-fit rounded-full px-10 py-2 transition bg-[#7a4fcf] hover:bg-[#ae95d9] cursor-pointer"
                 onClick={handleBuy}
@@ -125,18 +129,50 @@ export default function CourseProductPage() {
               )}
             </div>
 
-            {course.description && course.description.trim() && (
-              <div className="mt-6">
-                <h2 className="text-lg font-medium text-gray-800 mb-2">Informações</h2>
-                <FormattedDescription text={course.description} className="mb-4" />
-              </div>
-            )}
-
-            <ProductSection
-              title="O que você vai aprender"
-              items={course.sections?.oQueVoceVaiAprender}
-            />
-            <ProductSection title="Para quem é" items={course.sections?.paraQuemE} />
+            {course.description && course.description.trim() && (() => {
+              // Separar description nos dois campos
+              const description = course.description;
+              let oQueVoceVaiAprender = null;
+              let paraQuemE = null;
+              
+              // Encontrar onde começa cada seção
+              const oQueIndex = description.search(/O\s+QUE\s+VOCÊ\s+VAI\s+APRENDER:\s*\n/i);
+              const paraQuemIndex = description.search(/PARA\s+QUEM\s+É:\s*\n/i);
+              
+              if (oQueIndex !== -1) {
+                const contentStart = description.indexOf('\n', oQueIndex) + 1;
+                const contentEnd = paraQuemIndex !== -1 ? paraQuemIndex : description.length;
+                const content = description.substring(contentStart, contentEnd).trim();
+                if (content) {
+                  oQueVoceVaiAprender = content;
+                }
+              }
+              
+              if (paraQuemIndex !== -1) {
+                const contentStart = description.indexOf('\n', paraQuemIndex) + 1;
+                const content = description.substring(contentStart).trim();
+                if (content) {
+                  paraQuemE = content;
+                }
+              }
+              
+              return (
+                <>
+                  {oQueVoceVaiAprender && (
+                    <ProductSection
+                      title="O que você vai aprender"
+                      items={oQueVoceVaiAprender}
+                    />
+                  )}
+                  {paraQuemE && (
+                    <ProductSection 
+                      title="Para quem é" 
+                      items={paraQuemE}
+                    />
+                  )}
+                </>
+              );
+            })()}
           </div>
         </div>
       </section>

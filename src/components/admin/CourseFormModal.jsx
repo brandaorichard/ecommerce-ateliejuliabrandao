@@ -26,18 +26,16 @@ export default function CourseFormModal({ open, onClose, onSubmit, initial }) {
     oldPrice: "",
     discount: "",
     installment: "",
-    description: "",
     buyUrl: "",
     isActive: true,
     images: [],
-    oQueVoceVaiAprender: [],
-    paraQuemE: []
+    oQueVoceVaiAprender: "",
+    paraQuemE: ""
   });
   const [existingImages, setExistingImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [newFiles, setNewFiles] = useState([]);
   const [newPreviews, setNewPreviews] = useState([]);
-  const [sectionItem, setSectionItem] = useState({ oQueVoceVaiAprender: "", paraQuemE: "" });
 
   useEffect(() => {
     return () => {
@@ -49,6 +47,31 @@ export default function CourseFormModal({ open, onClose, onSubmit, initial }) {
   useEffect(() => {
     newPreviews.forEach(url => URL.revokeObjectURL(url));
     if (initial) {
+      // Ler do campo description e separar nos dois campos
+      const description = initial.description || "";
+      let oQueVoceVaiAprender = "";
+      let paraQuemE = "";
+      
+      // Separar description nos dois campos usando marcadores
+      // Primeiro, encontrar onde começa "O QUE VOCÊ VAI APRENDER:"
+      const oQueIndex = description.search(/O\s+QUE\s+VOCÊ\s+VAI\s+APRENDER:\s*\n/i);
+      const paraQuemIndex = description.search(/PARA\s+QUEM\s+É:\s*\n/i);
+      
+      if (oQueIndex !== -1) {
+        // Encontrar o início do conteúdo (após o marcador e quebra de linha)
+        const contentStart = description.indexOf('\n', oQueIndex) + 1;
+        // Encontrar o fim do conteúdo (antes de "PARA QUEM É:" ou fim da string)
+        const contentEnd = paraQuemIndex !== -1 ? paraQuemIndex : description.length;
+        oQueVoceVaiAprender = description.substring(contentStart, contentEnd).trim();
+      }
+      
+      if (paraQuemIndex !== -1) {
+        // Encontrar o início do conteúdo (após o marcador e quebra de linha)
+        const contentStart = description.indexOf('\n', paraQuemIndex) + 1;
+        // O conteúdo vai até o fim da string
+        paraQuemE = description.substring(contentStart).trim();
+      }
+      
       setForm({
         name: initial.name || "",
         slug: initial.slug || "",
@@ -57,12 +80,11 @@ export default function CourseFormModal({ open, onClose, onSubmit, initial }) {
         oldPrice: initial.oldPrice ? formatCurrencyInput(String(initial.oldPrice)) : "",
         discount: initial.discount || "",
         installment: initial.installment || "",
-        description: initial.description || "",
         buyUrl: initial.buyUrl || "",
         isActive: initial.isActive !== undefined ? initial.isActive : true,
         images: [],
-        oQueVoceVaiAprender: initial.sections?.oQueVoceVaiAprender || [],
-        paraQuemE: initial.sections?.paraQuemE || []
+        oQueVoceVaiAprender,
+        paraQuemE
       });
       const normalizeImage = (img) => typeof img === "string" ? img : (img?.original || img?.webp || "");
       setExistingImages((initial.images || []).map(normalizeImage).filter(Boolean));
@@ -78,12 +100,11 @@ export default function CourseFormModal({ open, onClose, onSubmit, initial }) {
         oldPrice: "",
         discount: "",
         installment: "",
-        description: "",
         buyUrl: "",
         isActive: true,
         images: [],
-        oQueVoceVaiAprender: [],
-        paraQuemE: []
+        oQueVoceVaiAprender: "",
+        paraQuemE: ""
       });
       setExistingImages([]);
       setNewFiles([]);
@@ -140,25 +161,27 @@ export default function CourseFormModal({ open, onClose, onSubmit, initial }) {
     setNewPreviews(prev => prev.filter((_, i) => i !== index));
   }
 
-  function addSectionItem(field) {
-    const value = sectionItem[field].trim();
-    if (!value) return;
-    setForm(f => ({
-      ...f,
-      [field]: [...f[field], value]
-    }));
-    setSectionItem(prev => ({ ...prev, [field]: "" }));
-  }
-
-  function removeSectionItem(field, index) {
-    setForm(f => ({
-      ...f,
-      [field]: f[field].filter((_, i) => i !== index)
-    }));
-  }
-
   function handleSubmit(e) {
     e.preventDefault();
+    // Concatenar os dois campos em description
+    // IMPORTANTE: trim() remove espaços, mas garantimos que campos vazios não sejam incluídos
+    const oQueVoceVaiAprenderText = form.oQueVoceVaiAprender.trim();
+    const paraQuemEText = form.paraQuemE.trim();
+    
+    // Construir description apenas com campos que têm conteúdo
+    let description = "";
+    if (oQueVoceVaiAprenderText) {
+      description += "O QUE VOCÊ VAI APRENDER:\n" + oQueVoceVaiAprenderText;
+    }
+    if (paraQuemEText) {
+      if (description) {
+        description += "\n\n";
+      }
+      description += "PARA QUEM É:\n" + paraQuemEText;
+    }
+    
+    // Se ambos os campos estiverem vazios, description será string vazia
+    // Enviar null se description estiver vazio para limpar o campo no banco
     const data = {
       name: form.name,
       slug: form.slug,
@@ -167,13 +190,11 @@ export default function CourseFormModal({ open, onClose, onSubmit, initial }) {
       oldPrice: form.oldPrice ? form.oldPrice.replace(/\./g, "").replace(",", ".") : null,
       discount: form.discount || null,
       installment: form.installment || null,
-      description: form.description || null,
+      description: description || null,
       buyUrl: form.buyUrl || null,
       isActive: form.isActive,
       images: newFiles,
-      imagesToDelete: imagesToDelete.length > 0 ? imagesToDelete : undefined,
-      oQueVoceVaiAprender: form.oQueVoceVaiAprender.length > 0 ? form.oQueVoceVaiAprender : undefined,
-      paraQuemE: form.paraQuemE.length > 0 ? form.paraQuemE : undefined
+      imagesToDelete: imagesToDelete.length > 0 ? imagesToDelete : undefined
     };
     onSubmit(data);
   }
@@ -286,21 +307,25 @@ export default function CourseFormModal({ open, onClose, onSubmit, initial }) {
               className="w-full border border-[#e0d6f7] bg-[#f7f3fa] px-2 py-1 rounded text-sm text-neutral-900"
             />
           </div>
+
+          {/* Sections */}
           <div>
-            <label className="block text-xs font-medium mb-1">
-              Descrição
+            <label className="block text-xs font-bold mb-1">
+              O que você vai aprender:
               <span className="text-[10px] text-gray-500 ml-2 font-normal">
                 (Suporta quebras de linha - Enter para nova linha)
               </span>
             </label>
             <textarea
-              name="description"
-              placeholder="Descrição do curso...
+              name="oQueVoceVaiAprender"
+              placeholder="Materiais e ferramentas essenciais
+Preparação e organização do trabalho
+Técnicas de base e acabamento
+Dicas para evitar erros comuns
 
 Você pode usar múltiplas linhas.
-Parágrafos são preservados.
 Pressione Enter para criar novas linhas."
-              value={form.description}
+              value={form.oQueVoceVaiAprender}
               onChange={handleChange}
               rows={8}
               className="w-full border border-[#e0d6f7] bg-[#f7f3fa] px-2 py-2 rounded text-sm text-neutral-900 resize-y min-h-[120px]"
@@ -316,75 +341,35 @@ Pressione Enter para criar novas linhas."
             </p>
           </div>
 
-          {/* Sections */}
           <div>
-            <label className="block text-xs font-medium mb-2">O que você vai aprender</label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                placeholder="Adicionar item..."
-                value={sectionItem.oQueVoceVaiAprender}
-                onChange={(e) => setSectionItem(prev => ({ ...prev, oQueVoceVaiAprender: e.target.value }))}
-                onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addSectionItem("oQueVoceVaiAprender"))}
-                className="flex-1 border border-[#e0d6f7] bg-[#f7f3fa] px-2 py-1 rounded text-sm text-neutral-900"
-              />
-              <button
-                type="button"
-                onClick={() => addSectionItem("oQueVoceVaiAprender")}
-                className="px-3 py-1 bg-[#7a4fcf] text-white rounded text-sm"
-              >
-                Adicionar
-              </button>
-            </div>
-            <div className="space-y-1">
-              {form.oQueVoceVaiAprender.map((item, i) => (
-                <div key={i} className="flex items-center gap-2 bg-gray-50 p-2 rounded">
-                  <span className="flex-1 text-xs">{item}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeSectionItem("oQueVoceVaiAprender", i)}
-                    className="text-red-500 text-xs"
-                  >
-                    Remover
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+            <label className="block text-xs font-bold mb-1">
+              Para quem é:
+              <span className="text-[10px] text-gray-500 ml-2 font-normal">
+                (Suporta quebras de linha - Enter para nova linha)
+              </span>
+            </label>
+            <textarea
+              name="paraQuemE"
+              placeholder="Iniciantes que querem começar com segurança
+Quem deseja aprimorar técnica e acabamento
+Artesãs(os) buscando um processo mais consistente
 
-          <div>
-            <label className="block text-xs font-medium mb-2">Para quem é</label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                placeholder="Adicionar item..."
-                value={sectionItem.paraQuemE}
-                onChange={(e) => setSectionItem(prev => ({ ...prev, paraQuemE: e.target.value }))}
-                onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addSectionItem("paraQuemE"))}
-                className="flex-1 border border-[#e0d6f7] bg-[#f7f3fa] px-2 py-1 rounded text-sm text-neutral-900"
-              />
-              <button
-                type="button"
-                onClick={() => addSectionItem("paraQuemE")}
-                className="px-3 py-1 bg-[#7a4fcf] text-white rounded text-sm"
-              >
-                Adicionar
-              </button>
-            </div>
-            <div className="space-y-1">
-              {form.paraQuemE.map((item, i) => (
-                <div key={i} className="flex items-center gap-2 bg-gray-50 p-2 rounded">
-                  <span className="flex-1 text-xs">{item}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeSectionItem("paraQuemE", i)}
-                    className="text-red-500 text-xs"
-                  >
-                    Remover
-                  </button>
-                </div>
-              ))}
-            </div>
+Você pode usar múltiplas linhas.
+Pressione Enter para criar novas linhas."
+              value={form.paraQuemE}
+              onChange={handleChange}
+              rows={8}
+              className="w-full border border-[#e0d6f7] bg-[#f7f3fa] px-2 py-2 rounded text-sm text-neutral-900 resize-y min-h-[120px]"
+              style={{
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                lineHeight: "1.6",
+                fontFamily: "inherit"
+              }}
+            />
+            <p className="text-[10px] text-gray-500 mt-1">
+              Dica: Pressione Enter para criar novas linhas. Espaços e parágrafos serão preservados.
+            </p>
           </div>
 
           <div>
