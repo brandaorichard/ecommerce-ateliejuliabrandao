@@ -6,7 +6,7 @@ export default function AdminHeroPage() {
       <section>
         <h1 className="text-3xl font-light tracking-wide">Painel Administrativo</h1>
         <p className="text-sm text-neutral-600 mt-2">
-          Bem-vindo. Selecione uma área no menu: produtos, pedidos, usuários, carrossel, categorias, destaques, analytics, avaliações ou cupons.
+          Bem-vindo. Selecione uma área no menu: produtos, cursos, pedidos, usuários, carrossel, categorias, destaques, analytics, avaliações ou cupons.
         </p>
       </section>
 
@@ -16,6 +16,16 @@ export default function AdminHeroPage() {
           <p className="text-xs text-neutral-600 mb-3">Gerencie o catálogo (bebês) por categoria.</p>
           <a
             href="/admin/produtos"
+            className="inline-block text-xs px-3 py-1 rounded bg-[#7a4fcf] hover:bg-[#ae95d9] text-white"
+          >
+            Acessar
+          </a>
+        </div>
+        <div className="p-5 rounded-lg bg-white border border-[#e0d6f7]">
+          <h2 className="text-sm font-semibold mb-1 text-neutral-900">📚 Cursos</h2>
+          <p className="text-xs text-neutral-600 mb-3">Gerencie o catálogo de cursos disponíveis.</p>
+          <a
+            href="/admin/cursos"
             className="inline-block text-xs px-3 py-1 rounded bg-[#7a4fcf] hover:bg-[#ae95d9] text-white"
           >
             Acessar
