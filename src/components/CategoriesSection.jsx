@@ -34,10 +34,10 @@ export default function CategoriesSection() {
   };
 
   return (
-    <div className="mt-10">
+    <div className="bg-[#f9e7f6] pb-4" style={{ paddingTop: '3.84rem' }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-semibold text-gray-800 text-center mb-8">
-          CATEGORIAS
+        <h2 className="text-2xl md:text-3xl font-light text-gray-800 text-center mb-[1.2rem]">
+          Categorias
         </h2>
       </div>
 

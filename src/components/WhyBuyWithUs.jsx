@@ -1,8 +1,8 @@
 export default function WhyBuyWithUs() {
   return (
-    <div className="bg-[#f9e7f6] py-8">
+    <div className="bg-[#f9e7f6] pb-8" style={{ paddingTop: '3.84rem' }}>
       <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-8">
+        <div className="text-center mb-[1.2rem]">
           <h2 className="text-2xl md:text-3xl font-light text-gray-800 mb-2">
             Por que comprar conosco
           </h2>

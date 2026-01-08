@@ -101,11 +101,12 @@ export default function Category1Preview() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto px-4 mt-10 sm:px-6 lg:px-8">
-      <div className="flex items-center justify-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">
-          BEBÊS EM DESTAQUE
-        </h2>
+    <div className="bg-[#f9e7f6] pb-4" style={{ paddingTop: '3.84rem' }}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center mb-[1.2rem]">
+          <h2 className="text-2xl md:text-3xl font-light text-gray-800">
+            Bebês em destaque
+          </h2>
         {/* <motion.button
           id="ver-mais-link"
           whileTap={isMobile ? { scale: 0.95 } : {}}
@@ -209,6 +210,7 @@ export default function Category1Preview() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
