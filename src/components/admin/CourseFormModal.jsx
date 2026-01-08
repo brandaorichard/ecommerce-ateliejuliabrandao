@@ -4,13 +4,20 @@ import { motion as fmMotion } from "framer-motion";
 import { removeImage } from "../../redux/adminCoursesSlice";
 
 function formatCurrencyInput(value) {
+  // Remove tudo que não é número
   let cleaned = value.replace(/\D/g, "");
+  // Remove zeros à esquerda
   cleaned = cleaned.replace(/^0+/, "");
+  // Se vazio, retorna vazio
   if (!cleaned) return "";
+  // Limita a 8 dígitos (até 999.999,99)
   cleaned = cleaned.slice(0, 8);
+  // Adiciona zeros à esquerda para garantir pelo menos 3 dígitos
   cleaned = cleaned.padStart(3, "0");
+  // Insere vírgula antes dos dois últimos dígitos
   let intPart = cleaned.slice(0, -2);
   let decimalPart = cleaned.slice(-2);
+  // Adiciona pontos a cada 3 dígitos do inteiro
   intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   return `${intPart},${decimalPart}`;
 }
@@ -76,8 +83,8 @@ export default function CourseFormModal({ open, onClose, onSubmit, initial }) {
         name: initial.name || "",
         slug: initial.slug || "",
         category: initial.category || "cursos",
-        price: initial.price ? formatCurrencyInput(String(initial.price)) : "",
-        oldPrice: initial.oldPrice ? formatCurrencyInput(String(initial.oldPrice)) : "",
+        price: initial.price || "",
+        oldPrice: initial.oldPrice || "",
         discount: initial.discount || "",
         installment: initial.installment || "",
         buyUrl: initial.buyUrl || "",
@@ -186,8 +193,8 @@ export default function CourseFormModal({ open, onClose, onSubmit, initial }) {
       name: form.name,
       slug: form.slug,
       category: form.category,
-      price: form.price.replace(/\./g, "").replace(",", "."),
-      oldPrice: form.oldPrice ? form.oldPrice.replace(/\./g, "").replace(",", ".") : null,
+      price: form.price,
+      oldPrice: form.oldPrice,
       discount: form.discount || null,
       installment: form.installment || null,
       description: description || null,
@@ -255,7 +262,9 @@ export default function CourseFormModal({ open, onClose, onSubmit, initial }) {
               <input
                 name="price"
                 type="text"
-                placeholder="199,00"
+                inputMode="numeric"
+                pattern="[0-9.,]*"
+                placeholder="ex: 9.999,99"
                 value={form.price}
                 onChange={handleChange}
                 className="w-full border border-[#e0d6f7] bg-[#f7f3fa] px-2 py-1 rounded text-sm text-neutral-900"
@@ -267,7 +276,9 @@ export default function CourseFormModal({ open, onClose, onSubmit, initial }) {
               <input
                 name="oldPrice"
                 type="text"
-                placeholder="249,00"
+                inputMode="numeric"
+                pattern="[0-9.,]*"
+                placeholder="ex: 9.999,99"
                 value={form.oldPrice}
                 onChange={handleChange}
                 className="w-full border border-[#e0d6f7] bg-[#f7f3fa] px-2 py-1 rounded text-sm text-neutral-900"

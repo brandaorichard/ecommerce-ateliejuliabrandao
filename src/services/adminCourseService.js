@@ -31,10 +31,10 @@ export async function createCourse(token, data) {
   if (data.slug) form.append('slug', data.slug);
   if (data.category) form.append('category', data.category);
   if (data.price !== undefined && data.price !== null) {
-    form.append('price', String(data.price).replace(',', '.'));
+    form.append('price', data.price);
   }
   if (data.oldPrice !== undefined && data.oldPrice !== null && data.oldPrice !== '') {
-    form.append('oldPrice', String(data.oldPrice).replace(',', '.'));
+    form.append('oldPrice', data.oldPrice);
   }
   if (data.discount) form.append('discount', data.discount);
   if (data.installment) form.append('installment', data.installment);
@@ -86,13 +86,13 @@ export async function updateCourse(token, id, data) {
   if (data.slug !== undefined) form.append('slug', data.slug);
   if (data.category !== undefined) form.append('category', data.category);
   if (data.price !== undefined && data.price !== null) {
-    form.append('price', String(data.price).replace(',', '.'));
+    form.append('price', data.price);
   }
   if (data.oldPrice !== undefined) {
     if (data.oldPrice === null || data.oldPrice === '') {
       form.append('oldPrice', '');
     } else {
-      form.append('oldPrice', String(data.oldPrice).replace(',', '.'));
+      form.append('oldPrice', data.oldPrice);
     }
   }
   if (data.discount !== undefined) {
