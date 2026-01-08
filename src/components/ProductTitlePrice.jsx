@@ -1,6 +1,6 @@
 import ShareButton from './ShareButton';
 
-export default function ProductTitlePrice({ name, price, oldPrice, discount, installment, productUrl, productName }) {
+export default function ProductTitlePrice({ name, price, oldPrice, discount, installment, productUrl, productName, isCourse }) {
   return (
     <>
       <h1 className="text-2xl md:text-3xl font-light text-gray-800 mb-2">{name}</h1>
@@ -20,7 +20,9 @@ export default function ProductTitlePrice({ name, price, oldPrice, discount, ins
         )}
       </div>
       <span className="text-sm text-[#7a4fcf]">{installment}</span>
-      <span className="text-sm text-[#7a4fcf] mb-4 block">10% de desconto no PIX</span>
+      {!isCourse && (
+        <span className="text-sm text-[#7a4fcf] mb-4 block">10% de desconto no PIX</span>
+      )}
       
       {/* Share Button - only show if productUrl and productName are provided */}
       {productUrl && productName && (

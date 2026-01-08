@@ -287,15 +287,33 @@ export default function CourseFormModal({ open, onClose, onSubmit, initial }) {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium">Descrição</label>
+            <label className="block text-xs font-medium mb-1">
+              Descrição
+              <span className="text-[10px] text-gray-500 ml-2 font-normal">
+                (Suporta quebras de linha - Enter para nova linha)
+              </span>
+            </label>
             <textarea
               name="description"
-              placeholder="Descrição do curso..."
+              placeholder="Descrição do curso...
+
+Você pode usar múltiplas linhas.
+Parágrafos são preservados.
+Pressione Enter para criar novas linhas."
               value={form.description}
               onChange={handleChange}
-              rows={3}
-              className="w-full border border-[#e0d6f7] bg-[#f7f3fa] px-2 py-1 rounded text-sm text-neutral-900"
+              rows={8}
+              className="w-full border border-[#e0d6f7] bg-[#f7f3fa] px-2 py-2 rounded text-sm text-neutral-900 resize-y min-h-[120px]"
+              style={{
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                lineHeight: "1.6",
+                fontFamily: "inherit"
+              }}
             />
+            <p className="text-[10px] text-gray-500 mt-1">
+              Dica: Pressione Enter para criar novas linhas. Espaços e parágrafos serão preservados.
+            </p>
           </div>
 
           {/* Sections */}

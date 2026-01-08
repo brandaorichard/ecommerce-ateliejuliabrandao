@@ -5,10 +5,10 @@ import { useDispatch } from "react-redux";
 import Breadcrumb from "./Breadcrumb";
 import ProductCarousel from "./ProductCarousel";
 import ProductTitlePrice from "./ProductTitlePrice";
-import PaymentMethods from "./PaymentMethods";
 import ProductSection from "./ProductSection";
 import SEOHead from "./SEO/SEOHead";
 import LoadingSpinner from "./LoadingSpinner";
+import FormattedDescription from "./FormattedDescription";
 
 import { showToast } from "../redux/toastSlice";
 import { trackViewItem } from "../utils/analytics";
@@ -108,28 +108,27 @@ export default function CourseProductPage() {
               installment={course.installment}
               productUrl={`https://www.juliabrandao.com.br/cursos/${course.slug}`}
               productName={course.name}
+              isCourse={true}
             />
 
-            <div className="flex flex-col gap-2 mb-2">
+            <div className="flex flex-col gap-2 mb-4">
               <button
-                className="text-white text-lg font-medium rounded-full px-10 py-2 transition bg-[#7a4fcf] hover:bg-[#ae95d9] cursor-pointer"
+                className="text-white text-lg font-medium w-fit rounded-full px-10 py-2 transition bg-[#7a4fcf] hover:bg-[#ae95d9] cursor-pointer"
                 onClick={handleBuy}
               >
                 Comprar
               </button>
               {!course.buyUrl && (
-                <span className="text-xs text-[#616161]">
+                <span className="text-xs text-[#616161] text-center">
                   Link de compra em configuração. Em breve você poderá finalizar pelo checkout.
                 </span>
               )}
             </div>
 
-            <PaymentMethods />
-
             {course.description && course.description.trim() && (
               <div className="mt-6">
                 <h2 className="text-lg font-medium text-gray-800 mb-2">Informações</h2>
-                <p className="text-sm text-gray-600 mb-4">{course.description}</p>
+                <FormattedDescription text={course.description} className="mb-4" />
               </div>
             )}
 

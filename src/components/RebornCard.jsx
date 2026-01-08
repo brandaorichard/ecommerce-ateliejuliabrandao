@@ -1,5 +1,6 @@
 // components/RebornCard.jsx
 import { trackSelectItem } from '../utils/analytics';
+import hotmartLogo from '../assets/logo-hotmart-768.png';
 
 export default function RebornCard({ baby, onClick, context, mini }) {
   const cover = baby.img || (baby.images && baby.images[0]) || "";
@@ -72,7 +73,7 @@ export default function RebornCard({ baby, onClick, context, mini }) {
           </span>
         )}
       </div>
-      <div className={`p-3 flex flex-col ${isCourse ? "min-h-[140px]" : "flex-1"}`}>
+      <div className={`p-3 flex flex-col relative ${isCourse ? "min-h-[140px]" : "flex-1"}`}>
         <span className={`font-light text-black mb-1 ${isCourse ? "text-sm md:text-base" : "text-xs md:text-sm"}`}>
           {baby.name}
         </span>
@@ -99,6 +100,14 @@ export default function RebornCard({ baby, onClick, context, mini }) {
           <span className={`${isCourse ? "text-sm" : "text-xs"} ${isIndisponivel ? "text-gray-500" : "text-[#ae95d9]"}`}>
             {baby.installment}
           </span>
+        )}
+        {isCourse && (
+          <img 
+            src={hotmartLogo} 
+            alt="Hotmart" 
+            className="absolute bottom-2 w-16 h-auto object-contain opacity-80"
+            style={{ maxHeight: '72px' }}
+          />
         )}
       </div>
     </div>
