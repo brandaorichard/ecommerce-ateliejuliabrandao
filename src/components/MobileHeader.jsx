@@ -288,6 +288,7 @@ export default function MobileHeader({
                   if (idx === 0) navigate("/categoria1");
                   if (idx === 1) navigate("/categoria2");
                   if (idx === 2) navigate("/categoria3");
+                  if (idx === 3) navigate("/cursos");
                   setMenuOpen(false);
                 }}
               />

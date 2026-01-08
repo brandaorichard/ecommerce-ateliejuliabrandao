@@ -102,6 +102,9 @@ export default function CategoryCardsSection({
 
   // Detecta se está na categoria 3 (por semelhança)
   const isCategory3 = title === "Por Semelhança";
+  
+  // Detecta se é a seção de cursos
+  const isCourses = title === "Cursos";
 
   function resetFilter() {
     setMinValue("");
@@ -167,13 +170,17 @@ export default function CategoryCardsSection({
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className={`grid gap-4 ${
+        isCourses 
+          ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3" 
+          : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+      }`}>
         {filteredBabies.map((baby) => (
           <RebornCard
             key={baby.id}
             baby={baby}
             onClick={() => onCardClick(baby)}
-            context={isCategory3 ? "category3" : undefined} // <--- Passa context só na categoria3
+            context={isCategory3 ? "category3" : isCourses ? "course" : undefined}
           />
         ))}
       </div>

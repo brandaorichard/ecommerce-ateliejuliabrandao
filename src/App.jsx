@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useParams, useLocation } from "
 import Header from "./components/Header";
 import SocialMediasSection from "./components/SocialMediasSection";
 import ProductPage from "./components/ProductPage";
+import CourseProductPage from "./components/CourseProductPage";
 import ScrollToTop from "./components/ScrollToTop";
 import ToastContainer from "./components/ToastContainer";
 import CartDrawer from "./components/CartDrawer";
@@ -16,6 +17,7 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 const Category1Page = lazy(() => import("./pages/Category1Page"));
 const Category2Page = lazy(() => import("./pages/Category2Page"));
 const Category3Page = lazy(() => import("./pages/Category3Page"));
+const CursosPage = lazy(() => import("./pages/CursosPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 const ConfirmEmailInstructionPage = lazy(() => import("./pages/ConfirmEmailInstructionPage"));
@@ -129,6 +131,8 @@ function SiteShell({ cartOpen, setCartOpen }) {
           <Route path="/categoria1" element={<Category1Page />} />
           <Route path="/categoria2" element={<Category2Page />} />
           <Route path="/categoria3" element={<Category3Page />} />
+          <Route path="/cursos" element={<CursosPage />} />
+          <Route path="/cursos/:slug" element={<CourseProductPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           {/* Rota para confirmação de email */}

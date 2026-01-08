@@ -3,11 +3,13 @@ import { trackSelectItem } from '../utils/analytics';
 
 export default function RebornCard({ baby, onClick, context, mini }) {
   const cover = baby.img || (baby.images && baby.images[0]) || "";
-  // context: "category3" ou "category3preview" passado pelo pai
+  // context: "category3", "category3preview" ou "course" passado pelo pai
 
   const isSemelhanca =
     (baby.category === "semelhanca" || baby.type === "semelhanca") &&
     (context === "category3" || context === "category3preview");
+    
+  const isCourse = context === "course" || baby.category === "cursos";
     
   const isIndisponivel = baby.status === "indisponivel";
 
@@ -30,7 +32,11 @@ export default function RebornCard({ baby, onClick, context, mini }) {
       onClick={handleClick}
       className={`
         bg-[#f3e3fa] rounded-md shadow-md overflow-hidden flex flex-col border-[1px] 
-        border-gray-400 mb-4 w-full md:w-[200px] h-[400px] md:h-[440px] 
+        border-gray-400 mb-4
+        ${isCourse 
+          ? "w-full h-auto" 
+          : "w-full md:w-[200px] h-[400px] md:h-[440px]"
+        }
         ${!isIndisponivel ? "cursor-pointer transition-transform hover:scale-[1.03]" : "opacity-80"}
       `}
       tabIndex={isIndisponivel ? -1 : 0}
@@ -40,13 +46,17 @@ export default function RebornCard({ baby, onClick, context, mini }) {
         if (!isIndisponivel && (e.key === "Enter" || e.key === " ")) onClick();
       }}
     >
-      <div className="relative">
+      <div className={`relative ${isCourse ? "w-full aspect-video" : ""}`}>
         <img
           src={cover}
           alt={baby.name}
-          className={`w-full object-cover h-[275px] md:h-[320px] ${isIndisponivel ? "opacity-70" : ""}`}
-          width={200}
-          height={320}
+          className={`w-full object-cover ${
+            isCourse 
+              ? `h-full aspect-video ${isIndisponivel ? "opacity-70" : ""}` 
+              : `h-[275px] md:h-[320px] ${isIndisponivel ? "opacity-70" : ""}`
+          }`}
+          width={isCourse ? 400 : 200}
+          height={isCourse ? 225 : 320}
           loading="lazy"
           decoding="async"
           fetchpriority="auto"
@@ -62,12 +72,12 @@ export default function RebornCard({ baby, onClick, context, mini }) {
           </span>
         )}
       </div>
-      <div className="p-3 flex flex-col flex-1">
-        <span className="text-xs md:text-sm font-light text-black mb-1">
+      <div className={`p-3 flex flex-col ${isCourse ? "min-h-[140px]" : "flex-1"}`}>
+        <span className={`font-light text-black mb-1 ${isCourse ? "text-sm md:text-base" : "text-xs md:text-sm"}`}>
           {baby.name}
         </span>
         <div className="flex items-end gap-2 mb-1">
-          <span className="flex flex-col text-base md:text-lg font-bold text-[#7a4fcf]">
+          <span className={`flex flex-col font-bold text-[#7a4fcf] ${isCourse ? "text-lg md:text-xl" : "text-base md:text-lg"}`}>
             {isSemelhanca && (
               <span className="text-xs font-semibold text-[#616161] mb-1">A partir de:</span>
             )}
@@ -78,7 +88,7 @@ export default function RebornCard({ baby, onClick, context, mini }) {
             </span>
           </span>
           {baby.oldPrice && (
-            <span className="text-xs text-[#616161] line-through">
+            <span className={`text-[#616161] line-through ${isCourse ? "text-sm" : "text-xs"}`}>
               {typeof baby.oldPrice === "number"
                 ? `R$${baby.oldPrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
                 : baby.oldPrice}
@@ -86,7 +96,7 @@ export default function RebornCard({ baby, onClick, context, mini }) {
           )}
         </div>
         {baby.installment && !isSemelhanca && (
-          <span className={`text-xs ${isIndisponivel ? "text-gray-500" : "text-[#ae95d9]"}`}>
+          <span className={`${isCourse ? "text-sm" : "text-xs"} ${isIndisponivel ? "text-gray-500" : "text-[#ae95d9]"}`}>
             {baby.installment}
           </span>
         )}
