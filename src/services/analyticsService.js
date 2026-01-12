@@ -1,13 +1,15 @@
 /**
  * Serviço para buscar dados do Google Analytics via backend
  * 
- * IMPORTANTE: Este serviço requer que o backend tenha endpoints configurados
- * para fazer as requisições à Google Analytics Data API (GA4)
+ * Backend integrado com Google Analytics 4 Data API
+ * Documentação: docs/FRONTEND_ANALYTICS_GUIDE.md
  * 
- * Setup no Backend necessário:
- * 1. Instalar: npm install @google-analytics/data
- * 2. Configurar credenciais do Google Cloud (Service Account)
- * 3. Criar endpoints que usem a biblioteca para buscar métricas
+ * Endpoints disponíveis:
+ * - /api/analytics/metrics - Métricas principais (cache 5min)
+ * - /api/analytics/top-pages - Top páginas (cache 1h)
+ * - /api/analytics/realtime - Dados em tempo real (cache 2min)
+ * - /api/analytics/visitors - Estatísticas de visitantes (legado, compatível)
+ * - /api/analytics/conversions - Estatísticas de conversão (legado, compatível)
  */
 
 const API_BASE_URL = 'https://atelie-juliabrandao-backend-production.up.railway.app/api';
@@ -19,7 +21,7 @@ const API_BASE_URL = 'https://atelie-juliabrandao-backend-production.up.railway.
  */
 export async function fetchGAMetrics(token) {
   try {
-    const response = await fetch(`${API_BASE_URL}/admin/analytics/metrics`, {
+    const response = await fetch(`${API_BASE_URL}/analytics/metrics`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -28,15 +30,25 @@ export async function fetchGAMetrics(token) {
     });
 
     if (!response.ok) {
-      throw new Error('Erro ao buscar métricas do Analytics');
+      console.warn(`[Analytics] API retornou status ${response.status}, usando fallback`);
+      return getMockAnalyticsData();
     }
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Erro ao buscar métricas GA:', error);
+    const result = await response.json();
     
-    // Retorna dados mockados como fallback enquanto backend não está pronto
+    // Backend retorna { success: true, data: {...} }
+    if (result.success && result.data) {
+      console.log('[Analytics] Dados reais do GA4 carregados com sucesso');
+      return result.data;
+    }
+    
+    // Se não tiver a estrutura esperada, usar fallback
+    console.warn('[Analytics] Estrutura de resposta inesperada, usando fallback');
+    return getMockAnalyticsData();
+  } catch (error) {
+    console.error('[Analytics] Erro ao buscar métricas GA:', error);
+    
+    // Retorna dados mockados como fallback
     return getMockAnalyticsData();
   }
 }
@@ -49,7 +61,7 @@ export async function fetchGAMetrics(token) {
  */
 export async function fetchTopPages(token, limit = 5) {
   try {
-    const response = await fetch(`${API_BASE_URL}/admin/analytics/top-pages?limit=${limit}`, {
+    const response = await fetch(`${API_BASE_URL}/analytics/top-pages?limit=${limit}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -58,16 +70,116 @@ export async function fetchTopPages(token, limit = 5) {
     });
 
     if (!response.ok) {
-      throw new Error('Erro ao buscar páginas mais visitadas');
+      console.warn(`[Analytics] Top Pages API retornou status ${response.status}, usando fallback`);
+      return getMockTopPages();
     }
 
-    const data = await response.json();
-    return data;
+    const result = await response.json();
+    
+    // Backend retorna { success: true, data: [...] }
+    if (result.success && result.data) {
+      console.log('[Analytics] Top pages reais do GA4 carregadas com sucesso');
+      return result.data;
+    }
+    
+    // Se não tiver a estrutura esperada, usar fallback
+    console.warn('[Analytics] Estrutura de resposta inesperada para top pages, usando fallback');
+    return getMockTopPages();
   } catch (error) {
-    console.error('Erro ao buscar top pages:', error);
+    console.error('[Analytics] Erro ao buscar top pages:', error);
     
     // Retorna dados mockados como fallback
     return getMockTopPages();
+  }
+}
+
+/**
+ * Busca dados em tempo real do Analytics (últimos 30 minutos)
+ * @param {string} token - Token de autenticação
+ * @returns {Promise<Object|null>} Dados em tempo real ou null se falhar
+ */
+export async function fetchRealtimeStats(token) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/analytics/realtime`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      console.warn(`[Analytics] Realtime API retornou status ${response.status}`);
+      return null;
+    }
+
+    const result = await response.json();
+    
+    if (result.success && result.data) {
+      console.log('[Analytics] Dados em tempo real carregados');
+      return result.data;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('[Analytics] Erro ao buscar dados em tempo real:', error);
+    return null;
+  }
+}
+
+/**
+ * Busca estatísticas de visitantes (endpoint legado, compatível)
+ * @param {string} token - Token de autenticação
+ * @param {string} period - Período ('day', 'week', 'month')
+ * @returns {Promise<Object>} Estatísticas de visitantes
+ */
+export async function fetchVisitorStats(token, period = 'day') {
+  try {
+    const response = await fetch(`${API_BASE_URL}/analytics/visitors?period=${period}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro ao buscar estatísticas de visitantes');
+    }
+
+    const result = await response.json();
+    return result.success ? result.data : null;
+  } catch (error) {
+    console.error('[Analytics] Erro ao buscar visitor stats:', error);
+    return null;
+  }
+}
+
+/**
+ * Busca estatísticas de conversão (endpoint legado, compatível)
+ * @param {string} token - Token de autenticação
+ * @param {string} period - Período ('day', 'week', 'month')
+ * @returns {Promise<Object>} Estatísticas de conversão
+ */
+export async function fetchConversionStats(token, period = 'day') {
+  try {
+    const response = await fetch(`${API_BASE_URL}/analytics/conversions?period=${period}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro ao buscar estatísticas de conversão');
+    }
+
+    const result = await response.json();
+    return result.success ? result.data : null;
+  } catch (error) {
+    console.error('[Analytics] Erro ao buscar conversion stats:', error);
+    return null;
   }
 }
 
@@ -84,6 +196,8 @@ function getMockAnalyticsData() {
   
   const baseVisitors = Math.floor(2400 * timeMultiplier);
   const baseSessions = Math.floor(3100 * timeMultiplier);
+  
+  console.log('[Analytics] Usando dados mockados (fallback)');
   
   return {
     visitors: {
@@ -124,7 +238,16 @@ function getMockAnalyticsData() {
  * Páginas mais visitadas mockadas
  */
 function getMockTopPages() {
+  console.log('[Analytics] Usando top pages mockadas (fallback)');
+  
   return [
+    {
+      path: '/',
+      pageViews: 2100,
+      uniquePageViews: 1650,
+      avgTimeOnPage: 95,
+      bounceRate: 52.3
+    },
     {
       path: '/produtos/pronta-entrega',
       pageViews: 1240,
@@ -138,13 +261,6 @@ function getMockTopPages() {
       uniquePageViews: 720,
       avgTimeOnPage: 210,
       bounceRate: 42.1
-    },
-    {
-      path: '/',
-      pageViews: 2100,
-      uniquePageViews: 1650,
-      avgTimeOnPage: 95,
-      bounceRate: 52.3
     },
     {
       path: '/cursos',
